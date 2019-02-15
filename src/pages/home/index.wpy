@@ -1,0 +1,52 @@
+<template>
+  <view>
+    首页
+    <Toast />
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import RequestMixin from 'mixins/request';
+import Toast from 'components/toast';
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: 'Index'
+  };
+  components = {
+    Toast
+  };
+
+  mixins = [RequestMixin];
+
+  data = {};
+
+  async showToast(msg) {
+    await this.$invoke('Toast', 'show', {
+      title: msg,
+      duration: 1500
+    });
+  }
+
+  computed = {};
+
+  methods = {};
+
+  events = {};
+
+  async onLoad() {
+    try {
+      const resp = await wepy.login();
+      resp
+        ? this.showToast('微信登录成功！')
+        : this.showToast('微信登录失败！');
+    } catch (error) {
+      console.log('wechat login error', error);
+      this.showToast('网络错误～');
+    }
+  }
+}
+</script>
+<style lang="less">
+</style>
