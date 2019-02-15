@@ -1,14 +1,15 @@
 {
-  "description": "mobileLibrary",
-  "setting": {
-    "urlCheck": true,
-    "es6": false,
-    "postcss": false,
-    "minified": false,
-    "newFeature": true
-  },
-  "compileType": "miniprogram",
-  "appid": "wxcf070f835a792170",
-  "projectname": "mobileLibrary",
-  "miniprogramRoot": "./dist"
+	"description": "mobileLibrary",
+	"setting": {
+		"urlCheck": true,
+		"es6": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"appid": "wxcf070f835a792170",
+	"projectname": "mobileLibrary",
+	"miniprogramRoot": "dist/",
+	"condition": {}
 }

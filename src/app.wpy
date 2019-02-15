@@ -12,8 +12,8 @@ export default class extends wepy.app {
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#31D4DA',
-      navigationBarTitleText: '小程序标题',
-      navigationBarTextStyle: '#FFFFFF'
+      navigationBarTitleText: '流动图书馆',
+      navigationBarTextStyle: 'white'
     },
     tabBar: {
       color: '#8a8a8a',
@@ -23,14 +23,12 @@ export default class extends wepy.app {
       list: [
         {
           pagePath: 'pages/home/index',
-          iconPath: 'images/tab/coms-normal.png',
-          selectedIconPath: 'images/tab/coms-active.png',
+          // iconPath: 'images/tab/coms-normal.png',
+          // selectedIconPath: 'images/tab/coms-active.png',
           text: '首页'
         },
         {
           pagePath: 'pages/about/index',
-          iconPath: 'images/tab/about-normal.png',
-          selectedIconPath: 'images/tab/about-active.png',
           text: '关于'
         }
       ]
@@ -52,6 +50,7 @@ export default class extends wepy.app {
 }
 </script>
 <style lang="less">
+  // global
   @import url(./less/iconfont.less);
   @import url(./less/base.less);
 </style>
