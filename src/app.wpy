@@ -6,8 +6,8 @@ import 'utils/injectObj';
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/home/index',
-      'pages/about/index'
+      'pages/tarbar/home',
+      'pages/tarbar/index'
     ],
     window: {
       backgroundTextStyle: 'light',
