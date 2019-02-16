@@ -6,8 +6,8 @@ import 'utils/injectObj';
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/tarbar/home',
-      'pages/tarbar/index'
+      'pages/tarBar/home',
+      'pages/tarBar/about'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -16,19 +16,21 @@ export default class extends wepy.app {
       navigationBarTextStyle: 'white'
     },
     tabBar: {
-      color: '#8a8a8a',
-      selectedColor: '#28b1b0',
+      color: '#8C8C8C',
+      selectedColor: '#31D4DA',
       borderStyle: 'black',
       backgroundColor: '#ffffff',
       list: [
         {
-          pagePath: 'pages/home/index',
-          // iconPath: 'images/tab/coms-normal.png',
-          // selectedIconPath: 'images/tab/coms-active.png',
+          pagePath: 'pages/tarBar/home',
+          iconPath: './images/home.png',
+          selectedIconPath: './images/homeSelected.png',
           text: '首页'
         },
         {
-          pagePath: 'pages/about/index',
+          pagePath: 'pages/tarBar/about',
+          iconPath: './images/mine.png',
+          selectedIconPath: './images/mineSelected.png',
           text: '关于'
         }
       ]

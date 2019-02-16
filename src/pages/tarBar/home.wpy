@@ -21,7 +21,7 @@
         <!-- <text class="new-books-all">全部 ></text> -->
       </view>
       <scroll-view scroll-x="true" class="new-books-content" style="white-space: nowrap">
-        <image wx:for="{{newBooks}}" src="{{item.image}}" bindtap="toBorrowBook" data-isbn="{{item.isbn}}" data-bookid="{{item._id}}" class="new-book"></image>
+        <image wx:for="{{newBooks}}" wx:key="{{index}}" src="{{item.image}}" bindtap="toBorrowBook" data-isbn="{{item.isbn}}" data-bookid="{{item._id}}" class="new-book"></image>
       </scroll-view>
     </view>
   </view>
