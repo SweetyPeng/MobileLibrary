@@ -23,15 +23,21 @@ export default class extends wepy.app {
       list: [
         {
           pagePath: 'pages/tarBar/home',
-          iconPath: './images/home.png',
-          selectedIconPath: './images/homeSelected.png',
+          iconPath: './images/tab/home.png',
+          selectedIconPath: './images/tab/homeSelected.png',
           text: '首页'
         },
         {
           pagePath: 'pages/tarBar/about',
-          iconPath: './images/mine.png',
-          selectedIconPath: './images/mineSelected.png',
-          text: '关于'
+          iconPath: './images/tab/mine.png',
+          selectedIconPath: './images/tab/mineSelected.png',
+          text: '书架'
+        }，
+        {
+          pagePath: 'pages/tarBar/mine',
+          iconPath: './images/tab/mine.png',
+          selectedIconPath: './images/tab/mineSelected.png',
+          text: '我的'
         }
       ]
     },
