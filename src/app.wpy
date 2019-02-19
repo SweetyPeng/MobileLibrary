@@ -28,7 +28,7 @@ export default class extends wepy.app {
           text: '首页'
         },
         {
-          pagePath: 'pages/tarBar/about',
+          pagePath: 'pages/tarBar/bookshelf',
           iconPath: './images/tab/mine.png',
           selectedIconPath: './images/tab/mineSelected.png',
           text: '书架'

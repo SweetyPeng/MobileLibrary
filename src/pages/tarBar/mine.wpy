@@ -1,5 +1,15 @@
 <template>
-  <view> about </view>
+  <scroll-view scroll-y class="mine-container">
+    <view class="main">
+      <bsDialog />
+      <!-- 头像 -->
+      <avatarNickName />
+      <!-- 我的书单 -->
+      <!-- 邀请好友 -->
+      <!-- 意见反馈 -->
+      <evaluation />
+    </view>
+  </scroll-view>
 </template>
 
 <script>
