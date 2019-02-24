@@ -7,7 +7,9 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/tarBar/home',
-      'pages/tarBar/about'
+      'pages/tarBar/bookshelf',
+      'pages/tarBar/mine'
+
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -32,7 +34,7 @@ export default class extends wepy.app {
           iconPath: './images/tab/mine.png',
           selectedIconPath: './images/tab/mineSelected.png',
           text: '书架'
-        }，
+        },
         {
           pagePath: 'pages/tarBar/mine',
           iconPath: './images/tab/mine.png',
