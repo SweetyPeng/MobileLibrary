@@ -1,0 +1,71 @@
+<style lang="less">
+open-data {
+  overflow: hidden;
+  display: block;
+}
+.avatar-container {
+  height: 328rpx;
+  background: url(https://oss.biosan.cn/weichat/home/homeTitleBg.png);
+  background-repeat: no-repeat;
+  background-position: center -50%;
+  background-size: 100% 65%;
+  background-color: #ffffff;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+  .avatar-warp {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    box-sizing: border-box;
+    .avatar {
+      width: 160rpx;
+      height: 160rpx;
+      border-radius: 50%;
+      margin-top: 64rpx;
+      box-sizing: border-box;
+      // padding: 5rpx;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ffffff;
+      ._avatar {
+        width: 155rpx;
+        height: 155rpx;
+        border-radius: 50%;
+      }
+    }
+    .nickname {
+      color: #5d5d5d;
+      font-size: 32rpx;
+      margin-top: 32rpx;
+    }
+  }
+}
+</style>
+<template>
+  <view class="avatar-container">
+    <view class="avatar-warp">
+      <view class="avatar">
+        <open-data type="userAvatarUrl" class="_avatar"></open-data>
+      </view>
+      <open-data type="userNickName" class="nickname"></open-data>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+
+export default class AvatarNickName extends wepy.component {
+  components = {};
+  props = {};
+  data = {};
+  computed = {};
+  methods = {};
+  events = {};
+  onLoad() {}
+}
+</script>

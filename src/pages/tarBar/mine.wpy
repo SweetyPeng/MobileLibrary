@@ -14,11 +14,14 @@
 
 <script>
 import wepy from 'wepy';
+import AvatarNickName from 'components/avatar'; // 图像&昵称
 export default class Index extends wepy.page {
   config = {
-    navigationBarTitleText: 'Index'
+    navigationBarTitleText: '我的'
   };
-  components = {};
+  components = {
+    avatarNickName: AvatarNickName
+  };
   mixins = [];
   data = {};
   computed = {};
