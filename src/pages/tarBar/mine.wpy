@@ -4,10 +4,88 @@
       <bsDialog />
       <!-- 头像 -->
       <avatarNickName />
-      <!-- 我的书单 -->
+      <!-- 我的消息 -->
+      <view class="mine-item" @tap="linkToMobile">
+        <view class="item-left">
+          <view class="item-icon mobile-icon"></view>
+          <view class="left-txt">我的消息</view>
+        </view>
+        <view class="item-right">
+          <view class="right-txt" wx:if="{{mobileNum}}">{{mobileNum}}</view>
+          <view class="right-txt" wx:else>点击查看</view>
+          <view class="item-arrow"></view>
+        </view>
+      </view>
+      <!-- 我的漂流 -->
+      <view class="mine-item" @tap="linkToMobile">
+        <view class="item-left">
+          <view class="item-icon mobile-icon"></view>
+          <view class="left-txt">我的漂流</view>
+        </view>
+        <view class="item-right">
+          <view class="right-txt" wx:if="{{mobileNum}}">{{mobileNum}}</view>
+          <view class="right-txt" wx:else>点击查看</view>
+          <view class="item-arrow"></view>
+        </view>
+      </view>
+      <!-- 我的借阅 -->
+      <view class="mine-item" @tap="linkToMobile">
+        <view class="item-left">
+          <view class="item-icon mobile-icon"></view>
+          <view class="left-txt">我的借阅</view>
+        </view>
+        <view class="item-right">
+          <view class="right-txt" wx:if="{{mobileNum}}">{{mobileNum}}</view>
+          <view class="right-txt" wx:else>点击查看</view>
+          <view class="item-arrow"></view>
+        </view>
+      </view>
+      <!-- 我的书评 -->
+      <view class="mine-item" @tap="linkToMobile">
+        <view class="item-left">
+          <view class="item-icon mobile-icon"></view>
+          <view class="left-txt">我的书评</view>
+        </view>
+        <view class="item-right">
+          <view class="right-txt" wx:if="{{mobileNum}}">{{mobileNum}}</view>
+          <view class="right-txt" wx:else>点击查看</view>
+          <view class="item-arrow"></view>
+        </view>
+      </view>
+      <!-- 绑定手机 -->
+      <view class="mine-item" @tap="linkToMobile">
+        <view class="item-left">
+          <view class="item-icon mobile-icon"></view>
+          <view class="left-txt">手机绑定</view>
+        </view>
+        <view class="item-right">
+          <view class="right-txt" wx:if="{{mobileNum}}">{{mobileNum}}</view>
+          <view class="right-txt" wx:else>未绑定手机</view>
+          <view class="item-arrow"></view>
+        </view>
+      </view>
       <!-- 邀请好友 -->
+      <view class="mine-item" @tap="linkToMobile">
+        <view class="item-left">
+          <view class="item-icon mobile-icon"></view>
+          <view class="left-txt">邀请好友</view>
+        </view>
+        <view class="item-right">
+          <view class="right-txt" wx:if="{{mobileNum}}">{{mobileNum}}</view>
+          <view class="right-txt" wx:else>点击邀请</view>
+          <view class="item-arrow"></view>
+        </view>
+      </view>
       <!-- 意见反馈 -->
-      <evaluation />
+      <view class="mine-item" @tap="linkToMobile">
+        <view class="item-left">
+          <view class="item-icon mobile-icon"></view>
+          <view class="left-txt">意见反馈</view>
+        </view>
+        <view class="item-right">
+          <view class="item-arrow"></view>
+        </view>
+      </view>
     </view>
   </scroll-view>
 </template>
@@ -17,7 +95,7 @@ import wepy from 'wepy';
 import AvatarNickName from 'components/avatar'; // 图像&昵称
 export default class Index extends wepy.page {
   config = {
-    navigationBarTitleText: '我的'
+    navigationBarTitleText: '流动图书馆'
   };
   components = {
     avatarNickName: AvatarNickName
@@ -30,4 +108,121 @@ export default class Index extends wepy.page {
 }
 </script>
 <style lang="less">
+@import url(../../less/variables.less);
+@import url(../../less/mixins.less);
+page {
+  background-color: @page-bg-color;
+  height: 100%;
+  padding-bottom: 20px;
+  overflow-y: hidden;
+  .mine-container {
+    height: 100%;
+    // .dropbg-mixin();
+  }
+}
+.mine-item {
+  width: 100%;
+  height: 120px;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  .item-arrow {
+    width: 48px;
+    height: 48px;
+    background: url('https://biosan-saas.oss-cn-beijing.aliyuncs.com/medicClient/mine/arrow.png') no-repeat;
+    background-size: contain;
+  }
+  .item-icon {
+    width: 48px;
+    height: 48px;
+    background: url('https://biosan-saas.oss-cn-beijing.aliyuncs.com/medicClient/mine/message-icon.png') no-repeat;
+    background-size: contain;
+  }
+  .left-txt {
+    margin-left: 8px;
+    height: 48px;
+    font-size: 32px;
+    color: rgba(93, 93, 93, 1);
+    line-height: 48px;
+  }
+  .right-txt {
+    margin-right: 8px;
+    height: 48px;
+    font-size: 28px;
+    color: rgba(157, 157, 157, 1);
+    line-height: 48px;
+  }
+  .item-left {
+    margin-left: 32px;
+    display: flex;
+    flex-direction: row;
+  }
+  .item-right {
+    margin-right: 32px;
+    display: flex;
+    flex-direction: row;
+  }
+  .has-message-icon {
+    background: url('https://biosan-saas.oss-cn-beijing.aliyuncs.com/medicClient/mine/message-icon2.png') no-repeat;
+    background-size: contain;
+  }
+  .mobile-icon {
+    background: url('https://biosan-saas.oss-cn-beijing.aliyuncs.com/medicClient/mine/mobile-icon.png') no-repeat;
+    background-size: contain;
+  }
+}
+.global-close {
+  position: absolute;
+  bottom: -80rpx;
+  left: 45%;
+  color: white;
+  border-radius: 52rpx;
+  border: 2px solid white;
+  width: 52rpx;
+  height: 52rpx;
+  text-align: center;
+}
+.card-inner {
+  border-radius: 16rpx;
+  min-height: 200rpx;
+
+  image {
+    width: 100%;
+    height: 280rpx;
+  }
+  .title {
+    color: #5d5d5d;
+    font-size: 40rpx;
+    text-align: center;
+    margin-top: 48rpx;
+    font-weight: bolder;
+  }
+  .details {
+    color: #5d5d5d;
+    font-size: 28rpx;
+    text-align: center;
+    padding: 0 58rpx;
+    padding-top: 32rpx;
+    line-height: 45rpx;
+  }
+  .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 80rpx;
+    .k {
+      width: 400rpx;
+      height: 80rpx;
+      font-size: 32rpx;
+      line-height: 80rpx;
+      text-align: center;
+      background: #1a90f3;
+      color: white;
+      border-radius: 8rpx;
+    }
+  }
+}
 </style>

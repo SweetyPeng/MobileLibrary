@@ -1,7 +1,8 @@
 <template>
   <view>
-    <view></view>
-    <view></view>
+    <view>书籍查询</view>
+    <view>图书排行榜</view>
+    <view>热门书评等占位</view>
   </view>
 </template>
 
@@ -9,7 +10,7 @@
 import wepy from 'wepy';
 export default class Index extends wepy.page {
   config = {
-    navigationBarTitleText: 'Index'
+    navigationBarTitleText: '流动图书馆'
   };
   components = {};
   mixins = [];

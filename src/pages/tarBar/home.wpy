@@ -18,7 +18,14 @@
     <view class='new-books'>
       <view class='new-books-header'>
         <text class="new-books-header-title">新书速递</text>
-        <!-- <text class="new-books-all">全部 ></text> -->
+      </view>
+      <scroll-view scroll-x="true" class="new-books-content" style="white-space: nowrap">
+        <image wx:for="{{newBooks}}" wx:key="{{index}}" src="{{item.image}}" bindtap="toBorrowBook" data-isbn="{{item.isbn}}" data-bookid="{{item._id}}" class="new-book"></image>
+      </scroll-view>
+    </view>
+    <view class='new-books'>
+      <view class='new-books-header'>
+        <text class="new-books-header-title">附近的书</text>
       </view>
       <scroll-view scroll-x="true" class="new-books-content" style="white-space: nowrap">
         <image wx:for="{{newBooks}}" wx:key="{{index}}" src="{{item.image}}" bindtap="toBorrowBook" data-isbn="{{item.isbn}}" data-bookid="{{item._id}}" class="new-book"></image>
@@ -34,7 +41,7 @@ import Toast from 'components/toast';
 
 export default class Index extends wepy.page {
   config = {
-    navigationBarTitleText: '个人图书馆'
+    navigationBarTitleText: '流动图书馆'
   };
   components = {
     Toast
