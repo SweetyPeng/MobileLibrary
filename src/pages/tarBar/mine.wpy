@@ -4,107 +4,119 @@
       <bsDialog />
       <!-- 头像 -->
       <avatarNickName />
-      <!-- 我的消息 -->
-      <view class="mine-item" @tap="linkToMobile">
-        <view class="item-left">
-          <view class="item-icon mobile-icon"></view>
-          <view class="left-txt">我的消息</view>
-        </view>
-        <view class="item-right">
-          <view class="right-txt" wx:if="{{mobileNum}}">{{mobileNum}}</view>
-          <view class="right-txt" wx:else>点击查看</view>
-          <view class="item-arrow"></view>
-        </view>
-      </view>
-      <!-- 我的漂流 -->
-      <view class="mine-item" @tap="linkToMobile">
-        <view class="item-left">
-          <view class="item-icon mobile-icon"></view>
-          <view class="left-txt">我的漂流</view>
-        </view>
-        <view class="item-right">
-          <view class="right-txt" wx:if="{{mobileNum}}">{{mobileNum}}</view>
-          <view class="right-txt" wx:else>点击查看</view>
-          <view class="item-arrow"></view>
-        </view>
-      </view>
-      <!-- 我的借阅 -->
-      <view class="mine-item" @tap="linkToMobile">
-        <view class="item-left">
-          <view class="item-icon mobile-icon"></view>
-          <view class="left-txt">我的借阅</view>
-        </view>
-        <view class="item-right">
-          <view class="right-txt" wx:if="{{mobileNum}}">{{mobileNum}}</view>
-          <view class="right-txt" wx:else>点击查看</view>
-          <view class="item-arrow"></view>
-        </view>
-      </view>
-      <!-- 我的书评 -->
-      <view class="mine-item" @tap="linkToMobile">
-        <view class="item-left">
-          <view class="item-icon mobile-icon"></view>
-          <view class="left-txt">我的书评</view>
-        </view>
-        <view class="item-right">
-          <view class="right-txt" wx:if="{{mobileNum}}">{{mobileNum}}</view>
-          <view class="right-txt" wx:else>点击查看</view>
-          <view class="item-arrow"></view>
-        </view>
-      </view>
-      <!-- 绑定手机 -->
-      <view class="mine-item" @tap="linkToMobile">
-        <view class="item-left">
-          <view class="item-icon mobile-icon"></view>
-          <view class="left-txt">手机绑定</view>
-        </view>
-        <view class="item-right">
-          <view class="right-txt" wx:if="{{mobileNum}}">{{mobileNum}}</view>
-          <view class="right-txt" wx:else>未绑定手机</view>
-          <view class="item-arrow"></view>
-        </view>
-      </view>
-      <!-- 邀请好友 -->
-      <view class="mine-item" @tap="linkToMobile">
-        <view class="item-left">
-          <view class="item-icon mobile-icon"></view>
-          <view class="left-txt">邀请好友</view>
-        </view>
-        <view class="item-right">
-          <view class="right-txt" wx:if="{{mobileNum}}">{{mobileNum}}</view>
-          <view class="right-txt" wx:else>点击邀请</view>
-          <view class="item-arrow"></view>
-        </view>
-      </view>
-      <!-- 意见反馈 -->
-      <view class="mine-item" @tap="linkToMobile">
-        <view class="item-left">
-          <view class="item-icon mobile-icon"></view>
-          <view class="left-txt">意见反馈</view>
-        </view>
-        <view class="item-right">
-          <view class="item-arrow"></view>
-        </view>
-      </view>
+      <!-- navCard -->
+      <bindPhone :item.sync="bindPhone_data"/>
+      <myMessage :item.sync="message_data"/>
+      <myDrift :item.sync="drift_data"/>
+      <myBorrow :item.sync="borrow_data"/>
+      <myThoughts :item.sync="thoughts_data"/>
+      <myInvite :item.sync="invitation_data"/>
+      <myEvaluation :item.sync="evaluation_data"/>
     </view>
   </scroll-view>
 </template>
 
 <script>
 import wepy from 'wepy';
+import NavCard from 'components/navCard';
 import AvatarNickName from 'components/avatar'; // 图像&昵称
+import RequestMixin from 'mixins/request';
+
 export default class Index extends wepy.page {
   config = {
     navigationBarTitleText: '流动图书馆'
   };
   components = {
-    avatarNickName: AvatarNickName
+    avatarNickName: AvatarNickName,
+    bindPhone: NavCard,   // 绑定手机
+    myMessage: NavCard,   // 我的消息
+    myDrift: NavCard,     // 我的漂流
+    myBorrow: NavCard,    // 我的借阅
+    myThoughts: NavCard,  // 我的书评
+    myInvite: NavCard,    // 邀请好友
+    myEvaluation: NavCard // 意见反馈
   };
-  mixins = [];
-  data = {};
-  computed = {};
+  mixins = [RequestMixin];
+  data = {
+    bindPhone_data: {
+      icon: 'icon-icon_me_phone',
+      operator: '获取手机',
+      description: '未绑定手机号',
+      type: 'mobile'
+    },
+    message_data: {
+      icon: 'icon-icon_reportgrey',
+      operator: '我的消息',
+      description: '查看消息',
+      type: 'message',
+      mgb: '20rpx'
+    },
+    drift_data: {
+      icon: 'icon-icon_Inspection_grey',
+      operator: '我的漂流',
+      description: '点击查看',
+      type: 'drift'
+    },
+    borrow_data: {
+      icon: 'icon-icon_me_invoice',
+      operator: '我的借阅',
+      description: '点击查看',
+      type: 'borrow'
+    },
+    thoughts_data: {
+      icon: 'icon-icon_home_edit',
+      operator: '我的书评',
+      description: '点击查看',
+      type: 'thought',
+      mgb: '20rpx'
+    },
+    invitation_data: {
+      icon: 'icon-icon_Forward',
+      operator: '邀请好友',
+      description: '点击邀请',
+      type: 'invite'
+    },
+    evaluation_data: {
+      icon: 'icon-icon_Forward',
+      operator: '意见反馈',
+      type: 'evaluate',
+      mgb: '48rpx'
+    }
+
+  };
   methods = {};
-  events = {};
+  events = {
+    catchClick(type) {
+      let pageUrl = '';
+      switch (type) {
+        case 'mobile':
+          pageUrl = '';
+          break;
+        case 'message':
+          pageUrl = '';
+          break;
+        case 'drift':
+          pageUrl = '';
+          break;
+        case 'borrow':
+          pageUrl = '';
+          break;
+        case 'thought':
+          pageUrl = '';
+          break;
+        case 'invite':
+          pageUrl = '';
+          break;
+        case 'evaluate':
+          pageUrl = '';
+          break;
+        default:
+          break;
+      }
+      // 跳转到对应页面
+      this.$link(pageUrl);
+    }
+  };
 }
 </script>
 <style lang="less">
@@ -115,113 +127,17 @@ page {
   height: 100%;
   padding-bottom: 20px;
   overflow-y: hidden;
+  .dropbg-mixin();
   .mine-container {
     height: 100%;
-    // .dropbg-mixin();
-  }
-}
-.mine-item {
-  width: 100%;
-  height: 120px;
-  background: #fff;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
-  .item-arrow {
-    width: 48px;
-    height: 48px;
-    background: url('https://biosan-saas.oss-cn-beijing.aliyuncs.com/medicClient/mine/arrow.png') no-repeat;
-    background-size: contain;
-  }
-  .item-icon {
-    width: 48px;
-    height: 48px;
-    background: url('https://biosan-saas.oss-cn-beijing.aliyuncs.com/medicClient/mine/message-icon.png') no-repeat;
-    background-size: contain;
-  }
-  .left-txt {
-    margin-left: 8px;
-    height: 48px;
-    font-size: 32px;
-    color: rgba(93, 93, 93, 1);
-    line-height: 48px;
-  }
-  .right-txt {
-    margin-right: 8px;
-    height: 48px;
-    font-size: 28px;
-    color: rgba(157, 157, 157, 1);
-    line-height: 48px;
-  }
-  .item-left {
-    margin-left: 32px;
-    display: flex;
-    flex-direction: row;
-  }
-  .item-right {
-    margin-right: 32px;
-    display: flex;
-    flex-direction: row;
-  }
-  .has-message-icon {
-    background: url('https://biosan-saas.oss-cn-beijing.aliyuncs.com/medicClient/mine/message-icon2.png') no-repeat;
-    background-size: contain;
-  }
-  .mobile-icon {
-    background: url('https://biosan-saas.oss-cn-beijing.aliyuncs.com/medicClient/mine/mobile-icon.png') no-repeat;
-    background-size: contain;
-  }
-}
-.global-close {
-  position: absolute;
-  bottom: -80rpx;
-  left: 45%;
-  color: white;
-  border-radius: 52rpx;
-  border: 2px solid white;
-  width: 52rpx;
-  height: 52rpx;
-  text-align: center;
-}
-.card-inner {
-  border-radius: 16rpx;
-  min-height: 200rpx;
-
-  image {
-    width: 100%;
-    height: 280rpx;
-  }
-  .title {
-    color: #5d5d5d;
-    font-size: 40rpx;
-    text-align: center;
-    margin-top: 48rpx;
-    font-weight: bolder;
-  }
-  .details {
-    color: #5d5d5d;
-    font-size: 28rpx;
-    text-align: center;
-    padding: 0 58rpx;
-    padding-top: 32rpx;
-    line-height: 45rpx;
-  }
-  .btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 80rpx;
-    .k {
-      width: 400rpx;
-      height: 80rpx;
-      font-size: 32rpx;
-      line-height: 80rpx;
-      text-align: center;
-      background: #1a90f3;
-      color: white;
-      border-radius: 8rpx;
+    .dropbg-btm-mixin();
+    .main {
+      background-color: #f5f5f5;
+    }
+    button {
+      border: none;
+      border-radius: 0;
+      padding: 0;
     }
   }
 }

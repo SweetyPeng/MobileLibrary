@@ -1,0 +1,95 @@
+<template>
+    <view class="navCard-container" style="margin-bottom:{{item.mgb?item.mgb:'0'}}" >
+        <view class="navCard-warp" @tap="catch_Click({{item.type}})">
+            <view class="left">
+                <text class="_icon iconfont {{item.icon}}"></text>
+                <view class="operator">{{item.operator}}</view>
+            </view>
+            <view class="right">
+                <view class="descp">{{item.description}}</view>
+                <text class="_icon iconfont icon-icon_Arrow"></text>
+            </view>
+        </view>
+        <view class="line"></view>
+    </view>      
+</template>
+
+<script>
+import wepy from 'wepy'
+
+export default class NavCard extends wepy.component {
+  data = {};
+  props = {
+    item: {
+      type: Object
+    }
+  };
+  computed = {};
+  methods = {
+    catch_Click(type) {
+      this.$emit('catchClick', type);
+    }
+  };
+  events = {};
+  onLoad() {
+  }
+}
+</script>
+<style lang="less">
+.navCard-container {
+  height: 120rpx;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  .navCard-warp {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    // &::after{
+    //     content: "";
+    //     border:1px solid gray;
+    // }
+    .left {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      .operator {
+        color: #5d5d5d;
+        font-size: 32rpx;
+      }
+    }
+    .right {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      .descp {
+        color: #9d9d9d;
+        font-size: 28rpx;
+      }
+    }
+    ._icon {
+      color: #9d9d9d;
+    }
+    padding: 0 32rpx;
+    .showDot {
+      position: relative;
+    }
+    .showDot::after {
+      content: " ";
+      position: absolute;
+      width: 16rpx;
+      height: 16rpx;
+      top: 36rpx;
+      right: 0;
+      border-radius: 50%;
+      background: #e41335;
+    }
+  }
+  .line {
+    border-top: 2rpx solid gray;
+    margin: 0 32rpx;
+    border-color: #f2f2f2;
+  }
+}
+</style>
