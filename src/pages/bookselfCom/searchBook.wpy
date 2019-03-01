@@ -1,0 +1,52 @@
+<template>
+  <view class="search-bar">
+    <input type="text" placeholder="请输入书名" @input="inputChange" />
+    <button type="primary" @tap="queryBooks">查询</button>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+
+export default class SearchBook extends wepy.component {
+  props = {};
+
+  data = {};
+  events = {};
+
+  methods = {
+    inputChange(e) {
+      this.$emit('inputChange', e.detail.value);
+    }
+  };
+}
+</script>
+<style lang="less">
+.search-bar {
+  z-index: 1;
+  button {
+    height: 70rpx;
+    line-height: 70rpx;
+    width: 140rpx;
+    position: fixed;
+    top: 20rpx;
+    left: 585rpx;
+    font-size: 30rpx;
+    color: #fbf9fe;
+  }
+  input {
+    background-color: #fff;
+    border-radius: 5px;
+    width: 550rpx;
+    height: 70rpx;
+    margin-top: 20rpx;
+    margin-bottom: 15rpx;
+    position: fixed;
+    top: 0;
+    left: 25rpx;
+  }
+  .input-placeholder {
+    font-size: 30rpx;
+  }
+}
+</style>
