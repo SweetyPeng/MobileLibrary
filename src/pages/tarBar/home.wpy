@@ -1,7 +1,8 @@
 <template>
   <view>
-    <Toast />
-    <view class="main">
+    <!-- <Toast /> -->
+    <!-- 介绍  弹窗形式 -->
+    <!-- <view class="main">
       <view class='introduce'>
         <view class="book-icon">
           <image src="../../images/book-icon.png" />
@@ -14,7 +15,18 @@
         <image src="../../images/scan.png" class="scan-img" />扫一扫漂流图书
         </button>
       </view>
+    </view> -->
+    <!-- 查询图书 -->
+    <view class="search-book">
+      <SearchBook />
     </view>
+    <!-- 轮播图 -->
+    <view class="lunbo">
+      <swiper>
+        <!-- 三张轮播图 -->
+      </swiper>
+    </view>
+    <!-- 新书速递 -->
     <view class='new-books'>
       <view class='new-books-header'>
         <text class="new-books-header-title">新书速递</text>
@@ -23,6 +35,7 @@
         <image wx:for="{{newBooks}}" wx:key="{{index}}" src="{{item.image}}" bindtap="toBorrowBook" data-isbn="{{item.isbn}}" data-bookid="{{item._id}}" class="new-book"></image>
       </scroll-view>
     </view>
+    <!-- 附近的书 -->
     <view class='new-books'>
       <view class='new-books-header'>
         <text class="new-books-header-title">附近的书</text>
@@ -36,6 +49,7 @@
 
 <script>
 import wepy from 'wepy';
+import SearchBook from '../bookselfCom/searchBook';
 import RequestMixin from 'mixins/request';
 import Toast from 'components/toast';
 
@@ -44,7 +58,8 @@ export default class Index extends wepy.page {
     navigationBarTitleText: '流动图书馆'
   };
   components = {
-    Toast
+    Toast,
+    SearchBook
   };
 
   mixins = [RequestMixin];
@@ -90,24 +105,24 @@ export default class Index extends wepy.page {
 
   methods = {
     // 扫一扫获取ISBN码
-    async scanBook() {
-      let resp = await wepy.scanCode({
-        scanType: ['barCode', 'qrCode', 'datamatrix']
-      });
-      console.log(resp);
-      if (resp.scanType === 'EAN_13' || resp.scanType === 'EAN_10') {
-        // wepy.navigateTo({
-        //   url: './bookdetails/index?isbn=' + resp.result,
-        // });
-        console.log(resp.result);
-      } else {
-        // wepy.navigateTo({
-        //   url: './error/index',
-        // });
-        console.log('error');
-      }
-      this.$apply();
-    }
+    // async scanBook() {
+    //   let resp = await wepy.scanCode({
+    //     scanType: ['barCode', 'qrCode', 'datamatrix']
+    //   });
+    //   console.log(resp);
+    //   if (resp.scanType === 'EAN_13' || resp.scanType === 'EAN_10') {
+    //     // wepy.navigateTo({
+    //     //   url: './bookdetails/index?isbn=' + resp.result,
+    //     // });
+    //     console.log(resp.result);
+    //   } else {
+    //     // wepy.navigateTo({
+    //     //   url: './error/index',
+    //     // });
+    //     console.log('error');
+    //   }
+    //   this.$apply();
+    // }
   };
 
   events = {};
@@ -130,6 +145,17 @@ export default class Index extends wepy.page {
 }
 </script>
 <style lang="less">
+.search-book {
+  width: 100%;
+  background-color: #FBF9FE;
+  position: fixed;
+}
+.lunbo {
+  height: 300rpx;
+  width: 100%;
+  margin-top: 110rpx;
+  background: #333;
+}
 /**index.wxss**/
 .userinfo {
   display: flex;
@@ -266,6 +292,9 @@ export default class Index extends wepy.page {
   height: 100rpx;
   width: 100rpx;
   vertical-align: bottom;
+}
+.new-books {
+  margin-top: 48rpx;
 }
 .new-books-header{
   display: flex;

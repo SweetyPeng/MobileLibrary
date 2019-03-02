@@ -7,14 +7,15 @@ export default class extends wepy.app {
   config = {
     pages: [
       'pages/tarBar/home',
-      'pages/tarBar/bookshelf',
-      'pages/tarBar/mine'
+      // 'pages/tarBar/bookshelf',
+      'pages/tarBar/mine',
+      'pages/home/expression'
 
     ],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#31D4DA',
-      navigationBarTitleText: '流动图书馆',
+      navigationBarTitleText: '漂流吧图书酱',
       navigationBarTextStyle: 'white'
     },
     tabBar: {
@@ -29,12 +30,12 @@ export default class extends wepy.app {
           selectedIconPath: './images/tab/homeSelected.png',
           text: '首页'
         },
-        {
-          pagePath: 'pages/tarBar/bookshelf',
-          iconPath: './images/tab/mine.png',
-          selectedIconPath: './images/tab/mineSelected.png',
-          text: '书架'
-        },
+        // {
+        //   pagePath: 'pages/tarBar/bookshelf',
+        //   iconPath: './images/tab/mine.png',
+        //   selectedIconPath: './images/tab/mineSelected.png',
+        //   text: '书架'
+        // },
         {
           pagePath: 'pages/tarBar/mine',
           iconPath: './images/tab/mine.png',

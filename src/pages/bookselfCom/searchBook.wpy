@@ -17,6 +17,9 @@ export default class SearchBook extends wepy.component {
   methods = {
     inputChange(e) {
       this.$emit('inputChange', e.detail.value);
+    },
+    queryBooks(e) {
+      console.log(e.detail.value);
     }
   };
 }
