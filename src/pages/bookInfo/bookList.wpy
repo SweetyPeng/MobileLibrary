@@ -9,7 +9,7 @@
           <view class="item-title">{{item.title}}</view>
           <view class="item-author">作者:{{item.author}}</view>
           <view class="item-publish">出版信息:{{item.publish}}</view>
-          <view class="item-desc">简介：{{item.desc}}</view>
+          <view class="item-desc">简介：{{item.summary}}</view>
         </view>
       </view>
     </view>
@@ -17,34 +17,34 @@
 </template>
 <script>
 import wepy from 'wepy';
+import RequestMixin from 'mixins/request';
 export default class BookList extends wepy.page {
   config = {
     navigationBarTitleText: '图书列表'
   };
   data = {
-    bookList: [
-      {
-        title: 'JavaScript指南',
-        author: 'Flanagan',
-        publish: '机械工业出版社',
-        desc: '这是一本工具书，欢迎阅读哈'
-      },
-      {
-        title: 'JavaScript指南',
-        author: 'Flanagan',
-        publish: '机械工业出版社',
-        desc: '这是一本工具书，欢迎阅读哈'
-      }
-    ]
+    keyWord: '',
+    bookList: []
   };
+  mixins = [RequestMixin];
   methods = {
     onBookDetail() {
       this.$link(`/pages/bookInfo/bookDetail`);
     }
   }
+  async getBookList() {
+    const params = {
+      isMock: true,
+      q: this.keyWord
+    }
+    const resp = await this.GET('/getbooklist', params);
+    if (resp.result === 'success') {
+      this.bookList = resp.data;
+    }
+  }
   onLoad(options) {
-    console.log(options);
-    console.log('这是图书列表页');
+    this.keyWord = options.keyWords;
+    this.getBookList();
   }
 }
 </script>

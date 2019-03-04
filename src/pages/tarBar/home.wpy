@@ -102,32 +102,32 @@ export default class Index extends wepy.page {
       {
         _id: '1',
         isbn: '00000001',
-        image: '../../images/books/book.jpg'
+        image: 'https://img1.doubanio.com//view//subject//m//public//s4293097.jpg'
       },
       {
         _id: '2',
         isbn: '00000002',
-        image: '../../images/books/book.jpg'
+        image: 'https://img3.doubanio.com//view//subject//m//public//s26387712.jpg'
       },
       {
         _id: '3',
         isbn: '00000003',
-        image: '../../images/books/book.jpg'
+        image: 'https://img3.doubanio.com//view//subject//m//public//s1144911.jpg'
       },
       {
         _id: '4',
         isbn: '00000004',
-        image: '../../images/books/book.jpg'
+        image: 'https://img3.doubanio.com//view//subject//m//public//s27264241.jpg'
       },
       {
         _id: '5',
         isbn: '00000005',
-        image: '../../images/books/book.jpg'
+        image: 'https://img1.doubanio.com//view//subject//m//public//s1161599.jpg'
       },
       {
         _id: '6',
         isbn: '00000006',
-        image: '../../images/books/book.jpg'
+        image: 'https://img1.doubanio.com//view//subject//m//public//s1086519.jpg'
       }
     ]
   };

@@ -29,7 +29,7 @@ export default class SearchBook extends wepy.component {
       this.keywords = e.detail.value;
     },
     queryBooks() {
-      this.$link(`/pages/bookInfo/bookList?q=${this.keywords}`);
+      this.$link(`/pages/bookInfo/bookList?keyWords=${this.keywords}`);
     }
   };
 }
