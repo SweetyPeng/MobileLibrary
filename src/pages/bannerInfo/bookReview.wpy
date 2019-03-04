@@ -1,0 +1,17 @@
+<template>
+  <view>书评</view>
+</template>
+<script>
+import wepy from 'wepy';
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: '书籍分享'
+  };
+
+  onLoad() {
+    console.log('书籍分享');
+  }
+}
+</script>
+<style lang="less">
+</style>

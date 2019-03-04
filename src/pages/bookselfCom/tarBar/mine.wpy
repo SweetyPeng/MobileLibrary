@@ -1,0 +1,144 @@
+<template>
+  <scroll-view scroll-y class="mine-container">
+    <view class="main">
+      <bsDialog />
+      <!-- 头像 -->
+      <avatarNickName />
+      <!-- navCard -->
+      <bindPhone :item.sync="bindPhone_data"/>
+      <myMessage :item.sync="message_data"/>
+      <myDrift :item.sync="drift_data"/>
+      <myBorrow :item.sync="borrow_data"/>
+      <myThoughts :item.sync="thoughts_data"/>
+      <myInvite :item.sync="invitation_data"/>
+      <myEvaluation :item.sync="evaluation_data"/>
+    </view>
+  </scroll-view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import NavCard from 'components/navCard';
+import AvatarNickName from 'components/avatar'; // 图像&昵称
+import RequestMixin from 'mixins/request';
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: '流动图书馆'
+  };
+  components = {
+    avatarNickName: AvatarNickName,
+    bindPhone: NavCard,   // 绑定手机
+    myMessage: NavCard,   // 我的消息
+    myDrift: NavCard,     // 我的漂流
+    myBorrow: NavCard,    // 我的借阅
+    myThoughts: NavCard,  // 我的书评
+    myInvite: NavCard,    // 邀请好友
+    myEvaluation: NavCard // 意见反馈
+  };
+  mixins = [RequestMixin];
+  data = {
+    bindPhone_data: {
+      icon: 'icon-icon_me_phone',
+      operator: '获取手机',
+      description: '未绑定手机号',
+      type: 'mobile'
+    },
+    message_data: {
+      icon: 'icon-icon_reportgrey',
+      operator: '我的消息',
+      description: '查看消息',
+      type: 'message',
+      mgb: '20rpx'
+    },
+    drift_data: {
+      icon: 'icon-icon_Inspection_grey',
+      operator: '我的漂流',
+      description: '点击查看',
+      type: 'drift'
+    },
+    borrow_data: {
+      icon: 'icon-icon_me_invoice',
+      operator: '我的借阅',
+      description: '点击查看',
+      type: 'borrow'
+    },
+    thoughts_data: {
+      icon: 'icon-icon_home_edit',
+      operator: '我的书评',
+      description: '点击查看',
+      type: 'thought',
+      mgb: '20rpx'
+    },
+    invitation_data: {
+      icon: 'icon-icon_Forward',
+      operator: '邀请好友',
+      description: '点击邀请',
+      type: 'invite'
+    },
+    evaluation_data: {
+      icon: 'icon-icon_Forward',
+      operator: '意见反馈',
+      type: 'evaluate',
+      mgb: '48rpx'
+    }
+
+  };
+  methods = {};
+  events = {
+    catchClick(type) {
+      let pageUrl = '';
+      switch (type) {
+        case 'mobile':
+          pageUrl = '';
+          break;
+        case 'message':
+          pageUrl = '';
+          break;
+        case 'drift':
+          pageUrl = '';
+          break;
+        case 'borrow':
+          pageUrl = '';
+          break;
+        case 'thought':
+          pageUrl = '';
+          break;
+        case 'invite':
+          pageUrl = '';
+          break;
+        case 'evaluate':
+          pageUrl = '';
+          break;
+        default:
+          break;
+      }
+      // 跳转到对应页面
+      this.$link(pageUrl);
+    }
+  };
+}
+</script>
+<style lang="less">
+@import url(../../less/variables.less);
+@import url(../../less/mixins.less);
+page {
+  background-color: @page-bg-color;
+  height: 100%;
+  padding-bottom: 20px;
+  overflow-y: hidden;
+  .dropbg-mixin();
+  .mine-container {
+    height: 100%;
+    .dropbg-btm-mixin();
+    .main {
+      background-color: #f5f5f5;
+    }
+    button {
+      border: none;
+      border-radius: 0;
+      padding: 0;
+    }
+  }
+}
+</style>
