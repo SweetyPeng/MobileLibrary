@@ -1,21 +1,17 @@
 <template>
-  <view class="book-content">
-    <view wx:for="{{books}}" wx:key id data-qty bindtap>
-      <view class="book-list">
-        <view class="book-image">
-          <image src mode/>
-        </view>
-        <view class="book-info">
-          <view class="book-info-style">
-            <view>书名:</view>
-            <view>作者:</view>
-            <view>价格:</view>
-            <view>出版信息:</view>
-            <view>可借数量:</view>
-          </view>
+  <view class="book-list">
+    <view class="book-item" wx:for="{{bookList}}" wx:key="index" @tap="onBookDetail">
+      <view class="item-left">
+        <image src="../../images/books/book.jpg"/>
+      </view>
+      <view class="item-right">
+        <view>
+          <view class="item-title">{{item.title}}</view>
+          <view class="item-author">作者:{{item.author}}</view>
+          <view class="item-publish">出版信息:{{item.publish}}</view>
+          <view class="item-desc">简介：{{item.desc}}</view>
         </view>
       </view>
-      <view class="line"></view>
     </view>
   </view>
 </template>
@@ -25,62 +21,74 @@ export default class BookList extends wepy.page {
   config = {
     navigationBarTitleText: '图书列表'
   };
-  onLoad() {
+  data = {
+    bookList: [
+      {
+        title: 'JavaScript指南',
+        author: 'Flanagan',
+        publish: '机械工业出版社',
+        desc: '这是一本工具书，欢迎阅读哈'
+      },
+      {
+        title: 'JavaScript指南',
+        author: 'Flanagan',
+        publish: '机械工业出版社',
+        desc: '这是一本工具书，欢迎阅读哈'
+      }
+    ]
+  };
+  methods = {
+    onBookDetail() {
+      this.$link(`/pages/bookInfo/bookDetail`);
+    }
+  }
+  onLoad(options) {
+    console.log(options);
     console.log('这是图书列表页');
   }
 }
 </script>
 <style lang="less">
-.book-content {
-  .book-list {
-    display: flex;
-    // width: 93.3%;
-    flex-direction: row;
-    align-items: center;
-    box-sizing: border-box;
-    margin-top: 20rpx;
-    background-color: #fff;
-  }
-
-  .book-image {
-    flex: 0 0 32%;
-    box-sizing: border-box;
-    min-height: 242rpx;
-  }
-
-  .book-image image {
-    height: 242rpx;
-    width: 242rpx;
-  }
-
-  .book-info {
-    background-color: #fff;
-    flex: 0 0 66%;
-    box-sizing: border-box;
-    // height: 242rpx;
-    margin-left: 20rpx;
-  }
-
-  .book-info-style {
-    height: 240rpx;
-    background-color: white;
-  }
-
-  .book-info-style view {
-    display: block;
-    line-height: 42rpx;
-    font-size: 12px;
-    margin-bottom: 8rpx;
-    width: 460rpx;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    margin-top: 8rpx;
-  }
-
-  .line {
+.book-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 32rpx;
+  background: #fff;
+  margin-bottom: 32rpx;
+  border-radius: 20rpx 20rpx 0 0;
+  .book-item {
     width: 100%;
-    border: 1px solid #eee;
+    display: flex;
+    padding-top: 32rpx;
+    align-items: start;
+    padding-bottom: 32rpx;
+    justify-content: center;
+    border-bottom: 2rpx solid #f2f2f2;
+    .item-left {
+      image {
+        width: 220rpx;
+        height: 320rpx;
+      }
+    }
+    .item-right {
+      width: 480rpx;
+      margin-left: 32rpx;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 176rpx;
+      font-size: 32rpx;
+      .item-title {
+        font-size: 40rpx;
+        font-weight: bold;
+        padding-bottom: 16rpx;
+      }
+      .item-author {
+        padding-bottom: 16rpx;
+      }
+    }
   }
 }
 </style>

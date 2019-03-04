@@ -16,7 +16,9 @@ export default class extends wepy.app {
       'pages/tarBar/mine',
       'pages/bannerInfo/usage',
       'pages/bannerInfo/bookReview',
-      'pages/bannerInfo/bookRank'
+      'pages/bannerInfo/bookRank',
+      'pages/bookInfo/bookList',
+      'pages/bookInfo/bookDetail'
     ],
     window: {
       backgroundTextStyle: 'light',
