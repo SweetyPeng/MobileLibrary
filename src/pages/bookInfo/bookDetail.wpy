@@ -1,19 +1,211 @@
 <template>
-  <view class="book-detail"></view>
+  <view class="book-detail">
+    <scroll-view
+      class="wrapper-scroll"
+      scroll-y="true"
+      bindscrolltoupper="upper"
+      bindscrolltolower="lower"
+      bindscroll="scroll"
+      scroll-top="100"
+    >
+      <view class="detail-img">
+        <view class="detail-img-bg" style=" background-image: url({{bookInfo.images.large}})"></view>
+        <image src="{{bookInfo.images.large}}" class="detail-img-s"/>
+      </view>
+      <view class="detail-info">
+        <view class="detail-fl">
+          <view class="detail-title">{{bookInfo.title}}</view>
+          <view class="detail-text detail-author">作者：{{bookInfo.author}}</view>
+          <view class="detail-text detail-publisher">出版社：{{bookInfo.publisher}}</view>
+          <view class="detail-text detail-pubdate">出版时间：{{bookInfo.pubdate}}</view>
+          <view class="detail-tags">
+            <text wx:if="bookInfo.tags[0].title">{{bookInfo.tags[0].title}}</text>
+            <text wx:if="bookInfo.tags[1].title">{{bookInfo.tags[1].title}}</text>
+            <text wx:if="bookInfo.tags[2].title">{{bookInfo.tags[2].title}}</text>
+          </view>
+        </view>
+        <view class="detail-fr">
+          <view class="detail-star-box">
+            <view class="detail-star">{{bookInfo.rating.average}}</view>
+            <image class="detail-star-img" src="{{bookInfo.rating.block}}"/>
+          </view>
+        </view>
+      </view>
+      <view class="detail-summary">
+        <text class="ibox-title-small">图书摘要</text>
+        <view class="ibox-content">
+          <view>{{bookInfo.summary}}</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
 </template>
 <script>
 import wepy from 'wepy';
+import RequestMixin from 'mixins/request';
+
 export default class BookDetail extends wepy.page {
   config = {
     navigationBarTitleText: '图书详情'
   };
-  onLoad() {
-    console.log('这是图书详情页');
+  data = {
+    bookInfo: {}
+  }
+  mixins = [RequestMixin];
+
+  async getBookDetail(id) {
+    const params = {
+      isMock: false
+    };
+    const handler = {
+      header: {
+        'content-type': 'application/xml'
+      }
+    };
+    const resp = await this.GET(id, params, false, handler);
+    this.bookInfo = resp;
+    this.$apply();
+  }
+  onLoad(options) {
+    const id = parseInt(options.id);
+    this.getBookDetail(id);
   }
 }
 </script>
 <style lang="less">
 .book-detail {
-  padding: 32rpx;
+  .wrapper-scroll {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+  }
+  .detail-img {
+    position: relative;
+    width: 100%;
+    height: 600rpx;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    overflow: hidden;
+    .detail-img-bg {
+      position: absolute;
+      z-index: -2;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 600rpx;
+      background-size: cover;
+      background-position: center;
+      filter: blur(30rpx);
+      transform: scale(1.2);
+    }
+    .detail-img-s {
+      z-index: 9999;
+      width: 354rpx;
+      height: 504rpx;
+      margin-top: 47rpx;
+      box-shadow: 0 0rpx 30rpx rgba(0, 0, 0, 0.3);
+    }
+  }
+  .detail-info {
+    background: #fff;
+    padding: 50rpx 30rpx 30rpx;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30rpx;
+    .detail-fl {
+      width: 500rpx;
+      .detail-title {
+        font-size: 50rpx;
+        color: #2d2d2d;
+        font-weight: bold;
+        margin-bottom: 20rpx;
+      }
+      .detail-text {
+        font-size: 28rpx;
+        color: #656565;
+        margin-bottom: 14rpx;
+      }
+      .detail-tags text {
+        position: relative;
+        font-size: 28rpx;
+        color: #ffac2d;
+        padding: 14rpx 18rpx;
+        display: inline-block;
+        margin-right: 16rpx;
+        margin-bottom: 14rpx;
+        margin-top: 20rpx;
+      }
+      .detail-tags text::after {
+        content: ' ';
+        width: 200%;
+        height: 200%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        border: 1px solid #ffac2d;
+        -webkit-transform: scale(0.5);
+        transform: scale(0.5);
+        -webkit-transform-origin: 0 0;
+        transform-origin: 0 0;
+        box-sizing: border-box;
+        border-radius: 6px;
+      }
+    }
+    .detail-fr {
+      width: 170rpx;
+      .detail-star-box {
+        width: 167rpx;
+        height: 167rpx;
+        box-shadow: 0 0rpx 20rpx rgba(0, 0, 0, 0.2);
+        background: #fff;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        flex-direction: column;
+        text-align: center;
+        overflow: hidden;
+        .detail-star {
+          font-size: 38rpx;
+          font-weight: bold;
+          color: #2d2d2d;
+          margin-bottom: 16rpx;
+        }
+
+        .detail-star-img {
+          width: 130rpx;
+          height: 24rpx;
+          display: block;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: cover;
+          margin: 0 auto;
+        }
+      }
+    }
+  }
+  .detail-summary {
+    background: #fff;
+    padding: 30rpx;
+    .ibox-title-small {
+      font-size: 30rpx;
+      color: #989898;
+      display: block;
+      padding: 20rpx 0;
+      text-overflow: ellipsis;
+    }
+    .ibox-content {
+      padding: 20rpx 0;
+      font-size: 32rpx;
+      color: #2d2d2d;
+      line-height: 60rpx;
+    }
+    .ibox-content view {
+      margin-bottom: 20rpx;
+    }
+  }
 }
 </style>
