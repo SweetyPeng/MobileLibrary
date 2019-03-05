@@ -31,7 +31,7 @@ export default class BookListCard extends wepy.component {
   };
   methods = {
     onBookDetail(id) {
-      this.$link(`/pages/bookInfo/bookDetail?id=id`);
+      this.$link(`/pages/bookInfo/bookDetail?id=${id}`);
     }
   }
 }
@@ -43,6 +43,7 @@ export default class BookListCard extends wepy.component {
   display: flex;
   justify-content: flex-start;
   align-items: cneter;
+  padding-bottom: 32rpx;
   .card-left {
     width: 210rpx;
     height: 280rpx;
