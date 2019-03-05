@@ -2,7 +2,7 @@
   <view class="book-list">
     <view class="book-item" wx:for="{{bookList}}" wx:key="index" @tap="onBookDetail">
       <view class="item-left">
-        <image src="../../images/books/book.jpg"/>
+        <image src="{{item.image}}"/>
       </view>
       <view class="item-right">
         <view>
@@ -34,13 +34,18 @@ export default class BookList extends wepy.page {
   }
   async getBookList() {
     const params = {
-      isMock: true,
+      isMock: false,
       q: this.keyWord
+    };
+    const handler = {
+      header: {
+        'content-type': 'application/xml'
+      }
     }
-    const resp = await this.GET('/getbooklist', params);
-    if (resp.result === 'success') {
-      this.bookList = resp.data;
-    }
+    const resp = await this.GET('/search', params, false, handler);
+    this.bookList = resp.books;
+    this.$apply();
+    console.log(this.bookList)
   }
   onLoad(options) {
     this.keyWord = options.keyWords;

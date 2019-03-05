@@ -30,54 +30,9 @@ const requestWithLogin = async (
   showToast = false,
   handler = {}
 ) => {
-  let isLogin = false;
-  let token = db.get('token');
   let resp = {};
-
-  if (token) {
-    isLogin = true;
-  } else {
-    isLogin = await login();
-  }
-  if (isLogin) {
-    resp = await request(method, url, params, showToast, handler);
-    if (isNeedFreshCode(url, resp.result, resp.message)) {
-      Debug('code need refresh ~');
-      isLogin = await login();
-      if (isLogin) {
-        resp = await request(method, url, params, showToast, handler);
-      }
-    }
-  }
-
+  resp = await request(method, url, params, showToast, handler);
   return resp;
-};
-
-const isNeedFreshCode = (url, result, message) => {
-  return !/login/.test(url) && (result === 'fail' && message === 'token失效');
-};
-
-const toastFn = (showToast, open = true) => {
-  if (!showToast && open) {
-    return () => {
-      wepy.showNavigationBarLoading();
-    };
-  }
-  if (!showToast && !open) {
-    return () => {
-      wepy.hideNavigationBarLoading();
-    };
-  }
-  if (showToast && open) {
-    return () => {
-      loading();
-    };
-  }
-  if (showToast && !open) {
-    return () => {
-      loading(false);
-    };
-  }
 };
 
 const request = (method, url, params = {}, showToast = false, handler = {}) => {
@@ -95,7 +50,6 @@ const request = (method, url, params = {}, showToast = false, handler = {}) => {
     handler.url = domain + url;
   }
 
-  handler.header = {};
   handler.data = params;
   handler.method = method;
   if (method === 'POST') {
@@ -137,6 +91,29 @@ const request = (method, url, params = {}, showToast = false, handler = {}) => {
   });
 };
 
+const toastFn = (showToast, open = true) => {
+  if (!showToast && open) {
+    return () => {
+      wepy.showNavigationBarLoading();
+    };
+  }
+  if (!showToast && !open) {
+    return () => {
+      wepy.hideNavigationBarLoading();
+    };
+  }
+  if (showToast && open) {
+    return () => {
+      loading();
+    };
+  }
+  if (showToast && !open) {
+    return () => {
+      loading(false);
+    };
+  }
+};
+
 const setSession = loginData => {
   if (loginData) {
     let user = {
@@ -165,28 +142,4 @@ const logout = () => {
   db.clear();
 };
 
-const login = async () => {
-  logout();
-
-  try {
-    // 微信登录
-    const wxLoginResp = await wepy.login();
-
-    // 登录服务器
-    const loginResp = await request('POST', '/khaos/login', {
-      isMock: false,
-      code: wxLoginResp.code
-    });
-    if (loginResp.result === 'success') {
-      setSession(loginResp.data);
-      return true;
-    } else {
-      throw new Error('用户登录失败！');
-    }
-  } catch (err) {
-    console.log('err', err);
-    toast('网络错误~');
-    return false;
-  }
-};
-export { GET, POST, PUT, DELETE, setSession, getSession, logout, login };
+export { GET, POST, PUT, DELETE, setSession, getSession, logout};
