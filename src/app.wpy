@@ -18,7 +18,8 @@ export default class extends wepy.app {
       'pages/bannerInfo/bookReview',
       'pages/bannerInfo/bookRank',
       'pages/bookInfo/bookList',
-      'pages/bookInfo/bookDetail'
+      'pages/bookInfo/bookDetail',
+      'pages/searchBook/search'
     ],
     window: {
       backgroundTextStyle: 'light',
