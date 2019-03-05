@@ -1,0 +1,114 @@
+<template>
+  <view class="booklist-card" @tap="onBookDetail({{item.id}})">
+    <view class="card-left">
+      <image src="{{item.image}}"/>
+    </view>
+    <view class="card-right">
+      <view class="title">{{item.title}}</view>
+      <!-- <view class="star">
+        <image class="star-img" src="{{item.rating.block}}"/>
+        <text class="average-rating">{{item.rating.average}}</text>
+      </view> -->
+      <view class="tags">
+        <text wx:if="{{item.tags[0].title}}">{{item.tags[0].title}}</text>
+        <text wx:if="{{item.tags[1].title}}">{{item.tags[1].title}}</text>
+        <text wx:if="{{item.tags[2].title}}">{{item.tags[2].title}}</text>
+      </view>
+      <view class="author">作者：{{item.author[0]}}</view>
+      <view class="summary">{{item.summary}}</view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class BookListCard extends wepy.component {
+  props = {
+    item: {
+      type: Object,
+      default: {}
+    }
+  };
+  methods = {
+    onBookDetail(id) {
+      this.$link(`/pages/bookInfo/bookDetail?id=id`);
+    }
+  }
+}
+</script>
+
+<style lang="less">
+.booklist-card {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: cneter;
+  .card-left {
+    width: 210rpx;
+    height: 280rpx;
+    image {
+      width: 210rpx;
+      height: 280rpx;
+    }
+  }
+  .card-right {
+    width: 450rpx;
+    margin-left: 20rpx;
+    display: flex;
+    flex-direction: column;
+    .title {
+      display: block;
+      font-size: 34rpx;
+      color: #2d2d2d;
+      text-overflow: ellipsis;
+      margin-top: 4rpx;
+    }
+    .star {
+      margin: 12rpx 0 14rpx;
+    }
+    .tags text {
+      position: relative;
+      font-size: 24rpx;
+      color: #ffac2d;
+      padding: 12rpx 16rpx;
+      display: inline-block;
+      margin-right: 14rpx;
+      margin-bottom: 10rpx;
+    }
+    .tags text::after {
+      content: ' ';
+      width: 200%;
+      height: 200%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 1px solid #ffac2d;
+      -webkit-transform: scale(0.5);
+      transform: scale(0.5);
+      -webkit-transform-origin: 0 0;
+      transform-origin: 0 0;
+      box-sizing: border-box;
+      border-radius: 6px;
+    }
+    .author {
+      font-size: 28rpx;
+      color: #656565;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      line-height: 38rpx;
+      margin-bottom: 6rpx;
+    }
+    .summary {
+      font-size: 28rpx;
+      color: #656565;
+      word-break: break-all;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 38rpx;
+    }
+  }
+}
+</style>
