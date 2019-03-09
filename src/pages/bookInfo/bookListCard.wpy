@@ -1,0 +1,102 @@
+<template>
+  <view class="booklist-card" @tap="onBookDetail({{item.id}})">
+    <view class="card-left">
+      <image src="{{item.image}}"/>
+    </view>
+    <view class="card-right">
+      <view class="title">{{item.title}}</view>
+      <view class="tags">
+        <text wx:if="{{item.tags[0].title}}">{{item.tags[0].title}}</text>
+        <text wx:if="{{item.tags[1].title}}">{{item.tags[1].title}}</text>
+      </view>
+      <view class="author">作者：{{item.author[0]}}</view>
+      <view class="pubdate">出版时间：{{item.pubdate}}</view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class BookListCard extends wepy.component {
+  props = {
+    item: {
+      type: Object,
+      default: {},
+      twoWay: true
+    }
+  };
+  methods = {
+    onBookDetail(id) {
+      this.$link(`/pages/bookInfo/bookDetail?id=${id}`);
+    }
+  }
+}
+</script>
+
+<style lang="less">
+.booklist-card {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: cneter;
+  padding: 32rpx 0;
+  border-bottom: 2rpx solid #f2f2f2;
+  .card-left {
+    width: 210rpx;
+    height: 280rpx;
+    image {
+      width: 210rpx;
+      height: 280rpx;
+    }
+  }
+  .card-right {
+    width: 450rpx;
+    margin-left: 20rpx;
+    display: flex;
+    flex-direction: column;
+    .title {
+      display: block;
+      font-size: 34rpx;
+      color: #2d2d2d;
+      text-overflow: ellipsis;
+    }
+    .tags text {
+      position: relative;
+      font-size: 24rpx;
+      color: #ffac2d;
+      padding: 8rpx 12rpx;
+      display: inline-block;
+      margin: 8rpx 8rpx 8rpx 0;
+    }
+    .tags text::after {
+      content: ' ';
+      width: 200%;
+      height: 200%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 1px solid #ffac2d;
+      -webkit-transform: scale(0.5);
+      transform: scale(0.5);
+      -webkit-transform-origin: 0 0;
+      transform-origin: 0 0;
+      box-sizing: border-box;
+      border-radius: 6px;
+    }
+    .author {
+      font-size: 28rpx;
+      color: #656565;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      line-height: 38rpx;
+      margin: 8rpx 0;
+    }
+    .pubdate {
+      font-size: 28rpx;
+      color: #656565;
+      line-height: 38rpx;
+    }
+  }
+}
+</style>

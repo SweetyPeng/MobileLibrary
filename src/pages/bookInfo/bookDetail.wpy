@@ -48,8 +48,7 @@ export default class BookDetail extends wepy.page {
     navigationBarTitleText: '图书详情'
   };
   data = {
-    bookInfo: {},
-    isbn: ''
+    bookInfo: {}
   }
   mixins = [RequestMixin];
 
@@ -67,32 +66,43 @@ export default class BookDetail extends wepy.page {
     this.$apply();
   }
 
-  // 通过扫条形码获得的ISBN进行查找
-  async queryBookById(isbnId) {
+  /**
+   * 查询图书详情信息 --通过云函数
+   * @param {Object}
+   * param 为id：通过id查询，为isbn：通过isbn查询
+   */
+  async queryBookById(param) {
     const resp = await wx.cloud.callFunction({
       // 传递给云函数的参数
       name: 'bookInfo',
-      data: {
-        isbn: isbnId
-      }
+      data: param
     }).then(res => {
       return JSON.parse(res.result);
     }).catch(err => {
       console.log(err);
     });
-    resp.rating = Object.assign(resp.rating, {
-      block: getStar(resp.rating.average)
-    });
+    if (resp) {
+      resp.rating = Object.assign(resp.rating, {
+        block: getStar(resp.rating.average)
+      });
+    }
     this.bookInfo = resp;
-    console.log(this.bookInfo)
     this.$apply();
   }
 
   onLoad(options) {
-    // const id = parseInt(options.id);
-    this.isbn = options.isbn
-    // this.getBookDetail(id);
-    this.queryBookById(this.isbn)
+    if (options.id) {
+      const param = {
+        id: options.id
+      };
+      this.queryBookById(param);
+    }
+    if (options.isbn) {
+      const param = {
+        isbn: options.isbn
+      }
+      this.queryBookById(param);
+    }
   }
 }
 </script>
@@ -139,7 +149,6 @@ export default class BookDetail extends wepy.page {
     padding: 50rpx 30rpx 30rpx;
     display: flex;
     justify-content: space-between;
-    margin-bottom: 30rpx;
     .detail-fl {
       width: 500rpx;
       .detail-title {

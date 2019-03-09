@@ -7,8 +7,9 @@
 </template>
 <script>
 import wepy from 'wepy';
+import wx from 'utils/wx';
 import RequestMixin from 'mixins/request';
-import BookListCard from 'components/bookListCard';
+import BookListCard from './bookListCard';
 export default class BookList extends wepy.page {
   config = {
     navigationBarTitleText: '图书列表'
@@ -22,24 +23,42 @@ export default class BookList extends wepy.page {
   };
   mixins = [RequestMixin];
   methods = {};
-  async getBookList() {
-    const params = {
-      isMock: false,
-      q: this.keyWord
-    };
-    const handler = {
-      header: {
-        'content-type': 'application/xml'
+  // async getBookList() {
+  //   const params = {
+  //     isMock: false,
+  //     q: this.keyWord
+  //   };
+  //   const handler = {
+  //     header: {
+  //       'content-type': 'application/xml'
+  //     }
+  //   };
+  //   const resp = await this.GET('/search', params, false, handler);
+  //   this.bookList = resp.books;
+  //   this.$apply();
+  //   console.log(this.bookList);
+  // }
+
+  // 通过关键字查询图书 --通过云函数
+  async queryBookByName(word) {
+    const resp = await wx.cloud.callFunction({
+      // 传递给云函数的参数
+      name: 'getBookListByName',
+      data: {
+        name: word
       }
-    };
-    const resp = await this.GET('/search', params, false, handler);
+    }).then(res => {
+      return JSON.parse(res.result);
+    }).catch(err => {
+      console.log(err);
+    });
     this.bookList = resp.books;
     this.$apply();
-    console.log(this.bookList);
   }
   onLoad(options) {
     this.keyWord = options.keyWords;
-    this.getBookList();
+    // this.getBookList();
+    this.queryBookByName(this.keyWord);
   }
 }
 </script>

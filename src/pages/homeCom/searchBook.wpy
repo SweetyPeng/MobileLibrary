@@ -1,12 +1,15 @@
 <template>
   <view class="search-bar">
-    <input
-      type="text"
-      placeholder="请输入书名"
-      placeholder-class="input-placeholder"
-      value="{{keywords}}"
-      @input="inputKeywords"
-    />
+    <view class="search-left">
+      <image src="../../images/icon_search.png" class="search-icon"/>
+      <input
+        type="text"
+        placeholder="请输入书名/作者"
+        placeholder-class="input-placeholder"
+        value="{{keywords}}"
+        @input="inputKeywords"
+      />
+    </view>
     <view>
       <button class="search-btn" @tap="queryBooks">查询</button>
     </view>
@@ -29,9 +32,20 @@ export default class SearchBook extends wepy.component {
       this.keywords = e.detail.value;
     },
     queryBooks() {
-      this.$link(`/pages/bookInfo/bookList?keyWords=${this.keywords}`);
+      const hasWord = this.verifyInput(this.keywords);
+      if (hasWord) {
+        this.$link(`/pages/bookInfo/bookList?keyWords=${this.keywords}`);
+      }
     }
   };
+
+  verifyInput(word) {
+    if (!word) {
+      this.$toast('请输入书名/作者');
+      return false;
+    }
+    return true;
+  }
 }
 </script>
 <style lang="less">
@@ -40,18 +54,27 @@ export default class SearchBook extends wepy.component {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  input {
-    width: 500rpx;
-    height: 70rpx;
-    padding-left: 8rpx;
+  .search-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #fff;
     border-radius: 10rpx;
     border: 1rpx solid #f2f2f2;
-  }
-  .input-placeholder {
-    font-size: 32rpx;
-    color: #b2b2b2;
-    padding-left: 8rpx;
+    .search-icon {
+      width:40rpx;
+      height:40rpx;
+      padding: 0 10rpx;
+    }
+    input {
+      width: 500rpx;
+      height: 70rpx;
+    }
+    .input-placeholder {
+      font-size: 32rpx;
+      color: #b2b2b2;
+      padding-left: 8rpx;
+    }
   }
   .search-btn {
     font-size: 32px;
@@ -59,8 +82,6 @@ export default class SearchBook extends wepy.component {
   }
   button {
     height: 70rpx;
-    width: 140rpx;
-    border-radius: 32px;
     color: rgba(255, 255, 255, 1);
     line-height: 70rpx;
     background: rgba(49, 212, 218, 1);
