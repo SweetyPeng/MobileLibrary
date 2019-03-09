@@ -25,7 +25,8 @@ export default class extends wepy.app {
       'pages/mine/borrow',
       'pages/mine/drift',
       'pages/mine/thought',
-      'pages/mine/evaluate'
+      'pages/mine/evaluate',
+      'pages/main/main'
     ],
     window: {
       backgroundTextStyle: 'light',

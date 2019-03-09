@@ -1,0 +1,31 @@
+<template>
+  <view>main</view>
+</template>
+<script>
+import wepy from 'wepy';
+import wx from 'utils/wx';
+export default class Main extends wepy.page {
+  config = {
+    navigationBarTitleText: 'main'
+  };
+
+  data = {
+    book_list: []
+  };
+  onLoad() {
+    // console.log('onload');
+    const db = wx.cloud.database({});
+    const book = db.collection('books');
+    console.log(book);
+    db.collection('books').get({
+      success(res) {
+        console.log(res.data);
+        this.book_list = res.data;
+        console.log(this.book_list);
+      }
+    });
+  }
+}
+</script>
+<style lang="less">
+</style>

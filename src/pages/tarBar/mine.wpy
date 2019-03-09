@@ -5,7 +5,6 @@
       <!-- 头像 -->
       <avatarNickName />
       <!-- navCard -->
-      <bindPhone :item.sync="bindPhone_data"/>
       <myMessage :item.sync="message_data"/>
       <myDrift :item.sync="drift_data"/>
       <myBorrow :item.sync="borrow_data"/>
@@ -28,7 +27,6 @@ export default class Index extends wepy.page {
   };
   components = {
     avatarNickName: AvatarNickName,
-    bindPhone: NavCard,   // 绑定手机
     myMessage: NavCard,   // 我的消息
     myDrift: NavCard,     // 我的漂流
     myBorrow: NavCard,    // 我的借阅
@@ -38,12 +36,6 @@ export default class Index extends wepy.page {
   };
   mixins = [RequestMixin];
   data = {
-    bindPhone_data: {
-      icon: 'icon-icon_me_phone',
-      operator: '获取手机',
-      description: '未绑定手机号',
-      type: 'mobile'
-    },
     message_data: {
       icon: 'icon-icon_reportgrey',
       operator: '我的消息',
@@ -89,26 +81,23 @@ export default class Index extends wepy.page {
     catchClick(type) {
       let pageUrl = '';
       switch (type) {
-        case 'mobile':
-          pageUrl = '';
-          break;
         case 'message':
-          pageUrl = '';
+          pageUrl = '../mine/message';
           break;
         case 'drift':
-          pageUrl = '';
+          pageUrl = '../mine/drift';
           break;
         case 'borrow':
-          pageUrl = '';
+          pageUrl = '../mine/borrow';
           break;
         case 'thought':
-          pageUrl = '';
+          pageUrl = '../mine/thought';
           break;
         case 'invite':
           pageUrl = '';
           break;
         case 'evaluate':
-          pageUrl = '';
+          pageUrl = '../mine/evaluate';
           break;
         default:
           break;

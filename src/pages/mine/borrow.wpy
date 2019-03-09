@@ -1,0 +1,18 @@
+<template>
+  <view>
+    我的借阅
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+export default class Borrow extends wepy.component {
+  config = {
+    navigationBarTitleText: '我的借阅'
+  };
+  onLoad() {
+    console.log('borrow');
+  }
+};
+</script>
+<style lang="less">
+</style>

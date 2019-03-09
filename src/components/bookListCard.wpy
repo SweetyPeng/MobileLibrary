@@ -26,11 +26,13 @@ export default class BookListCard extends wepy.component {
   props = {
     item: {
       type: Object,
-      default: {}
+      default: {},
+      twoWay: true
     }
   };
   methods = {
     onBookDetail(id) {
+      console.log(id)
       this.$link(`/pages/bookInfo/bookDetail?id=${id}`);
     }
   }

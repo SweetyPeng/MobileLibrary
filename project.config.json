@@ -1,16 +1,45 @@
 {
 	"description": "mobileLibrary",
 	"setting": {
-		"urlCheck": true,
+		"urlCheck": false,
 		"es6": false,
 		"postcss": false,
 		"minified": false,
-		"newFeature": true
+		"newFeature": true,
+		"autoAudits": false
 	},
 	"cloudfunctionRoot": "cloudfunctions/",
 	"compileType": "miniprogram",
 	"appid": "wxcf070f835a792170",
 	"projectname": "mobileLibrary",
 	"miniprogramRoot": "dist/",
-	"condition": {}
+	"condition": {
+		"search": {
+			"current": -1,
+			"list": []
+		},
+		"conversation": {
+			"current": -1,
+			"list": []
+		},
+		"plugin": {
+			"current": -1,
+			"list": []
+		},
+		"game": {
+			"list": []
+		},
+		"miniprogram": {
+			"current": 0,
+			"list": [
+				{
+					"id": 0,
+					"name": "ceshi",
+					"pathName": "pages/bookInfo/bookDetail",
+					"query": "isbn=9787111376613&comeFrom=fromScan",
+					"scene": null
+				}
+			]
+		}
+	}
 }

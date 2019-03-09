@@ -15,14 +15,13 @@ export default class BookList extends wepy.page {
   };
   components = {
     BookListCard
-  }
+  };
   data = {
     keyWord: '',
     bookList: []
   };
   mixins = [RequestMixin];
-  methods = {
-  }
+  methods = {};
   async getBookList() {
     const params = {
       isMock: false,
@@ -32,11 +31,11 @@ export default class BookList extends wepy.page {
       header: {
         'content-type': 'application/xml'
       }
-    }
+    };
     const resp = await this.GET('/search', params, false, handler);
     this.bookList = resp.books;
     this.$apply();
-    console.log(this.bookList)
+    console.log(this.bookList);
   }
   onLoad(options) {
     this.keyWord = options.keyWords;

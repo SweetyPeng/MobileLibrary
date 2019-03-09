@@ -17,6 +17,7 @@
 </template>
 <script>
 import wepy from 'wepy';
+// import wx from 'utils/wx';
 export default class Drift extends wepy.page {
   config = {
     navigationBarTitleText: '漂流吧图书酱'
@@ -25,14 +26,39 @@ export default class Drift extends wepy.page {
     // 扫一扫获取ISBN码
     async scanBook() {
       let resp = await wepy.scanCode({
-        scanType: ['barCode', 'qrCode', 'datamatrix']
+        scanType: ['barCode']
       });
-      console.log(resp);
       if (resp.scanType === 'EAN_13' || resp.scanType === 'EAN_10') {
-        // wepy.navigateTo({
-        //   url: './bookdetails/index?isbn=' + resp.result,
+        wepy.navigateTo({
+          url: `../bookInfo/bookDetail/isbn=${resp.result}&comeFrom=fromScan`
+        });
+        // wx.cloud.callFunction({
+        //   // 要调用的云函数名称
+        //   name: 'bookInfo',
+        //   // 传递给云函数的参数
+        //   data: {
+        //     isbn: resp.result
+        //   },
+        //   success: res => {
+        //     const bookString = res.result;
+        //     console.log(JSON.parse(bookString))
+        //     // 云数据库初始化
+        //     const db = wx.cloud.database({});
+        //     const book = db.collection('books');
+        //     console.log('book=====' + book);
+        //     db.collection('books').add({
+        //       // data字段表示需新增的JSON数据
+        //       data: JSON.parse(bookString)
+        //     }).then(res => {
+        //       console.log(res)
+        //     }).catch(err => {
+        //       console.log(err)
+        //     })
+        //   },
+        //   fail: err => {
+        //     console.error(err)
+        //   }
         // });
-        console.log(resp.result);
       } else {
         // wepy.navigateTo({
         //   url: './error/index',

@@ -3,9 +3,6 @@
     <scroll-view
       class="wrapper-scroll"
       scroll-y="true"
-      bindscrolltoupper="upper"
-      bindscrolltolower="lower"
-      bindscroll="scroll"
       scroll-top="100"
     >
       <view class="detail-img">
@@ -42,6 +39,7 @@
 </template>
 <script>
 import wepy from 'wepy';
+import wx from 'utils/wx';
 import RequestMixin from 'mixins/request';
 
 export default class BookDetail extends wepy.page {
@@ -49,7 +47,8 @@ export default class BookDetail extends wepy.page {
     navigationBarTitleText: '图书详情'
   };
   data = {
-    bookInfo: {}
+    bookInfo: {},
+    isbn: ''
   }
   mixins = [RequestMixin];
 
@@ -66,9 +65,30 @@ export default class BookDetail extends wepy.page {
     this.bookInfo = resp;
     this.$apply();
   }
+
+  // 通过扫条形码获得的ISBN进行查找
+  async queryBookById(isbnId) {
+    const resp = await wx.cloud.callFunction({
+      // 传递给云函数的参数
+      name: 'bookInfo',
+      data: {
+        isbn: isbnId
+      }
+    }).then(res => {
+      return JSON.parse(res.result);
+    }).catch(err => {
+      console.log(err);
+    });
+    this.bookInfo = resp;
+    console.log(this.bookInfo)
+    this.$apply();
+  }
+
   onLoad(options) {
-    const id = parseInt(options.id);
-    this.getBookDetail(id);
+    // const id = parseInt(options.id);
+    this.isbn = options.isbn
+    // this.getBookDetail(id);
+    this.queryBookById(this.isbn)
   }
 }
 </script>

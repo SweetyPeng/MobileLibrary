@@ -1,0 +1,18 @@
+<template>
+  <view>
+    我的漂流
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+export default class Borrow extends wepy.component {
+  config = {
+    navigationBarTitleText: '我的漂流'
+  };
+  onLoad() {
+    console.log('漂流');
+  }
+};
+</script>
+<style lang="less">
+</style>
