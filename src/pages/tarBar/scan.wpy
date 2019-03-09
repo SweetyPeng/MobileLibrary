@@ -1,0 +1,94 @@
+<template>
+  <view class="main">
+    <view class="introduce">
+      <view class="book-icon">
+        <image src="../../images/book-icon.png"/>
+      </view>
+      <view class="paragraph">流动图书馆是一个图书漂流和借阅工具，旨在共享闲置图书，并链接趣味相投的小伙伴。</view>
+      <view class="paragraph">漂流图书到学校或公司，结识志趣一致的TA</view>
+      <view class="paragraph">快来开始你的图书漂流之旅吧~</view>
+    </view>
+    <view class="scan">
+      <button class="scan-btn" @tap="scanBook">
+        <image src="../../images/scan.png" class="scan-img"/>扫一扫漂流图书
+      </button>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+export default class Drift extends wepy.page {
+  config = {
+    navigationBarTitleText: '漂流吧图书酱'
+  };
+  methods = {
+    // 扫一扫获取ISBN码
+    async scanBook() {
+      let resp = await wepy.scanCode({
+        scanType: ['barCode', 'qrCode', 'datamatrix']
+      });
+      console.log(resp);
+      if (resp.scanType === 'EAN_13' || resp.scanType === 'EAN_10') {
+        // wepy.navigateTo({
+        //   url: './bookdetails/index?isbn=' + resp.result,
+        // });
+        console.log(resp.result);
+      } else {
+        // wepy.navigateTo({
+        //   url: './error/index',
+        // });
+        console.log('error');
+      }
+      this.$apply();
+    }
+  };
+  onLoad() {
+    console.log('saoyisao');
+  }
+}
+</script>
+<style lang="less">
+.main {
+  margin: 20rpx;
+  background-color: #fff;
+  border-radius: 6rpx;
+  box-shadow: 0 2rpx 10rpx #666;
+  margin-bottom: 60rpx;
+}
+.introduce {
+  width: 94%;
+  padding: 2%;
+  padding-top: 8%;
+}
+.book-icon {
+  text-align: center;
+}
+.book-icon image {
+  width: 100rpx;
+  height: 100rpx;
+}
+.paragraph {
+  display: block;
+  width: 100%;
+  font-size: 28rpx;
+  color: #bbbbbb;
+  word-break: break-all;
+  word-wrap: break-word;
+  margin-bottom: 40rpx;
+}
+.scan {
+  margin: 6%;
+  margin-bottom: 0;
+  padding-bottom: 10%;
+}
+.scan .scan-btn {
+  background-color: #31d4da;
+  color: #fff;
+  border-radius: 60rpx;
+}
+.scan .scan-img {
+  height: 100rpx;
+  width: 100rpx;
+  vertical-align: bottom;
+}
+</style>

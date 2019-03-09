@@ -14,12 +14,18 @@ export default class extends wepy.app {
     pages: [
       'pages/tarBar/home',
       'pages/tarBar/mine',
+      'pages/tarBar/scan',
       'pages/bannerInfo/usage',
       'pages/bannerInfo/bookReview',
       'pages/bannerInfo/bookRank',
       'pages/bookInfo/bookList',
       'pages/bookInfo/bookDetail',
-      'pages/searchBook/search'
+      'pages/searchBook/search',
+      'pages/mine/message',
+      'pages/mine/borrow',
+      'pages/mine/drift',
+      'pages/mine/thought',
+      'pages/mine/evaluate'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -38,6 +44,12 @@ export default class extends wepy.app {
           iconPath: './images/tab/home.png',
           selectedIconPath: './images/tab/homeSelected.png',
           text: '首页'
+        },
+        {
+          pagePath: 'pages/tarBar/scan',
+          iconPath: './images/tab/drift.png',
+          selectedIconPath: './images/tab/driftSelected.png',
+          text: '漂流'
         },
         {
           pagePath: 'pages/tarBar/mine',
