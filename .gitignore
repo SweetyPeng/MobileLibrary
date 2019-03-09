@@ -6,4 +6,3 @@ yarn-error.log
 .wepycache
 .vscode/
 .idea/
-/node_modules/*
