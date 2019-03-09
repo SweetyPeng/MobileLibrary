@@ -40,6 +40,7 @@
 <script>
 import wepy from 'wepy';
 import wx from 'utils/wx';
+import { getStar } from 'utils/star';
 import RequestMixin from 'mixins/request';
 
 export default class BookDetail extends wepy.page {
@@ -78,6 +79,9 @@ export default class BookDetail extends wepy.page {
       return JSON.parse(res.result);
     }).catch(err => {
       console.log(err);
+    });
+    resp.rating = Object.assign(resp.rating, {
+      block: getStar(resp.rating.average)
     });
     this.bookInfo = resp;
     console.log(this.bookInfo)
