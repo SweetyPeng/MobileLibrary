@@ -20,7 +20,6 @@ export default class extends wepy.app {
       'pages/bannerInfo/bookRank',
       'pages/bookInfo/bookList',
       'pages/bookInfo/bookDetail',
-      'pages/searchBook/search',
       'pages/mine/message',
       'pages/mine/borrow',
       'pages/mine/drift',
