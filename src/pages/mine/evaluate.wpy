@@ -1,0 +1,314 @@
+<template>
+  <view class="evalute-page">
+    <view class="title">
+      <view class="line"></view>
+      <view class="title-name">总体评价</view>
+      <view class="line"></view>
+    </view>
+    <view class="tag">
+      <view class="_tag" @tap="select({{1}})">
+        <text class="_icon iconfont {{ selectGood ? 'icon-icon_good' : 'icon-icon_good1'}}"></text>
+        <text class="text">好用</text>
+      </view>
+      <view class="ver-line"></view>
+      <view class="_tag" @tap="select({{2}})">
+        <text class="_icon iconfont {{ selectBad ? 'icon-icon_bad' : 'icon-icon_bad1'}}"></text>
+        <text class="text">不好用</text>
+      </view>
+    </view>
+    <view class="detail">
+      <view wx:for="{{tagList}}" data-index="{{item.id}}" wx:key="{{item.id}}" @tap="selectTag">
+        <text
+          class="{{ item.selected ? 'detail-tag-selected' : 'detail-tag-default'}}"
+        >{{item.opinionTagName}}</text>
+      </view>
+    </view>
+    <view class="detail-input">
+      <textarea
+        placeholder-class="placeholder-class"
+        placeholder="请输入您的其他意见反馈"
+        value="{{userInput}}"
+        @input="wordsLimit"
+      />
+    </view>
+    <view class="submit-btn" @tap="submit">提交</view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import RequestMixin from 'mixins/request';
+export default class EvaluateService extends wepy.page {
+  config = {
+    navigationBarTitleText: '意见反馈'
+  };
+
+  components = {};
+
+  data = {
+    selectGood: false,
+    selectBad: false,
+    state: 1,
+    userInput: '',
+    tagList: [],
+    currentLen: null,
+    tagValue: '',
+    contentInput: '',
+    tags: {
+      positive_tag_list: [
+        {
+          id: 1,
+          opinionTagType: 1,
+          opinionTagName: '简洁方便'
+        },
+        {
+          id: 2,
+          opinionTagType: 1,
+          opinionTagName: '流程清晰'
+        },
+        {
+          id: 3,
+          opinionTagType: 1,
+          opinionTagName: '界面美观'
+        }
+      ],
+      negative_tag_list: [
+        {
+          id: 4,
+          opinionTagType: 2,
+          opinionTagName: '使用不方便'
+        },
+        {
+          id: 5,
+          opinionTagType: 2,
+          opinionTagName: '流程复杂'
+        },
+        {
+          id: 6,
+          opinionTagType: 2,
+          opinionTagName: '信息不全面'
+        },
+        {
+          id: 7,
+          opinionTagType: 2,
+          opinionTagName: '有待改善'
+        },
+        {
+          id: 8,
+          opinionTagType: 2,
+          opinionTagName: '希望有更多功能'
+        }
+      ]
+    }
+  };
+
+  mixins = [RequestMixin];
+
+  methods = {
+    // 选择 1好用 或 2不好用
+    select(num) {
+      if (num === 1) {
+        this.state = 1;
+      } else if (num === 2) {
+        this.state = 2;
+      }
+      this.chooseState();
+      this.getTag(this.state);
+    },
+    // 手动填写评价 字数限制
+    wordsLimit(e) {
+      const len = e.detail.value.length;
+      this.contentInput = e.detail.value;
+      if (len > 100) {
+        this.$toast('总体评价超过100字');
+        return;
+      }
+      this.currentLen = len;
+    },
+    // 直接选择 标签评价
+    selectTag(e) {
+      const index = e.currentTarget.dataset.index;
+      const list = this.tagList;
+      for (var i = 0; i < list.length; i++) {
+        if (index === list[i].id) {
+          list[i].selected = !list[i].selected;
+        }
+      }
+      this.tagValue = this.data.tagList
+        .filter(it => it.selected)
+        .map(it => it.opinionTagName)
+        .toString();
+    },
+    // 提交评价
+    submit() {
+      if (this.state === null) {
+        this.$toast('请完成评价后提交');
+      } else {
+        this.saveEvaluation();
+      }
+    }
+  };
+
+  onLoad() {
+    this.$loading(false);
+    this.getTag(this.state);
+    this.chooseState();
+  }
+
+  chooseState() {
+    let _state = this.state;
+    if (_state === 1) {
+      this.selectGood = true;
+      this.selectBad = false;
+    } else if (_state === 2) {
+      this.selectBad = true;
+      this.selectGood = false;
+    }
+  }
+  // 保存评价 TODO：
+  async saveEvaluation() {
+    // const resp = await this.POST(
+    //   `/uploadUserOpinion`,
+    //   {
+    //     opinionType: this.state,
+    //     opinionTags: this.tagValue,
+    //     userOpinion: this.contentInput
+    //   },
+    //   true
+    // );
+    // if (resp.result === 'success' && resp) {
+    //   this.$redirect('./evaluateSuccess');
+    // } else {
+    //   this.$loading(false);
+    //   this.$toast(resp.message);
+    //   return false;
+    // }
+  }
+
+  // 获取标签
+  getTag(state) {
+    const data = this.tags;
+    if (state === 1) {
+      this.tagList = data.positive_tag_list.map(item => {
+        return Object.assign(item, { selected: false });
+      });
+    } else if (state === 2) {
+      this.tagList = data.negative_tag_list.map(item => {
+        return Object.assign(item, { selected: false });
+      });
+    }
+  }
+}
+</script>
+
+<style lang="less">
+.evalute-page {
+  display: flex;
+  flex-direction: column;
+  // align-items: center;
+  padding: 0 48rpx;
+  padding-top: 80rpx;
+  .title {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    .line {
+      width: 128px;
+      height: 0px;
+      border: 2px solid rgba(204, 204, 204, 1);
+    }
+    .title-name {
+      width: 114px;
+      height: 40px;
+      font-size: 28px;
+      font-weight: bold;
+      color: rgba(93, 93, 93, 1);
+      line-height: 40px;
+      margin: 0 48rpx;
+    }
+  }
+  .tag {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 48rpx;
+    ._tag {
+      display: flex;
+      align-items: center;
+    }
+    .text {
+      height: 40px;
+      font-size: 28px;
+      color: rgba(93, 93, 93, 1);
+      line-height: 40px;
+      margin-left: 16rpx;
+    }
+    ._icon {
+      font-size: 48rpx;
+      color: #ef8e47;
+    }
+    .ver-line {
+      height: 48px;
+      border: 2px solid rgba(204, 204, 204, 1);
+      margin: 0 108rpx;
+    }
+  }
+  .detail {
+    display: flex;
+    flex-flow: row wrap;
+    margin-top: 32rpx;
+    .detail-tag-selected {
+      margin-top: 32rpx;
+      margin-right: 32rpx;
+      display: inline-block;
+      height: 48rpx;
+      padding: 0 30rpx;
+      background: rgba(239, 142, 71, 1);
+      border-radius: 24px;
+      font-size: 28rpx;
+      color: rgba(255, 255, 255, 1);
+      line-height: 48rpx;
+    }
+    .detail-tag-default {
+      margin-top: 32rpx;
+      margin-right: 32rpx;
+      display: inline-block;
+      height: 48rpx;
+      padding: 0 30rpx;
+      background: rgba(242, 242, 242, 1);
+      border-radius: 24px;
+      font-size: 28rpx;
+      color: rgba(93, 93, 93, 1);
+      line-height: 48rpx;
+    }
+  }
+  textarea {
+    width: 590px;
+    height: 194px;
+    background: rgba(255, 255, 255, 1);
+    border-radius: 8px;
+    border: 2px solid rgba(204, 204, 204, 1);
+    margin-top: 32rpx;
+    padding: 16rpx 32rpx;
+  }
+  .placeholder-class {
+    height: 40rpx;
+    font-size: 28px;
+    color: rgba(178, 178, 178, 1);
+    line-height: 40px;
+  }
+  .submit-btn {
+    margin: 0 auto;
+    text-align: center;
+    font-size: 32px;
+    color: rgba(255, 255, 255, 1);
+    width: 560px;
+    height: 96px;
+    line-height: 96px;
+    background: rgba(49, 212, 218, 1);
+    border-radius: 48px;
+    margin-top: 120rpx;
+  }
+}
+</style>
