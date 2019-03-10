@@ -1,9 +1,9 @@
 <template>
-  <view class="item-detail">
+  <view class="item-detail {{isIpx?'mb68':''}}">
     <image
       class="header-img"
       mode="widthFix"
-      src=""
+      src="../../images/bannerImgs/readtime.jpg"
     />
     <view class="post">
       <view class="post-title">漂流吧,图书酱</view>
@@ -16,32 +16,60 @@
 
       <view class="title">
         <view></view>
-        <text>介绍</text>
+        <text>简介</text>
       </view>
       <view class="content">
-        <text></text>
-      </view>
-      <view class="content top32">
-        <text></text>
-      </view>
-      <view class="content top32">
-        <text></text>
+        <text>漂流吧图书酱，是一个图书漂流和借阅的工具。以小程序的形式，呈现在大家面前，方便大家使用。</text>
       </view>
       <view class="content">
-        <text></text>
+        <text>该小程序适用范围，校园、社区，公司等，通过手手相传实现漂流，传阅纸质书籍，传递与分享阅读的乐趣同时结交朋友！</text>
       </view>
 
       <view class="title">
         <view></view>
-        <text>介绍</text>
+        <text>功能</text>
       </view>
-      <view class="title2"></view>
-      <view class="title3"></view>
-      <view class="content-withlabel">
-        <text class="left-label"></text>
-        <text></text>
+      <view class="title2">
+        <text>一、查询</text>
+      </view>
+      <view class="content">
+        <text>在首页查询输入框，输入书名或作者，点击查询即可了解相关书籍信息</text>
+      </view>
+      <view class="title2">
+        <text>二、发布漂流</text>
+      </view>
+      <view class="content">
+        <text>通过扫描书籍背后的ISBN条形码，将您手中的闲置书籍进行发布。</text>
+      </view>
+      <view class="title2">
+        <text>三、预约书籍</text>
+      </view>
+      <view class="content">
+        <text>查看书籍信息后，可点击预约，填写预约信息，之后只需要静静等待书主人消息了</text>
+      </view>
+      <view class="title2">
+        <text>四、书籍交接</text>
+      </view>
+      <view class="content">
+        <text>取得联系后，将您手中的书传递给下一位借阅者，如此便完成一次书籍的漂流之旅！</text>
+      </view>
+      <view class="title2">
+        <text>五、分享</text>
+      </view>
+      <view class="content">
+        <text>您可以写下书评分享阅读后的感受，也可以通过转发，让朋友们看到您的漂流信息。当然，欢迎邀请朋友一起来漂流哦~</text>
+      </view>
+
+      <view class="title">
+        <view></view>
+        <text>最后</text>
+      </view>
+      <view class="content">
+        <text>享受阅读，传递快乐！</text>
+        <text>\n如果在使用过程中，有什么不足，请随时指出,可以在意见反馈中，写下您的意见。您的意见，是我努力的方向！</text>
       </view>
     </view>
+    <view class="btn {{isIpx?'fix-iphonex-buttom':''}}" @tap="tap">意见反馈</view>
   </view>
 </template>
 
@@ -51,6 +79,23 @@ export default class Index extends wepy.page {
   config = {
     navigationBarTitleText: '使用攻略'
   };
+  data = {
+    isIpx: false
+  };
+  methods = {
+    tap() {
+      this.$link('/pages/mine/evaluate');
+    }
+  }
+  async getSystemInfo() {
+    const systemInfo = await wepy.getSystemInfo();
+    return systemInfo.model;
+  }
+  async onLoad() {
+    const isIpx = await this.getSystemInfo();
+    this.isIpx = isIpx.indexOf('iPhone X') > -1;
+    this.$apply();
+  }
 }
 </script>
 <style lang='less'>
@@ -59,18 +104,6 @@ export default class Index extends wepy.page {
 page {
   background: rgba(245, 245, 245, 1);
   padding-bottom: 100rpx;
-}
-.top80 {
-  margin-top: 80px !important;
-}
-.top32 {
-  margin-top: 32px !important;
-}
-.top20 {
-  margin-top: 20px !important;
-}
-.top48 {
-  margin-top: 48px !important;
 }
 .item-img {
   width: 100%;
@@ -83,58 +116,13 @@ page {
     width: 100%;
     display: block;
   }
-  .info {
-    padding: 32rpx;
-    padding-bottom: 40rpx;
-    margin-top: 0;
-    background: rgba(255, 255, 255, 1);
-  }
   .arrow-img {
     width: 48px;
     height: 48px;
   }
-  .item-end {
-    height: 40px;
-    display: flex;
-    font-size: 24px;
-    margin-top: 32px;
-    line-height: 34px;
-    justify-content: space-between;
-    view {
-      &:nth-child(1) {
-        color: #e30d30;
-        text {
-          font-size: 36px;
-        }
-      }
-      &:nth-child(2) {
-        font-size: 24px;
-        color: #f09450;
-      }
-    }
-  }
   .img-container {
     display: flex;
     justify-content: center;
-  }
-}
-.info {
-  > text {
-    display: block;
-    &:nth-child(1) {
-      height: 40px;
-      font-size: 36rpx;
-      font-weight: bolder;
-      color: #333333;
-      line-height: 44rpx;
-    }
-    &:nth-child(2) {
-      height: 40px;
-      margin-top: 16rpx;
-      font-size: 24rpx;
-      line-height: 34px;
-      color: rgba(157, 157, 157, 1);
-    }
   }
 }
 .post {
@@ -142,7 +130,7 @@ page {
   padding: 0 30rpx 32rpx;
   .post-title {
     margin-bottom: 30rpx;
-    padding-top: 48rpx;
+    padding-top: 32rpx;
     text-align: center;
     font-size: 40rpx;
     color: rgba(51, 51, 51, 1);
@@ -150,8 +138,7 @@ page {
     font-weight: bold;
   }
   .title {
-    margin-top: 80rpx;
-    margin-bottom: 32rpx;
+    margin: 32rpx 0;
     height: 48rpx;
     line-height: 48rpx;
     font-size: 32rpx;
@@ -172,16 +159,8 @@ page {
     color: #333333;
     letter-spacing: 3rpx;
   }
-  .content-withlabel {
-    position: relative;
-    font-size: 28rpx;
-    line-height: 52rpx;
-    color: #333333;
-    letter-spacing: 3rpx;
-    padding-left: 24rpx;
-  }
   .title2 {
-    margin-top: 50px;
+    margin-top: 20px;
     font-size: 32px;
   }
   .title3 {
@@ -214,38 +193,5 @@ page {
     right: 0;
     background: #fff;
   }
-}
-.left-label {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 8px;
-  background-color: #cccccc;
-}
-.mb68 {
-  margin-bottom: 68rpx;
-}
-.orange {
-  color: #f46903;
-}
-.line {
-  text-align: center;
-}
-.black {
-  color: #333333;
-}
-.less-blue {
-  color: #31d4da;
-}
-.brown-red {
-  color: #da6868;
-  font-size: 28px;
-}
-.fnt40 {
-  font-size: 40px;
-}
-.bold {
-  font-weight: bold;
 }
 </style>

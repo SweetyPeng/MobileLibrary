@@ -25,13 +25,19 @@ export default class extends wepy.app {
       'pages/mine/drift',
       'pages/mine/thought',
       'pages/mine/evaluate',
-      'pages/main/main'
+      'pages/main/main',
+      'pages/forTest/mapTest'
     ],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#31D4DA',
       navigationBarTitleText: '漂流吧图书酱',
       navigationBarTextStyle: 'white'
+    },
+    'permission': {
+      'scope.userLocation': {
+        'desc': '你的位置信息将用于小程序位置接口的效果展示'
+      }
     },
     tabBar: {
       color: '#8C8C8C',
@@ -61,11 +67,6 @@ export default class extends wepy.app {
     },
     networkTimeout: {
       request: 10000
-    },
-    permission: {
-      // scope.userLocation: {
-      //   desc: '你的位置信息将用于小程序位置接口的效果展示'
-      // }
     }
   };
 
