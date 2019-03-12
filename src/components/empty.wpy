@@ -1,0 +1,105 @@
+<style lang='less'>
+  .bs-emptyPage-container{
+    height: 100%;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .imgs{
+      width: 240rpx;
+      height: 240rpx;
+      margin-top: 160rpx;
+      image{
+        width: 240rpx;
+        height: 240rpx;
+      }
+    }
+    .description{
+      color: #5D5D5D;
+      font-size: 28rpx;
+      margin-top: 48rpx;
+    }
+    .desc {
+      color: #5D5D5D;
+      font-size: 28rpx;
+    }
+    .detail {
+      width: 600rpx;
+      height: 68rpx;
+      font-size: 24rpx;
+      text-align: center;
+      color: rgba(157,157,157,1);
+      line-height: 34rpx;
+      margin-top: 36rpx;
+    }
+    .link-btn {
+      font-size: 28px;
+      color: rgba(74,144,226,1);
+      line-height: 40px;
+      text-decoration: underline;
+      margin-top: 48rpx;
+    }
+    .btn{
+      height:80rpx;
+      padding: 0px 18rpx;
+      border-radius:16rpx;
+      // border:1px solid rgba(49,212,218,1);
+      border:2px solid #31D4DA;
+      background: #ffffff;
+      color: #31D4DA;
+      // box-sizing: border-box;
+      // border-color: #31D4DA;
+      line-height: 80rpx;
+      margin-top:120rpx;
+    }
+  }
+</style>
+<template>
+ <view class="bs-emptyPage-container">
+    <view class="imgs">
+      <image src="{{item.url}}"/>
+    </view>
+    <view class="description">{{item.description}}</view>
+    <block wx:if="{{item.desc}}">
+      <view class="desc">{{item.desc}}</view>
+    </block>
+    <block wx:if="{{item.detail}}">
+      <view class="detail">{{item.detail}}</view>
+    </block>
+    <block wx:if="{{item.linkbtn}}">
+      <view class="link-btn" @tap="btnLink">{{item.linkbtn}}</view>
+    </block>
+    <block wx:if="{{item.btn}}">
+      <view class="btn" @tap="btnTap">{{item.btn}}</view>
+    </block>
+ </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+
+export default class EmptyPage extends wepy.component {
+  data = {
+  }
+  props = {
+    item: {
+      type: Object
+    }
+  }
+  components = {
+
+  }
+  computed = {
+  }
+  methods = {
+    btnTap() {
+      this.$emit('bindTap');
+    },
+    btnLink() {
+      this.$emit('bindTap');
+    }
+  }
+  onLoad() {
+  }
+ }
+</script>

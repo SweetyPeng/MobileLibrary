@@ -151,25 +151,6 @@ export default class Index extends wepy.page {
       console.log(data)
       console.log('点击查看图书详情');
     }
-    // 扫一扫获取ISBN码
-    // async scanBook() {
-    //   let resp = await wepy.scanCode({
-    //     scanType: ['barCode', 'qrCode', 'datamatrix']
-    //   });
-    //   console.log(resp);
-    //   if (resp.scanType === 'EAN_13' || resp.scanType === 'EAN_10') {
-    //     // wepy.navigateTo({
-    //     //   url: './bookdetails/index?isbn=' + resp.result,
-    //     // });
-    //     console.log(resp.result);
-    //   } else {
-    //     // wepy.navigateTo({
-    //     //   url: './error/index',
-    //     // });
-    //     console.log('error');
-    //   }
-    //   this.$apply();
-    // }
   };
 
   events = {};
