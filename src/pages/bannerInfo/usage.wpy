@@ -69,7 +69,7 @@
         <text>\n如果在使用过程中，有什么不足，请随时指出,可以在意见反馈中，写下您的意见。您的意见，是我努力的方向！</text>
       </view>
     </view>
-    <view class="btn {{isIpx?'fix-iphonex-buttom':''}}" @tap="tap">意见反馈</view>
+    <view class="btn {{isIpx?'fix-iphonex-button':''}}" @tap="tap">意见反馈</view>
   </view>
 </template>
 

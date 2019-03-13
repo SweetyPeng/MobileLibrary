@@ -39,27 +39,7 @@
             src="{{item.image}}"
             data-isbn="{{item.isbn}}"
             data-bookid="{{item._id}}"
-            @tap="onBookDetail({{item}})"
-          />
-        </view>
-      </view>
-    </view>
-    <!-- 附近的书 -->
-    <view class="book-groups">
-      <view class="item-title">
-        <text class="title-name">附近的书</text>
-        <view class="more" @tap="findMore">
-          <text class="more-title">查看更多</text>
-          <i class="iconfont icon-icon_Arrow"></i>
-        </view>
-      </view>
-      <view class="item-content">
-        <view wx:for="{{newBooks}}" wx:key="{{index}}" class="content-list">
-          <image
-            src="{{item.image}}"
-            data-isbn="{{item.isbn}}"
-            data-bookid="{{item._id}}"
-            @tap="onBookDetail({{item}})"
+            @tap="onBookDetail({{item.id}})"
           />
         </view>
       </view>
@@ -128,6 +108,21 @@ export default class Index extends wepy.page {
         _id: '6',
         isbn: '00000006',
         image: 'https://img1.doubanio.com//view//subject//m//public//s1086519.jpg'
+      },
+      {
+        _id: '7',
+        isbn: '00000007',
+        image: 'https://img1.doubanio.com//view//subject//m//public//s4293097.jpg'
+      },
+      {
+        _id: '8',
+        isbn: '00000008',
+        image: 'https://img3.doubanio.com//view//subject//m//public//s26387712.jpg'
+      },
+      {
+        _id: '9',
+        isbn: '00000009',
+        image: 'https://img3.doubanio.com//view//subject//m//public//s1144911.jpg'
       }
     ]
   };
@@ -146,10 +141,10 @@ export default class Index extends wepy.page {
       // 点击查看更多
       console.log('点击查看更多');
     },
-    onBookDetail(data) {
+    onBookDetail(id) {
       // 点击查看图书详情
-      console.log(data)
       console.log('点击查看图书详情');
+      // this.$link(`/pages/bookInfo/bookDetail?id=${id}`);
     }
   };
 

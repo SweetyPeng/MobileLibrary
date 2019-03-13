@@ -37,6 +37,7 @@ export default class BookList extends wepy.page {
 
   // 通过关键字查询图书 --通过云函数
   async queryBookByName(word) {
+    this.$loading('加载中');
     const resp = await wx.cloud.callFunction({
       // 传递给云函数的参数
       name: 'getBookListByName',
@@ -50,6 +51,7 @@ export default class BookList extends wepy.page {
     });
     this.bookList = resp.books;
     this.$apply();
+    this.$loading(false);
   }
   onLoad(options) {
     this.keyWord = options.keyWords;
