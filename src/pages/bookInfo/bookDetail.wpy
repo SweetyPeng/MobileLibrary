@@ -1,5 +1,13 @@
 <template>
   <view class="book-detail">
+    <!-- 是否确定发布模态框 -->
+    <bsDialog>
+      <view slot="bsDialog_content" class="content-tip">
+        <view>请您确定是否要发布漂流?</view>
+        <view>{{bookInfo.title}}</view>
+      </view>
+    </bsDialog>
+    <!-- 图书详情 -->
     <scroll-view
       class="wrapper-scroll"
       scroll-y="true"
@@ -15,11 +23,6 @@
           <view class="detail-text detail-author">作者：{{bookInfo.author}}</view>
           <view class="detail-text detail-publisher">出版社：{{bookInfo.publisher}}</view>
           <view class="detail-text detail-pubdate">出版时间：{{bookInfo.pubdate}}</view>
-          <view class="detail-tags">
-            <text wx:if="bookInfo.tags[0].title">{{bookInfo.tags[0].title}}</text>
-            <text wx:if="bookInfo.tags[1].title">{{bookInfo.tags[1].title}}</text>
-            <text wx:if="bookInfo.tags[2].title">{{bookInfo.tags[2].title}}</text>
-          </view>
         </view>
         <view class="detail-fr">
           <view class="detail-star-box">
@@ -28,43 +31,116 @@
           </view>
         </view>
       </view>
+      <view class="book-status">
+        <text>书籍状态</text>
+        <view class="content">
+          <view>持书人：{{bookowner || '暂无人发布'}}</view>
+        </view>
+      </view>
       <view class="detail-summary">
-        <text class="ibox-title-small">图书摘要</text>
+        <text class="ibox-title-small">图书简介</text>
         <view class="ibox-content">
-          <view>{{bookInfo.summary}}</view>
+          <view>{{bookInfo.summary || '找不到简介呢'}}</view>
         </view>
       </view>
     </scroll-view>
+    <view class="btn-group {{isIpx?'mb68':''}}">
+      <view class="publish-btn" bindtap="publishBook">我要发布</view>
+      <view class="borrow-btn" bindtap="borrowBook">我要借阅</view>
+    </view>
+    <view class="form {{visible?'show':''}}" >
+      <view class="mask" bindtap="hiddenForm"></view>
+      <form bindsubmit="submit">
+        <view class="form-content">
+        <view class="input-item">
+          <text>微信号</text>
+          <input type="text" maxlength="25" placeholder='请输入微信号' name="wxNum" confirm-type="next"/>
+        </view>
+        <view class="input-item">
+          <text>电   话</text>
+          <input type='number' maxlength="11"  placeholder='请输入手机号码' name="phoneNum" confirm-type="next"/>
+        </view>
+        <view class="input-item">
+          <text>留   言</text>
+          <input type="text" placeholder="给书主的留言" maxlength='50' name="msg" confirm-type="done"/>
+        </view>
+        <view wx:if="{{infoVisible}}" class="info">请填写微信号和手机号</view>
+        <view class="input-item">
+          <button form-type="submit" class="send"> 发 送 </button>
+        </view>
+      </view>
+      </form>
+    </view>
   </view>
 </template>
 <script>
 import wepy from 'wepy';
 import wx from 'utils/wx';
 import { getStar } from 'utils/star';
+import bsDialog from 'components/bs_dialog';
 import RequestMixin from 'mixins/request';
 
 export default class BookDetail extends wepy.page {
   config = {
     navigationBarTitleText: '图书详情'
   };
+  components = {
+    bsDialog
+  }
   data = {
-    bookInfo: {}
+    bookInfo: {},
+    isIpx: false,
+    visible: false, // 表单弹框
+    hidden: true, // 隐藏借阅按钮
+    infoVisible: false // 输入提示信息
   }
   mixins = [RequestMixin];
-
-  async getBookDetail(id) {
-    const params = {
-      isMock: false
-    };
-    const handler = {
-      header: {
-        'content-type': 'application/xml'
+  methods = {
+    async publishBook() {
+      let resp = await this.$invoke('bsDialog', 'showBsDialog', {
+        title: '是否发布漂流',
+        buttons: [
+          {
+            type: 'confirm',
+            text: '确定',
+            color: '#0076FF'
+          },
+          {
+            type: 'cancle',
+            text: '取消',
+            color: '#0076FF'
+          }
+        ]
+      });
+      let { type } = resp;
+      if (type === 'confirm') {
+        // TODO: 发布图书
+        this.$toast('发布成功！');
       }
-    };
-    const resp = await this.GET(id, params, false, handler);
-    this.bookInfo = resp;
-    this.$apply();
-  }
+    },
+    borrowBook() {
+      this.visible = true;
+    },
+    hiddenForm() {
+      this.visible = false;
+    },
+    submit(e) {
+      console.log(e.detail);
+      let wxNum = e.detail.value.wxNum;
+      let phoneNum = e.detail.value.phoneNum;
+      let msg = e.detail.value.msg;
+      let bookData = this.bookInfo;
+      console.log(msg);
+      console.log(bookData);
+      if (!wxNum || !phoneNum || phoneNum.length !== 11) {
+        this.infoVisible = true
+        return;
+      }
+      this.visible = false;
+      this.$loading('发送中');
+      // TODO: 借阅信息发送
+    }
+  };
 
   /**
    * 查询图书详情信息 --通过云函数
@@ -85,8 +161,18 @@ export default class BookDetail extends wepy.page {
       resp.rating = Object.assign(resp.rating, {
         block: getStar(resp.rating.average)
       });
+      if (resp.summary.length > 100) {
+        resp.summary = resp.summary.substr(0, 100) + '...';
+      }
     }
     this.bookInfo = resp;
+    this.$apply();
+  }
+  // 判断是否是iphoneX
+  async isIphoneX() {
+    const systemInfo = await wepy.getSystemInfo();
+    const isIpx = systemInfo.model;
+    this.isIpx = isIpx.indexOf('iPhone X') > -1;
     this.$apply();
   }
 
@@ -103,11 +189,21 @@ export default class BookDetail extends wepy.page {
       }
       this.queryBookById(param);
     }
+    this.isIphoneX();
   }
 }
 </script>
 <style lang="less">
 .book-detail {
+  .bs-dialog__header {
+    font-size: 34rpx;
+  }
+  .content-tip {
+    font-size: 28rpx;
+    color: rgba(93,93,93,1);
+    line-height: 40rpx;
+    text-align: center;
+  }
   .wrapper-scroll {
     position: fixed;
     left: 0;
@@ -146,7 +242,7 @@ export default class BookDetail extends wepy.page {
   }
   .detail-info {
     background: #fff;
-    padding: 50rpx 30rpx 30rpx;
+    padding: 30rpx;
     display: flex;
     justify-content: space-between;
     .detail-fl {
@@ -220,6 +316,18 @@ export default class BookDetail extends wepy.page {
       }
     }
   }
+  .book-status {
+    padding: 0 30rpx 30rpx;
+    text {
+      font-size: 30rpx;
+      color: #2d2d2d;
+      display: block;
+      padding: 20rpx 0;
+    }
+    .content {
+      color: #00B267;
+    }
+  }
   .detail-summary {
     background: #fff;
     padding: 0 30rpx 30rpx;
@@ -231,7 +339,7 @@ export default class BookDetail extends wepy.page {
       text-overflow: ellipsis;
     }
     .ibox-content {
-      padding: 20rpx 0;
+      padding-bottom: 100rpx;
       font-size: 32rpx;
       color: #2d2d2d;
       line-height: 60rpx;
@@ -239,6 +347,129 @@ export default class BookDetail extends wepy.page {
     .ibox-content view {
       margin-bottom: 20rpx;
     }
+  }
+  .btn-group{
+    width: 100%;
+    height: 100rpx;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    .publish-btn{
+      width: 50%;
+      height: 100%;
+      font-size: 36rpx;
+      display: inline-block;
+      border-radius: 0;
+      padding: 0;
+      border: 0;
+      color: #fff;
+      background-color: #2BD3D2;
+      line-height: 100rpx;
+      text-align: center;
+    }
+    .borrow-btn{
+      width: 50%;
+      height: 100%;
+      display: inline-block;
+      background-color:  rgb(13,118,161);
+      font-size: 36rpx;
+      border-radius: 0;
+      padding: 0;
+      color: #fff;
+      line-height: 100rpx;
+      text-align: center;
+    }
+  }
+  .mb68 {
+    bottom: 68rpx !important;
+    &::after {
+      content: ' ';
+      position: fixed;
+      height: 68rpx;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+    }
+  }
+  // 弹窗样式
+  .form .mask{
+    position: absolute;
+    background-color: rgba(0,0,0,0.5);
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+    opacity: 0;
+    z-index: -100;
+    transition: height .2s ease-in-out;
+  }
+  .form .form-content{
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 0;
+    background-color: #fff;
+    transition: all .2s ease-in-out;
+    overflow: hidden;
+    z-index: 100;
+    color: #666;
+    font-size: 40rpx;
+  }
+
+  .form.show .mask{
+    visibility: visible;
+    opacity: 1;
+    height: 60%;
+    z-index : 100;
+  }
+  .form.show .form-content{
+    height: 40%;
+  }
+  .form-content .input-item{
+    display: flex;
+    margin: 0 20rpx;
+    border-top: 1px solid #ccc;
+    height: 100rpx;
+    align-items: center;
+    justify-content: center;
+  }
+  .form-content .input-item:first-child{
+    border-top: 0;
+  }
+  .input-item text{
+    width: 20%;
+    font-size: 30rpx;
+  }
+  .input-item text{
+    width: 20%;
+    font-size: 30rpx;
+  }
+  .input-item wx-input{
+    display: inline-block;
+    width: 100%;
+    font-size: 30rpx;
+  }
+  .input-item:last-child{
+    margin-top: 10rpx;
+    border-top: 0;
+  }
+  .input-item .send{
+    border: 1px solid rgb(62,58,57);
+    height: 70rpx;
+    line-height: 70rpx;
+    background-color: #fff;
+    color: rgb(87,86,84);
+    font-size: 30rpx;
+    text-align: center;
+    width: 200rpx;
+    border-radius: 5rpx;
+  }
+  .info {
+    color: rgb(217,59,38);
+    text-align: center;
+    width: 100%;
+    font-size: 25rpx;
   }
 }
 </style>
