@@ -54,7 +54,7 @@ export default class BookList extends wepy.page {
     this.$loading(false);
   }
   onLoad(options) {
-    this.keyWord = options.keyWords;
+    this.keyWord = encodeURI(options.keyWords); // 中文转码
     this.queryBookByName(this.keyWord);
   }
 }
