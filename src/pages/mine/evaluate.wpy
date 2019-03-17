@@ -37,6 +37,7 @@
 
 <script>
 import wepy from 'wepy';
+import wx from 'utils/wx';
 import RequestMixin from 'mixins/request';
 export default class EvaluateService extends wepy.page {
   config = {
@@ -165,24 +166,26 @@ export default class EvaluateService extends wepy.page {
       this.selectGood = false;
     }
   }
-  // 保存评价 TODO：
+  // 保存评价 ----云数据库options
   async saveEvaluation() {
-    // const resp = await this.POST(
-    //   `/uploadUserOpinion`,
-    //   {
-    //     opinionType: this.state,
-    //     opinionTags: this.tagValue,
-    //     userOpinion: this.contentInput
-    //   },
-    //   true
-    // );
-    // if (resp.result === 'success' && resp) {
-    //   this.$redirect('./evaluateSuccess');
-    // } else {
-    //   this.$loading(false);
-    //   this.$toast(resp.message);
-    //   return false;
-    // }
+    const params = {
+      opinionType: this.state,
+      opinionTags: this.tagValue,
+      userOpinion: this.contentInput
+    }
+    // 云数据库初始化
+    const db = wx.cloud.database({});
+    // const options = db.collection('options');
+    db.collection('options').add({
+      // data 字段表示需新增的JSON数据
+      data: params
+    }).then(res => {
+      if (res.errMsg === 'collection.add:ok') {
+        this.$redirect('../minecom/evaluateSuccess');
+      }
+    }).catch(err => {
+      console.log(err)
+    })
   }
 
   // 获取标签

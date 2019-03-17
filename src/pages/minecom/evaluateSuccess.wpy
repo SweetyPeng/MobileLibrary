@@ -1,0 +1,79 @@
+<template>
+  <view class="evaluate-page">
+    <view>
+      <icon type="success" size="100" color="#09BB07"/>
+    </view>
+    <view class="tip">评价成功</view>
+    <view class="content">感谢您的支持</view>
+    <view class="content">祝您生活愉快！</view>
+    <view class="btn" @tap="back">返回首页</view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class EvaluateSuccess extends wepy.page {
+  config = {
+    navigationBarTitleText: '评价成功'
+  };
+
+  components = {};
+
+  data = {};
+
+  methods = {
+    back() {
+      wepy.switchTab({
+        url: '/pages/tabBar/home'
+      });
+    }
+  };
+  onLoad() {
+    this.$loading(false);
+  }
+}
+</script>
+
+<style lang="less">
+page {
+  height: 100%;
+  background:rgba(255,255,255,1);
+}
+.evaluate-page{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 32rpx;
+  padding-top: 120rpx;
+  .tip {
+    margin-top: 48px;
+    margin-bottom: 32px;
+    width: 160px;
+    height: 56px;
+    font-size: 40px;
+    font-weight: bold;
+    color: rgba(51, 51, 51, 1);
+    line-height: 56px;
+  }
+  .content {
+    height: 44px;
+    font-size: 32px;
+    font-weight: 400;
+    color: rgba(157, 157, 157, 1);
+    line-height: 44px;
+  }
+  .btn {
+    margin: 0 auto;
+    text-align: center;
+    font-size: 32px;
+    color:rgba(49,212,218,1);
+    width: 560px;
+    height: 96px;
+    line-height: 96px;
+    background: rgba(255,255,255,1);
+    border-radius: 48px;
+    border: 2px solid rgba(49,212,218,1);
+    margin-top: 94rpx;
+  }
+}
+</style>
