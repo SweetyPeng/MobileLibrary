@@ -49,7 +49,7 @@
 
 <script>
 import wepy from 'wepy';
-import SearchBook from '../homeCom/searchBook';
+import SearchBook from '../homecom/searchBook';
 import RequestMixin from 'mixins/request';
 
 export default class Index extends wepy.page {

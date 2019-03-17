@@ -12,9 +12,9 @@ import 'utils/injectObj';
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/tarBar/home',
-      'pages/tarBar/mine',
-      'pages/tarBar/scan',
+      'pages/tabBar/home',
+      'pages/tabBar/mine',
+      'pages/tabBar/scan',
       'pages/bannerInfo/usage',
       'pages/bannerInfo/bookReview',
       'pages/bannerInfo/bookRank',
@@ -26,7 +26,8 @@ export default class extends wepy.app {
       'pages/mine/thought',
       'pages/mine/evaluate',
       'pages/main/main',
-      'pages/forTest/mapTest'
+      'pages/forTest/mapTest',
+      'pages/minecom/evaluateSuccess'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -46,19 +47,19 @@ export default class extends wepy.app {
       backgroundColor: '#ffffff',
       list: [
         {
-          pagePath: 'pages/tarBar/home',
+          pagePath: 'pages/tabBar/home',
           iconPath: './images/tab/home.png',
           selectedIconPath: './images/tab/homeSelected.png',
           text: '首页'
         },
         {
-          pagePath: 'pages/tarBar/scan',
+          pagePath: 'pages/tabBar/scan',
           iconPath: './images/tab/drift.png',
           selectedIconPath: './images/tab/driftSelected.png',
           text: '漂流'
         },
         {
-          pagePath: 'pages/tarBar/mine',
+          pagePath: 'pages/tabBar/mine',
           iconPath: './images/tab/mine.png',
           selectedIconPath: './images/tab/mineSelected.png',
           text: '我的'
