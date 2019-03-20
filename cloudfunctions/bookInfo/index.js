@@ -6,7 +6,7 @@ cloud.init()
 const rp = require('request-promise');
 const getBookInfo = (event, context) => {
   if (event.isbn) {
-    let res = rp('https://api.douban.com/v2/book/isbn/' + event.isbn).then(
+    let res = rp('http://t.yushu.im/v2/book/isbn/' + event.isbn).then(
       data => {
         return data;
       }
@@ -18,7 +18,7 @@ const getBookInfo = (event, context) => {
     return res;
   }
   if (event.id) {
-    let res = rp('https://api.douban.com/v2/book/' + event.id).then(
+    let res = rp('http://t.yushu.im/v2/book/' + event.id).then(
       data => {
         return data;
       }
