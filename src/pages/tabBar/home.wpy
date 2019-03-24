@@ -78,53 +78,7 @@ export default class Index extends wepy.page {
         banner_img_link: '/pages/bannerInfo/bookRank'
       }
     ],
-    newBooks: [
-      {
-        _id: '1',
-        isbn: '00000001',
-        image: 'https://img1.doubanio.com//view//subject//m//public//s4293097.jpg'
-      },
-      {
-        _id: '2',
-        isbn: '00000002',
-        image: 'https://img3.doubanio.com//view//subject//m//public//s26387712.jpg'
-      },
-      {
-        _id: '3',
-        isbn: '00000003',
-        image: 'https://img3.doubanio.com//view//subject//m//public//s1144911.jpg'
-      },
-      {
-        _id: '4',
-        isbn: '00000004',
-        image: 'https://img3.doubanio.com//view//subject//m//public//s27264241.jpg'
-      },
-      {
-        _id: '5',
-        isbn: '00000005',
-        image: 'https://img1.doubanio.com//view//subject//m//public//s1161599.jpg'
-      },
-      {
-        _id: '6',
-        isbn: '00000006',
-        image: 'https://img1.doubanio.com//view//subject//m//public//s1086519.jpg'
-      },
-      {
-        _id: '7',
-        isbn: '00000007',
-        image: 'https://img1.doubanio.com//view//subject//m//public//s4293097.jpg'
-      },
-      {
-        _id: '8',
-        isbn: '00000008',
-        image: 'https://img3.doubanio.com//view//subject//m//public//s26387712.jpg'
-      },
-      {
-        _id: '9',
-        isbn: '00000009',
-        image: 'https://img3.doubanio.com//view//subject//m//public//s1144911.jpg'
-      }
-    ]
+    newBooks: []
   };
 
   computed = {};
@@ -150,8 +104,19 @@ export default class Index extends wepy.page {
 
   events = {};
 
-  getNewBooks() {
+  async getNewBooks() {
     // TODO: 从后台获取 新书数据
+    const resp = await this.GET('/newbooks', {});
+    console.log(resp);
+    if (resp.statusCode === 200) {
+      this.newbooks = resp.data.newPublishedBooks;
+    } else {
+      console.log('something wrong');
+    }
+  }
+
+  onLoad() {
+    this.getNewBooks();
   }
 }
 </script>

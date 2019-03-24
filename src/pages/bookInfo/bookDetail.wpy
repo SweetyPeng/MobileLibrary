@@ -168,15 +168,11 @@ export default class BookDetail extends wepy.page {
     this.bookInfo = resp;
     this.$apply();
   }
-  // 判断是否是iphoneX
-  async isIphoneX() {
-    const systemInfo = await wepy.getSystemInfo();
-    const isIpx = systemInfo.model;
-    this.isIpx = isIpx.indexOf('iPhone X') > -1;
-    this.$apply();
-  }
 
   onLoad(options) {
+    // let isbn = options.isbn;
+    // let owner = this.globalData.userInfo.nickname;
+    // let ownerImg = this.globalData.userInfo.avatarUrl;
     if (options.id) {
       const param = {
         id: options.id
@@ -190,6 +186,13 @@ export default class BookDetail extends wepy.page {
       this.queryBookById(param);
     }
     this.isIphoneX();
+  }
+  // 判断是否是iphoneX
+  async isIphoneX() {
+    const systemInfo = await wepy.getSystemInfo();
+    const isIpx = systemInfo.model;
+    this.isIpx = isIpx.indexOf('iPhone X') > -1;
+    this.$apply();
   }
 }
 </script>

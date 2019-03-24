@@ -1,0 +1,109 @@
+<template>
+  <view class="welcome-page">
+    <view class="container" wx:if="{{canIUse}}">
+      <view class="wel-image">
+        <image src="/images/logo.jpg" />
+      </view>
+      <view class="content">
+        <view>传递书籍，就是传递力量！</view>
+        <view>欢迎您的使用！</view>
+      </view>
+      <button class="login-btn" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo">授权登录</button>
+    </view>
+    <view wx:else>您的微信版本太低，请升级微信版本</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import wx from 'utils/wx';
+export default class Welcome extends wepy.page {
+  config = {
+    navigationBarTitleText: '漂流吧图书酱'
+  };
+  data = {
+    canIUse: wx.canIUse('button.open-type.getUserInfo')
+  };
+  methods = {
+    bindGetUserInfo: function(e) {
+      if (e.detail.userInfo) {
+        // 用户点击了授权登录
+        var that = this;
+        console.log(e.detail.userInfo);
+        const userInfo = e.detail.userInfo;
+        that.setData({
+          globalData: {
+            userInfo: userInfo
+          }
+        });
+        wx.switchTab({
+          url: '/pages/tabBar/home'
+        });
+      } else {
+        wx.showModal({
+          title: '抱歉',
+          content: '你拒绝了授权，将无法进入小程序，请先授权',
+          showCancel: false,
+          confirmText: '返回授权',
+          success: function(res) {
+            if (res.confirm) {
+              console.log('return');
+            }
+          }
+        });
+      }
+    }
+  };
+  onLoad() {
+    var that = this;
+    wx.getSetting({
+      success: function(res) {
+        if (res.authSetting['scope.userInfo']) {
+          wx.getUserInfo({
+            success: res => {
+              console.log('welcome---->');
+              const userInfo = res.userInfo;
+              that.setData({
+                globalData: {
+                  userInfo: userInfo
+                }
+              });
+              // 用户授权过
+              wx.switchTab({
+                url: '/pages/tabBar/home'
+              });
+            }
+          });
+        }
+      }
+    });
+  }
+}
+</script>
+
+<style lang="less">
+.welcome-page {
+  background: #ffffff;
+}
+.container {
+  padding: 32rpx;
+  text-align: center;
+}
+.wel-image {
+  padding: 68rpx 0;
+}
+.wel-image image {
+  width: 300rpx;
+  height: 300rpx;
+  border-radius: 50%;
+}
+.content view {
+  padding-top: 12rpx;
+}
+.login-btn {
+  width: 500rpx;
+  margin-top: 32rpx;
+  color: #ffffff;
+  background-color: #31d4da;
+  border-radius: 80rpx;
+}
+</style>
