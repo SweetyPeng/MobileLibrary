@@ -27,14 +27,10 @@ export default class Welcome extends wepy.page {
     bindGetUserInfo: function(e) {
       if (e.detail.userInfo) {
         // 用户点击了授权登录
-        var that = this;
-        console.log(e.detail.userInfo);
+        console.log('userInfo====>', e.detail.userInfo);
         const userInfo = e.detail.userInfo;
-        that.setData({
-          globalData: {
-            userInfo: userInfo
-          }
-        });
+        this.$parent.globalData.userInfo = userInfo;
+        this.saveUserInfo(userInfo);
         wx.switchTab({
           url: '/pages/tabBar/home'
         });
@@ -53,6 +49,13 @@ export default class Welcome extends wepy.page {
       }
     }
   };
+  // 保存用户信息 --云函数 --users表
+  saveUserInfo(params) {
+    wx.cloud.callFunction({
+      name: 'saveUser',
+      data: params
+    });
+  }
   onLoad() {
     var that = this;
     wx.getSetting({
@@ -62,11 +65,8 @@ export default class Welcome extends wepy.page {
             success: res => {
               console.log('welcome---->');
               const userInfo = res.userInfo;
-              that.setData({
-                globalData: {
-                  userInfo: userInfo
-                }
-              });
+              that.$parent.globalData.userInfo = userInfo;
+              that.saveUserInfo(userInfo);
               // 用户授权过
               wx.switchTab({
                 url: '/pages/tabBar/home'
