@@ -34,7 +34,7 @@ export default class Drift extends wepy.page {
       });
       if (resp.scanType === 'EAN_13' || resp.scanType === 'EAN_10') {
         wepy.navigateTo({
-          url: `../bookInfo/bookDetail?isbn=${resp.result}`
+          url: `../scan/scanDetail?isbn=${resp.result}`
         });
       } else {
         this.showToast('请扫描正确的图书条形码！');
