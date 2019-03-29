@@ -49,10 +49,10 @@ export default class Welcome extends wepy.page {
       }
     }
   };
-  // 保存用户信息 --云函数 --users表
+  // 保存用户信息 --云函数 --userList表
   saveUserInfo(params) {
     wx.cloud.callFunction({
-      name: 'saveUser',
+      name: 'signUp',
       data: params
     });
   }
