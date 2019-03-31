@@ -28,7 +28,7 @@ export default class BookList extends wepy.page {
     keyWord: '',
     bookList: [],
     emptyPageData: {
-      url: 'https://oss.biosan.cn/medicClient/coupon/nocoupons.png',
+      url: 'https://oss.biosan.cn/healthWechat/common/empty-img.png',
       description: '暂时没有找到您想要的图书哦'
     }
   };
@@ -45,6 +45,8 @@ export default class BookList extends wepy.page {
         name: word
       }
     }).then(res => {
+      let result = JSON.parse(res.result);
+      console.log('Search图书列表', result);
       return JSON.parse(res.result);
     }).catch(err => {
       console.log(err);
