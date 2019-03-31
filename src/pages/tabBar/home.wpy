@@ -36,10 +36,8 @@
       <view class="item-content">
         <view wx:for="{{newBooks}}" wx:key="{{index}}" class="content-list">
           <image
-            src="{{item.image}}"
-            data-isbn="{{item.isbn}}"
-            data-bookid="{{item._id}}"
-            @tap="onBookDetail({{item.id}})"
+            src="{{item.bookImages.large}}"
+            @tap="onBookDetail({{item.bookID}})"
           />
         </view>
       </view>
@@ -49,6 +47,7 @@
 
 <script>
 import wepy from 'wepy';
+import wx from 'utils/wx';
 import SearchBook from '../homecom/searchBook';
 import RequestMixin from 'mixins/request';
 
@@ -92,29 +91,30 @@ export default class Index extends wepy.page {
       this.$link(linkUrl);
     },
     findMore() {
-      // 点击查看更多
-      console.log('点击查看更多');
+      this.$link(`/pages/bookInfo/bookList?from=findmore`)
     },
-    onBookDetail(id) {
+    onBookDetail(isbn) {
       // 点击查看图书详情
-      console.log('点击查看图书详情');
-      // this.$link(`/pages/bookInfo/bookDetail?id=${id}`);
+      this.$link(`/pages/bookInfo/bookDetail?isbn=${isbn}`);
     }
   };
 
   events = {};
 
-  async getNewBooks() {
-    // TODO: 从后台获取 新书数据
-    const resp = await this.GET('/newbooks', {});
-    console.log(resp);
-    if (resp.statusCode === 200) {
-      this.newbooks = resp.data.newPublishedBooks;
-    } else {
-      console.log('something wrong');
-    }
+  // 获取新书---云函数getNewBooks() ---数据库bookList
+  getNewBooks() {
+    wx.cloud.callFunction({
+      name: 'getNewBooks',
+      data: {
+        pageNum: 0
+      }
+    }).then(res => {
+      console.log(res)
+      this.newBooks = res.result.data.slice(0, 6);
+    }).catch(err => {
+      console.log(err)
+    });
   }
-
   onLoad() {
     this.getNewBooks();
   }
