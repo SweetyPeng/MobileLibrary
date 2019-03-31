@@ -157,6 +157,11 @@ export default class BookDetail extends wepy.page {
       data: {
         bookID: book.isbn,
         bookName: book.title,
+        bookAuthor: book.author,
+        bookPublisher: book.publisher,
+        bookPubdate: book.pubdate,
+        bookSummary: book.summary,
+        bookImages: book.images,
         owner: {
           ownerName: book.ownerName
         }
