@@ -28,7 +28,8 @@ export default class extends wepy.app {
       'pages/mine/evaluate',
       'pages/main/main',
       'pages/forTest/mapTest',
-      'pages/minecom/evaluateSuccess'
+      'pages/minecom/evaluateSuccess',
+      'pages/scan/scanDetail'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -73,7 +74,7 @@ export default class extends wepy.app {
   };
 
   globalData = {
-    userInfo: ''
+    userInfo: {}
   };
 
   constructor() {

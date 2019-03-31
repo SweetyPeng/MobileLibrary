@@ -12,19 +12,23 @@ const db = cloud.database()
 
 // 云函数入口函数
 exports.main = async (event, context) => {
-  const promise = await db.collection('userList').where({
-    _openID: event.userInfo.openid
+  const promise = await db.collection('bookList').where({
+    bookID: event.bookID
   }).get()
   if (promise.data.length == 0) {
     try {
       let bookOwners = [];
-      let owner = {
-        ownerID: event.userInfo.openid
-      }
+      let {
+        ownerName
+      } = event.owner;
+      const owner = {
+        ownerName: ownerName,
+        ownerID: event.userInfo.openId
+      };
       bookOwners.unshift(owner);
       return await db.collection('bookList').add({
         data: {
-          bookID: event.bookId,
+          bookID: event.bookID,
           bookName: event.bookName,
           bookOwners: bookOwners
         }
@@ -33,8 +37,19 @@ exports.main = async (event, context) => {
       console.error(e)
     }
   } else {
+    let {
+      ownerName
+    } = event.owner;
+    const owner = {
+      ownerName: ownerName,
+      ownerID: event.userInfo.openId
+    };
+    const resp = await db.collection('bookList').doc(event.bookId).get();
+    const bookOwners = resp.data.bookOwners || [];
+    bookOwners.unshift(owner);
+    console.log('bookOwners===', bookOwners);
     return await db.collection('bookList').where({
-      bookID: event.bookId
+      bookID: event.bookID
     }).update({
       data: {
         bookOwners: bookOwners
