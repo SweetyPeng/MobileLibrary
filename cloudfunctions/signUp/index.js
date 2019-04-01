@@ -17,23 +17,31 @@ exports.main = async (event, context) => {
   }).get()
   if (promise.data.length == 0) {
     try {
-      return await db.collection('userList').add({
+      let result = await db.collection('userList').add({
         data: {
           nickName: event.nickName,
           avatarUrl: event.avatarUrl,
           _openID: event.userInfo.openid
         }
       })
+      result = Object.assign (result, {
+        openId: event.userInfo.openId
+      })
+      return result;
     } catch (e) {
       console.error(e)
     }
   } else {
-    return await db.collection('userList').update({
+    let result = await db.collection('userList').update({
       data: {
         nickName: event.nickName,
         avatarUrl: event.avatarUrl,
         _openID: event.userInfo.openid
       }
     })
+    result = Object.assign (result, {
+      openId: event.userInfo.openId
+    })
+    return result;
   }
 }

@@ -54,6 +54,8 @@ export default class Welcome extends wepy.page {
     wx.cloud.callFunction({
       name: 'signUp',
       data: params
+    }).then(res => {
+      this.$parent.globalData.openId = res.result.openId;
     });
   }
   onLoad() {
