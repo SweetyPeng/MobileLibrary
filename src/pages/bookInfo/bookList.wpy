@@ -5,7 +5,7 @@
         <BookListCard :item="item"/>
       </repeat>
     </block>
-    <block wx:if="{{newBookList.length>0}}">
+    <block wx:elif="{{newBookList.length>0}}">
       <repeat for="{{newBookList}}" key="index" item="item">
         <NewBookListCard :item="item"/>
       </repeat>
