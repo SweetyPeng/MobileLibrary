@@ -154,7 +154,6 @@ export default class BookDetail extends wepy.page {
       }
       this.visible = false;
       this.$loading('发送中');
-      // TODO: 借阅信息发送
       this.saveBorrowMsg();
       this.$invoke('ModalFixedBtm', 'close');
     }
@@ -172,11 +171,11 @@ export default class BookDetail extends wepy.page {
       }
     }).then(res => {
       console.log('saveBorrowMsg', res)
-      if (res.errMsg === 'cloud.callFunction:ok') {
+      if (res.result._id) {
         this.$toast('请求发送成功!');
         // TODO: 发送成功跳转页面
-      } else {
-        this.$toast('请求发送失败,请重试!');
+      } else if(res.result.code){
+        this.$toast(res.result.message);
       }
     })
   }

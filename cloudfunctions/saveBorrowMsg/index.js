@@ -12,11 +12,11 @@ const db = cloud.database()
 
 // 云函数入口函数
 exports.main = async (event, context) => {
-  const hasBorrow = db.collection('borrowMsg').where({
+  const hasBorrow = await db.collection('borrowMsg').where({
     userID: event.userInfo.openId,
     bookID: event.bookID,
     bookOwnerID: event.bookOwnerID
-  })
+  }).get()
   if (hasBorrow.data.length == 0) {
     try {
       return await db.collection('borrowMsg').add({
@@ -25,7 +25,7 @@ exports.main = async (event, context) => {
           bookID: event.bookID,
           bookOwnerID: event.bookOwnerID,
           bookOwnerName: event.bookOwnerName,
-          borrowMessge: event.borrowMessge,
+          borrowMessage: event.borrowMessage,
           borrowTime: event.borrowTime
         }
       })
@@ -35,7 +35,7 @@ exports.main = async (event, context) => {
   } else {
     return {
       code: 99999,
-      message: '您已经提交借阅请，耐心等待，请勿重复申请'
+      message: '您已经提交申请，请耐心等待'
     }
   }
 
