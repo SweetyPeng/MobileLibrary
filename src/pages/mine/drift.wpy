@@ -1,18 +1,54 @@
 <template>
-  <view>
-    我的漂流
+  <view class="container">
+    <view wx:for="{{postBooks}}" wx:key="{{index}}" class="content-list">
+      <image src="{{item.bookImages.large}}" @tap="onBookDetail({{item.bookID}})"/>
+    </view>
   </view>
 </template>
 <script>
 import wepy from 'wepy';
-export default class Borrow extends wepy.component {
+import wx from 'utils/wx';
+export default class Drift extends wepy.page {
   config = {
     navigationBarTitleText: '我的漂流'
   };
-  onLoad() {
-    console.log('漂流');
+  data = {
+    postBooks: []
   }
-};
+  methods = {
+    onBookDetail(id) {
+      this.$link(`/pages/drift/driftDetail?isbn=${id}`);
+    }
+  }
+  onLoad() {}
+
+  onShow() {
+    this.getPostBooks();
+  }
+  getPostBooks() {
+    wx.cloud.callFunction({
+      name: 'getPostBooks',
+      data: {}
+    }).then(res => {
+      console.log('getPostBooks----->', res)
+      this.postBooks = res.result.data;
+      this.$apply();
+    })
+  }
+}
 </script>
 <style lang="less">
+.container {
+  padding: 32rpx;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
+  .content-list {
+    image {
+      width: 200rpx;
+      height: 300rpx;
+    }
+  }
+}
 </style>
