@@ -23,6 +23,7 @@ exports.main = async (event, context) => {
         data: {
           userID: event.userInfo.openId,
           bookID: event.bookID,
+          bookImages: event.bookImages,
           bookOwnerID: event.bookOwnerID,
           bookOwnerName: event.bookOwnerName,
           borrowMessage: event.borrowMessage,

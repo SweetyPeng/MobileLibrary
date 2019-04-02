@@ -164,6 +164,7 @@ export default class BookDetail extends wepy.page {
       name: 'saveBorrowMsg',
       data: {
         bookID: this.bookInfo.isbn,
+        bookImages: this.bookInfo.images.large,
         bookOwnerID: this.bookStatusInfo.ownerID,
         bookOwnerName: this.bookStatusInfo.ownerName,
         borrowMessage: this.borrowMessage,
@@ -174,7 +175,7 @@ export default class BookDetail extends wepy.page {
       if (res.result._id) {
         this.$toast('请求发送成功!');
         // TODO: 发送成功跳转页面
-      } else if(res.result.code){
+      } else if (res.result.code) {
         this.$toast(res.result.message);
       }
     })
