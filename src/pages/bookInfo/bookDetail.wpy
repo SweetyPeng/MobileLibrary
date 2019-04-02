@@ -5,12 +5,17 @@
       title="该书籍状态">
       <view>
         <view style="padding:32rpx;">
-          <view>持书人:</view>
-          <view style="color:#4A90E2;text-decoration:underline;margin-top:16rpx;">彭甜甜</view>
+          <view>当前持书人:</view>
+          <view style="color:#4A90E2;text-decoration:underline;margin-top:16rpx;">
+            <view wx:if="{{bookStatusInfo.length>0}}">
+              <view>{{bookStatusInfo.ownerName}}</view>
+            </view>
+            <view wx:else>暂无人发布</view>
+          </view>
         </view>
-        <view style="padding:0 32rpx;margin-top:64rpx;">
+        <view style="padding:0 32rpx;margin-top:32rpx;">
           <button type="primary" size="mini" bindtap="publish">我要发布</button>
-          <button type="primary" size="mini" bindtap="borrow">我要借阅</button>
+          <button type="primary" size="mini" style="margin-left: 64rpx;" wx:if="{{bookStatusInfo.length>0}}" bindtap="borrow">我要借阅</button>
         </view>
       </view>
     </ModalFixedBtm>
@@ -89,8 +94,11 @@ export default class BookDetail extends wepy.page {
   };
   data = {
     bookInfo: {},
+    bookStatusInfo: [],
+    borrowMessage: {},
     isIpx: false,
     ownerName: '',
+    openId: '',
     visible: false, // 表单弹框
     hidden: true, // 隐藏借阅按钮
     infoVisible: false // 输入提示信息
@@ -116,7 +124,7 @@ export default class BookDetail extends wepy.page {
       let { type } = resp;
       if (type === 'confirm') {
         let book = this.bookInfo;
-        this.postBooks(book);
+        this.userPostBook(book);
         this.$invoke('ModalFixedBtm', 'close');
       }
     },
@@ -128,15 +136,18 @@ export default class BookDetail extends wepy.page {
     },
     checkBookStatus() {
       this.$invoke('ModalFixedBtm', 'open');
+      this.checkBookStatusInfo();
     },
     submit(e) {
-      console.log(e.detail);
       let wxNum = e.detail.value.wxNum;
       let phoneNum = e.detail.value.phoneNum;
       let msg = e.detail.value.msg;
-      let bookData = this.bookInfo;
-      console.log(msg);
-      console.log(bookData);
+      this.borrowMessage = {
+        wxNum: wxNum,
+        phoneNum: phoneNum,
+        msg: msg
+      };
+      // let bookData = this.bookInfo;
       if (!wxNum || !phoneNum || phoneNum.length !== 11) {
         this.infoVisible = true
         return;
@@ -144,10 +155,73 @@ export default class BookDetail extends wepy.page {
       this.visible = false;
       this.$loading('发送中');
       // TODO: 借阅信息发送
+      this.saveBorrowMsg();
       this.$invoke('ModalFixedBtm', 'close');
     }
   };
-
+  // 保存借书信息
+  saveBorrowMsg() {
+    wx.callFunction({
+      name: 'saveBorrowMsg',
+      data: {
+        bookID: this.bookInfo.isbn,
+        bookOwnerID: this.bookStatusInfo.ownerID,
+        bookOwnerName: this.bookStatusInfo.ownerName,
+        borrowMessage: this.borrowMessage,
+        borrowTime: new Date().toLocaleString()
+      }
+    }).then(res => {
+      console.log('saveBorrowMsg', res)
+      if (res.errMsg === 'cloud.callFunction:ok') {
+        this.$toast('请求发送成功!');
+        // TODO: 发送成功跳转页面
+      } else {
+        this.$toast('请求发送失败,请重试!');
+      }
+    })
+  }
+  // 查看书籍状态信息
+  async checkBookStatusInfo() {
+    const isbn = this.bookInfo.isbn;
+    const db = wx.cloud.database({});
+    let resp = await db.collection('booksCollection').where({
+      bookID: isbn
+    }).get();
+    if (resp.data.length > 0) {
+      this.bookStatusInfo = resp.data[0];
+      this.$apply();
+    } else {
+      this.bookStatusInfo = [];
+    }
+  }
+  // 图书-用户
+  userPostBook(book) {
+    this.ownerName = this.$parent.globalData.userInfo.nickName;
+    this.openId = this.$parent.globalData.openId;
+    book.ownerName = this.ownerName;
+    wx.cloud.callFunction({
+      name: 'userPostBook',
+      data: {
+        bookID: book.isbn,
+        bookName: book.title,
+        bookAuthor: book.author,
+        bookPublisher: book.publisher,
+        bookPubdate: book.pubdate,
+        bookSummary: book.summary,
+        bookImages: book.images,
+        ownerName: book.ownerName,
+        ownerID: this.openId
+      }
+    }).then(res => {
+      console.log('userPostbook=====>', res)
+      if (res.errMsg === 'cloud.callFunction:ok') {
+        this.$toast('发布成功!');
+        // TODO: 发布成功跳转页面
+      } else {
+        this.$toast('发布失败,请重试!');
+      }
+    })
+  }
   // 发布图书--业务流程--图书数据库--bookList
   postBooks(book) {
     this.ownerName = this.$parent.globalData.userInfo.nickName;
@@ -193,33 +267,14 @@ export default class BookDetail extends wepy.page {
       .catch(err => {
         console.log(err);
       });
-    // const db = wx.cloud.database({});
-    // const book = db.collections('books');
-    // db.collection('books').add({
-    //   // data字段表示需新增的JSON数据
-    //   data: resp
-    // }).then(res => {
-    //   console.log(res)
-    // }).catch(err => {
-    //   console.log(err)
-    // });
     if (resp) {
-      // resp.rating = Object.assign(resp.rating, {
-      //   block: getStar(resp.rating.average)
-      // });
-      // if (resp.summary.length > 100) {
-      //   resp.summary = resp.summary.substr(0, 100) + '...';
-      // }
-      console.log('resp=====>', resp);
+      console.log('resp图书详情', resp);
     }
     this.bookInfo = resp;
     this.$apply();
   }
 
   onLoad(options) {
-    // let isbn = options.isbn;
-    // let owner = this.globalData.userInfo.nickname;
-    // let ownerImg = this.globalData.userInfo.avatarUrl;
     if (options.id) {
       const param = {
         id: options.id
