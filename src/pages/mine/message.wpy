@@ -1,18 +1,58 @@
 <template>
-  <view>
-    我的消息
+  <view class="message-contain">
+    <block wx:if="{{messageData && messageData.length>0}}">
+      <repeat for="{{messageData}}" key="index" index="index" item="item">
+        <NoticeCard :item.sync="item"/>
+      </repeat>
+    </block>
+    <block wx:else>
+      <EmptyPage :item.sync="emptyPageData"/>
+    </block>
   </view>
 </template>
 <script>
 import wepy from 'wepy';
-export default class Borrow extends wepy.component {
+import wx from 'utils/wx';
+import NoticeCard from '../message/noticeCard';
+import EmptyPage from 'components/empty';
+export default class Message extends wepy.page {
   config = {
     navigationBarTitleText: '我的消息'
   };
-  onLoad() {
-    console.log('message');
+  components = {
+    NoticeCard,
+    EmptyPage
+  };
+  data = {
+    messageData: [],
+    emptyPageData: {
+      url: 'https://oss.biosan.cn/healthWechat/common/empty-img.png',
+      description: '暂时没有消息哦'
+    }
+  };
+
+  // 获取消息列表
+  getMessageList() {
+    wx.cloud.callFunction({
+      name: 'getMessageList',
+      data: {}
+    }).then(res => {
+      console.log('getMessageList----->', res)
+      this.messageData = res.result.data;
+      this.$apply();
+    })
   }
-};
+  onLoad() {
+    this.getMessageList();
+  }
+}
 </script>
 <style lang="less">
+page {
+  background-color: #f5f5f5;
+  height: 100%;
+}
+.message-contain {
+  height: 100%;
+}
 </style>
