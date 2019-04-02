@@ -116,6 +116,8 @@ export default class Index extends wepy.page {
     });
   }
   onLoad() {
+  }
+  onShow() {
     this.getNewBooks();
   }
 }
