@@ -26,10 +26,10 @@ export default class extends wepy.app {
       'pages/mine/drift',
       'pages/mine/thought',
       'pages/mine/evaluate',
-      'pages/main/main',
       'pages/forTest/mapTest',
       'pages/minecom/evaluateSuccess',
-      'pages/scan/scanDetail'
+      'pages/scan/scanDetail',
+      'pages/drift/driftDetail'
     ],
     window: {
       backgroundTextStyle: 'light',
