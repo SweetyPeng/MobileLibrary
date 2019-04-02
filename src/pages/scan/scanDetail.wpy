@@ -57,7 +57,8 @@ export default class ScanDetail extends wepy.page {
     isIpx: false,
     hidden: true, // 隐藏借阅按钮
     infoVisible: false, // 输入提示信息
-    ownerName: ''
+    ownerName: '',
+    openId: ''
   }
   mixins = [RequestMixin];
   methods = {
@@ -80,7 +81,7 @@ export default class ScanDetail extends wepy.page {
       let { type } = resp;
       if (type === 'confirm') {
         let book = this.bookInfo;
-        this.postBooks(book);
+        this.userPostBook(book);
       }
     },
     writeReview() {
@@ -89,10 +90,9 @@ export default class ScanDetail extends wepy.page {
     }
   };
 
-  // isbn 查询图书详情信息 --云函数
+  // isbn 查询图书详情信息 --云函数bookInfo
   async queryBookById(param) {
     const resp = await wx.cloud.callFunction({
-      // 传递给云函数的参数
       name: 'bookInfo',
       data: param
     }).then(res => {
@@ -100,21 +100,16 @@ export default class ScanDetail extends wepy.page {
     }).catch(err => {
       console.log(err);
     });
-    if (resp) {
-      this.saveBooks(resp);
-      if (resp.summary.length > 150) {
-        resp.summary = resp.summary.substr(0, 150) + '······';
-      }
-    }
+    this.saveBooks(resp);
     this.bookInfo = resp;
     this.$apply();
   }
 
-  // 发布图书--业务流程--图书数据库--bookList
-  postBooks(book) {
+  // 发布图书，图书-用户
+  userPostBook(book) {
     book.ownerName = this.ownerName;
     wx.cloud.callFunction({
-      name: 'postBook',
+      name: 'userPostBook',
       data: {
         bookID: book.isbn13,
         bookName: book.title,
@@ -123,12 +118,11 @@ export default class ScanDetail extends wepy.page {
         bookPubdate: book.pubdate,
         bookSummary: book.summary,
         bookImages: book.images,
-        owner: {
-          ownerName: book.ownerName
-        }
+        ownerName: book.ownerName,
+        ownerID: this.openId
       }
     }).then(res => {
-      console.log('postbook=====>', res)
+      console.log('userPostbook=====>', res)
       if (res.errMsg === 'cloud.callFunction:ok') {
         this.$toast('发布成功!');
         // TODO: 发布成功跳转页面
@@ -162,6 +156,7 @@ export default class ScanDetail extends wepy.page {
 
   onLoad(options) {
     this.ownerName = this.$parent.globalData.userInfo.nickName;
+    this.openId = this.$parent.globalData.openId;
     if (options.isbn) {
       const param = {
         isbn: options.isbn

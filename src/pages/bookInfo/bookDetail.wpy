@@ -161,7 +161,7 @@ export default class BookDetail extends wepy.page {
   };
   // 保存借书信息
   saveBorrowMsg() {
-    wx.callFunction({
+    wx.cloud.callFunction({
       name: 'saveBorrowMsg',
       data: {
         bookID: this.bookInfo.isbn,
