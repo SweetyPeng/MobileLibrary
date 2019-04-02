@@ -22,7 +22,9 @@ exports.main = async (event, context) => {
       return await db.collection('borrowMsg').add({
         data: {
           userID: event.userInfo.openId,
+          userName: event.userName,
           bookID: event.bookID,
+          bookName: event.bookName,
           bookImages: event.bookImages,
           bookOwnerID: event.bookOwnerID,
           bookOwnerName: event.bookOwnerName,

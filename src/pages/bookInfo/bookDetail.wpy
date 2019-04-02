@@ -165,10 +165,12 @@ export default class BookDetail extends wepy.page {
       data: {
         bookID: this.bookInfo.isbn,
         bookImages: this.bookInfo.images.large,
+        bookName: this.bookInfo.title,
         bookOwnerID: this.bookStatusInfo.ownerID,
         bookOwnerName: this.bookStatusInfo.ownerName,
         borrowMessage: this.borrowMessage,
-        borrowTime: new Date().toLocaleString()
+        borrowTime: new Date().toLocaleString(),
+        userName: this.$parent.globalData.userInfo.nickName
       }
     }).then(res => {
       console.log('saveBorrowMsg', res)
