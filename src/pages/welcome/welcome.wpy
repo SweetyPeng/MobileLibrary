@@ -27,13 +27,13 @@ export default class Welcome extends wepy.page {
     bindGetUserInfo: function(e) {
       if (e.detail.userInfo) {
         // 用户点击了授权登录
-        console.log('userInfo====>', e.detail.userInfo);
+        console.log('userInfo=====>', e.detail.userInfo);
         const userInfo = e.detail.userInfo;
         this.$parent.globalData.userInfo = userInfo;
-        this.saveUserInfo(userInfo);
         wx.switchTab({
           url: '/pages/tabBar/home'
         });
+        this.saveUserInfo(userInfo);
       } else {
         wx.showModal({
           title: '抱歉',
@@ -42,7 +42,7 @@ export default class Welcome extends wepy.page {
           confirmText: '返回授权',
           success: function(res) {
             if (res.confirm) {
-              console.log('return');
+              console.log('拒绝授权----->return');
             }
           }
         });
@@ -65,14 +65,14 @@ export default class Welcome extends wepy.page {
         if (res.authSetting['scope.userInfo']) {
           wx.getUserInfo({
             success: res => {
-              console.log('welcome---->');
+              console.log('welcome---->', res.userInfo);
               const userInfo = res.userInfo;
               that.$parent.globalData.userInfo = userInfo;
-              that.saveUserInfo(userInfo);
               // 用户授权过
               wx.switchTab({
                 url: '/pages/tabBar/home'
               });
+              that.saveUserInfo(userInfo);
             }
           });
         }

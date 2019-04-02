@@ -12,19 +12,22 @@ const db = cloud.database()
 
 // 云函数入口函数
 exports.main = async (event, context) => {
-  const promise = await db.collection('userList').where({
-    _openID: event.userInfo.openid
+  let hasUser = await db.collection('userList').where({
+    _openID: event.userInfo.openId
   }).get()
-  if (promise.data.length == 0) {
+    if (hasUser.data.length > 0) {
     try {
-      let result = await db.collection('userList').add({
+      let result = await db.collection('userList')
+      .where({
+        _openID: event.userInfo.openId
+      })
+      .update({
         data: {
           nickName: event.nickName,
           avatarUrl: event.avatarUrl,
-          _openID: event.userInfo.openid
         }
       })
-      result = Object.assign (result, {
+      result = Object.assign(result, {
         openId: event.userInfo.openId
       })
       return result;
@@ -32,14 +35,15 @@ exports.main = async (event, context) => {
       console.error(e)
     }
   } else {
-    let result = await db.collection('userList').update({
-      data: {
-        nickName: event.nickName,
-        avatarUrl: event.avatarUrl,
-        _openID: event.userInfo.openid
-      }
-    })
-    result = Object.assign (result, {
+    let result = await db.collection('userList')
+    .add({
+        data: {
+          nickName: event.nickName,
+          avatarUrl: event.avatarUrl,
+          _openID: event.userInfo.openId
+        }
+      })
+    result = Object.assign(result, {
       openId: event.userInfo.openId
     })
     return result;
