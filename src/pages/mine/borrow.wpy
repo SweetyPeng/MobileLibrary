@@ -1,18 +1,54 @@
 <template>
-  <view>
-    我的借阅
+  <view class="container">
+    <view wx:for="{{borrowedBooks}}" wx:key="{{index}}" class="content-list">
+      <image src="{{item.bookImages}}" @tap="onBookDetail({{item.bookID}})"/>
+    </view>
   </view>
 </template>
 <script>
 import wepy from 'wepy';
-export default class Borrow extends wepy.component {
+import wx from 'utils/wx';
+export default class Drift extends wepy.page {
   config = {
     navigationBarTitleText: '我的借阅'
   };
-  onLoad() {
-    console.log('borrow');
+  data = {
+    borrowedBooks: []
   }
-};
+  methods = {
+    onBookDetail(id) {
+      this.$link(`/pages/drift/driftDetail?isbn=${id}`);
+    }
+  }
+  onLoad() {}
+
+  onShow() {
+    this.getBorrowedBooks();
+  }
+  getBorrowedBooks() {
+    wx.cloud.callFunction({
+      name: 'getBorrowedBooks',
+      data: {}
+    }).then(res => {
+      console.log('getBorrowedBooks----->', res)
+      this.borrowedBooks = res.result.data;
+      this.$apply();
+    })
+  }
+}
 </script>
 <style lang="less">
+.container {
+  padding: 32rpx;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
+  .content-list {
+    image {
+      width: 200rpx;
+      height: 300rpx;
+    }
+  }
+}
 </style>
