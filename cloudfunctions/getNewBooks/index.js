@@ -12,6 +12,6 @@ const MAX_LIMIT = 6;
 
 // 云函数入口函数
 exports.main = async (event, context) => 
-  await db.collection('bookList')
+  await db.collection('booksCollection')
   .orderBy('postTime', 'desc')
   .get()
