@@ -1,23 +1,43 @@
 <template>
-  <view class="container">
+  <view class="drift-container {{!postBooks.length ? 'empty-style':''}}">
     <view wx:for="{{postBooks}}" wx:key="{{index}}" class="content-list">
       <image src="{{item.bookImages.large}}" @tap="onBookDetail({{item.bookID}})"/>
+    </view>
+    <view wx:if="{{!postBooks.length}}">
+      <EmptyPage 
+        :item="emptyPageData"
+        @bindTap.user="bindTap"/>
     </view>
   </view>
 </template>
 <script>
 import wepy from 'wepy';
 import wx from 'utils/wx';
+import EmptyPage from 'components/empty';
+
 export default class Drift extends wepy.page {
   config = {
     navigationBarTitleText: '我的漂流'
   };
+  components = {
+    EmptyPage
+  };
   data = {
-    postBooks: []
+    postBooks: [],
+    emptyPageData: {
+      url: 'https://oss.biosan.cn/healthWechat/common/empty-img.png',
+      description: '您还没有发布漂流哦',
+      btn: '点我去发布漂流'
+    }
   }
   methods = {
     onBookDetail(id) {
       this.$link(`/pages/drift/driftDetail?isbn=${id}`);
+    },
+    bindTap() {
+      wx.switchTab({
+        url: '/pages/tabBar/scan'
+      })
     }
   }
   onLoad() {}
@@ -38,17 +58,26 @@ export default class Drift extends wepy.page {
 }
 </script>
 <style lang="less">
-.container {
-  padding: 32rpx;
+.drift-container {
+  padding: 32rpx 0;
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  justify-content: space-between;
   .content-list {
+    width:350rpx;
+    height:400rpx;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 20rpx 15rpx 10rpx #cccccc;
     image {
       width: 200rpx;
       height: 300rpx;
     }
   }
+}
+.empty-style {
+  display: flex;
+  justify-content: center;
 }
 </style>
