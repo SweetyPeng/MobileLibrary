@@ -1,12 +1,12 @@
 <template>
-  <view class="notice-card" bindtap="toDetail">
+  <view class="notice-card" bindtap="toDetail({{item._id}})">
     <view class="time_state">
       <view class="_icon iconfont icon-icon_news_Coupons" style="color:orange"></view>
       <view>借阅申请</view>
       <view>{{item.borrowTime}}</view>
     </view>
-    <view class="bookname">《{{item.bookName}}》</view>
-    <view class="borrower">{{item.userName}}</view>
+    <view class="bookname">书名：《{{item.bookName}}》</view>
+    <view class="borrower">申请人：{{item.userName}}</view>
   </view>
 </template>
 <script>
@@ -20,8 +20,8 @@ export default class NoticeCard extends wepy.component {
     }
   };
   methods = {
-    toDetail() {
-      console.log('to detail');
+    toDetail(id) {
+      this.$link(`../message/noticeDetail?noticeId=${id}`);
     }
   }
 };

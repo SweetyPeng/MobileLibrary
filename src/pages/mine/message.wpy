@@ -34,7 +34,7 @@ export default class Message extends wepy.page {
   // 获取消息列表
   getMessageList() {
     wx.cloud.callFunction({
-      name: 'getMessageList',
+      name: 'getMessage',
       data: {}
     }).then(res => {
       console.log('getMessageList----->', res)

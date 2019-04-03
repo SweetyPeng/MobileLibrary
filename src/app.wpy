@@ -29,7 +29,8 @@ export default class extends wepy.app {
       'pages/forTest/mapTest',
       'pages/minecom/evaluateSuccess',
       'pages/scan/scanDetail',
-      'pages/drift/driftDetail'
+      'pages/drift/driftDetail',
+      'pages/message/noticeDetail'
     ],
     window: {
       backgroundTextStyle: 'light',

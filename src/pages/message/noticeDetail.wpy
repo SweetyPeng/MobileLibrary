@@ -1,0 +1,169 @@
+<template>
+  <view class="detail-container">
+    <!-- 是否同意借阅模态框 -->
+    <bsDialog>
+      <view slot="bsDialog_content" class="content-tip">
+        <view>请您确定是否同意借阅?</view>
+      </view>
+    </bsDialog>
+    <block>
+      <view class="details-title">借阅申请信息</view>
+      <view class="card-wrap">
+        <text>书名</text>
+        <text class="detail-right">《{{noticeData.bookName}}》</text>
+      </view>
+      <view class="card-wrap">
+        <text>申请人</text>
+        <text class="detail-right">{{noticeData.userName}}</text>
+      </view>
+      <view class="card-wrap">
+        <text>申请人地址</text>
+        <text class="detail-right">{{noticeData.address || '对方没有填写'}}</text>
+      </view>
+      <view class="card-wrap">
+        <text>申请时间</text>
+        <text class="detail-right">{{noticeData.borrowTime}}</text>
+      </view>
+      <view class="card-wrap">
+        <text>申请留言</text>
+        <text class="detail-right">{{noticeData.borrowMessage.msg}}</text>
+      </view>
+    </block>
+    <block wx:if="{{show}}">
+      <view class="details-title">联系方式<text style="color:#f09450;font-size:26rpx;">（请及时联系对方，完成漂流）</text></view>
+      <view class="card-wrap">
+        <text>申请人微信号</text>
+        <text class="detail-right">{{noticeData.borrowMessage.wxNum}}</text>
+      </view>
+      <view class="card-wrap">
+        <text>申请人手机号</text>
+        <text class="detail-right">{{noticeData.borrowMessage.phoneNum}}</text>
+      </view>
+    </block>
+    <block>
+      <view class="tips-wrap">
+        <view>温馨提示：予人玫瑰，手有余香。分享传递，快乐你我。</view>
+      </view>
+    </block>
+    <block>
+      <view class="btn-wrap">
+        <view class="btn" wx:if="{{show}}">已同意借阅</view>
+        <view class="btn" bindtap="showInfo" wx:else>是否同意借阅</view>
+      </view>
+    </block>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import wx from 'utils/wx';
+import bsDialog from 'components/bs_dialog';
+
+export default class NoticeDetail extends wepy.page {
+  config = {
+    navigationBarTitleText: '消息详情'
+  };
+  components = {
+    bsDialog
+  };
+  data = {
+    show: false,
+    noticeId: '',
+    noticeData: {}
+  };
+  methods = {
+    async showInfo() {
+      let { type } = await this.$invoke('bsDialog', 'showBsDialog', {
+        cancelText: '取消',
+        confirmText: '同意'
+      });
+      if (type === 'confirm') {
+        this.show = true;
+        this.$apply();
+      }
+    }
+  };
+  // 获取借阅消息
+  getMessage() {
+    let isDetail = true;
+    wx.cloud.callFunction({
+      name: 'getMessage',
+      data: {
+        isDetail: isDetail,
+        _id: this.noticeId
+      }
+    }).then(res => {
+      console.log('getMessage----->', res)
+      this.noticeData = res.result.data[0];
+      this.$apply();
+    })
+  }
+  onLoad(options) {
+    this.noticeId = options.noticeId;
+    this.getMessage();
+  }
+}
+</script>
+<style lang="less">
+Page {
+  background-color: #f5f5f5;
+}
+.content-tip {
+  font-size: 32rpx;
+  color: rgba(93,93,93,1);
+  line-height: 40rpx;
+  text-align: center;
+}
+.detail-container {
+  padding-bottom: 68rpx;
+  font-size: 28rpx;
+  .details-title {
+    height: 120rpx;
+    line-height: 120rpx;
+    padding: 0 32rpx;
+    color: #5d5d5d;
+    font-size: 32rpx;
+    font-weight: bold;
+  }
+  .card-wrap {
+    height: 80rpx;
+    display: flex;
+    padding: 0 32rpx;
+    align-items: center;
+    background: #ffffff;
+    justify-content: space-between;
+    border-bottom: 1px solid #f2f2f2;
+    :first-child {
+      color: #9d9d9d;
+      font-size: 28rpx;
+    }
+    :last-child {
+      color: #5d5d5d;
+      font-size: 28rpx;
+    }
+  }
+  .btn-wrap {
+    margin-top: 120rpx;
+    height: 96rpx;
+    display: flex;
+    align-items: center;
+    margin-bottom: 52rpx;
+    justify-content: center;
+    .btn {
+      width: 560rpx;
+      height: 96rpx;
+      color: white;
+      font-size: 32rpx;
+      line-height: 96rpx;
+      text-align: center;
+      border-radius: 48rpx;
+      background-color: #31d4da;
+    }
+  }
+  .tips-wrap {
+    margin: 32rpx 32rpx;
+    color: #188FF2;
+    font-size: 24rpx;
+    line-height: 40rpx;
+  }
+}
+</style>
