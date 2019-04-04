@@ -24,7 +24,7 @@ export default class DonePage extends wepy.page {
 
   methods = {
     finish() {
-      if (this.status === 'postSuccess_fromScan' || this.status === 'postSuccess_fromSearch') {
+      if (this.status === 'postSuccess_fromScan' || this.status === 'postSuccess_fromSearch' || this.status === 'requestSuccess_fromSearch') {
         wepy.switchTab({
           url: '/pages/tabBar/home'
         });
