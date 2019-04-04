@@ -34,7 +34,7 @@
     </scroll-view>
     <!-- 底部按钮 -->
     <view class="btn-group {{isIpx?'mb68':''}}">
-      <view class="write-btn" bindtap="writeReview">写书评</view>
+      <!-- <view class="write-btn" bindtap="writeReview">写书评</view> -->
       <view class="publish-btn" bindtap="publishBook">我要发布</view>
     </view>
   </view>
@@ -58,7 +58,8 @@ export default class ScanDetail extends wepy.page {
     hidden: true, // 隐藏借阅按钮
     infoVisible: false, // 输入提示信息
     ownerName: '',
-    openId: ''
+    openId: '',
+    isbn: ''
   }
   mixins = [RequestMixin];
   methods = {
@@ -83,10 +84,6 @@ export default class ScanDetail extends wepy.page {
         let book = this.bookInfo;
         this.userPostBook(book);
       }
-    },
-    writeReview() {
-      // TODO: 书评
-      console.log('写书评');
     }
   };
 
@@ -100,32 +97,32 @@ export default class ScanDetail extends wepy.page {
     }).catch(err => {
       console.log(err);
     });
-    this.saveBooks(resp);
+    if (resp) {
+      this.saveBooks(resp);
+    }
     this.bookInfo = resp;
     this.$apply();
   }
 
   // 发布图书，图书-用户
   userPostBook(book) {
-    book.ownerName = this.ownerName;
     wx.cloud.callFunction({
       name: 'userPostBook',
       data: {
-        bookID: book.isbn13,
+        bookID: this.isbn,
         bookName: book.title,
         bookAuthor: book.author,
         bookPublisher: book.publisher,
         bookPubdate: book.pubdate,
         bookSummary: book.summary,
         bookImages: book.images,
-        ownerName: book.ownerName,
+        ownerName: this.ownerName,
         ownerID: this.openId
       }
     }).then(res => {
       console.log('userPostbook=====>', res)
       if (res.errMsg === 'cloud.callFunction:ok') {
-        this.$toast('发布成功!');
-        // TODO: 发布成功跳转页面
+        this.$redirect('./donePage?status=postSuccess_fromScan')
       } else {
         this.$toast('发布失败,请重试!');
       }
@@ -134,29 +131,28 @@ export default class ScanDetail extends wepy.page {
 
   // 将扫描所得图书存入数据库--bookLibrary
   saveBooks(book) {
-    const db = wx.cloud.database({});
-    db.collection('bookLibrary').add({
+    wx.cloud.callFunction({
+      name: 'saveScanBook',
       data: {
-        id: book.id,
-        isbn: book.isbn13,
+        id_scan: book.id,
+        isbn: book.isbn,
         author: book.author,
         title: book.title,
         pubdate: book.pubdate,
         publisher: book.publisher,
         image: book.image,
-        images: book.images,
+        image_large: book.images.large,
         summary: book.summary
       }
-    }).then(res => {
-      console.log('saveBooks=====>', res);
-    }).catch(err => {
-      console.log('saveBooks=====>', err)
+    }).then( res => {
+      console.log(res);
     })
   }
 
   onLoad(options) {
     this.ownerName = this.$parent.globalData.userInfo.nickName;
     this.openId = this.$parent.globalData.openId;
+    this.isbn = options.isbn;
     if (options.isbn) {
       const param = {
         isbn: options.isbn
@@ -260,7 +256,7 @@ export default class ScanDetail extends wepy.page {
     bottom: 0;
     left: 0;
     .publish-btn{
-      width: 60%;
+      width: 100%;
       height: 100%;
       font-size: 36rpx;
       display: inline-block;
