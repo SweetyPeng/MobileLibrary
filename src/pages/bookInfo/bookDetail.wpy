@@ -175,8 +175,7 @@ export default class BookDetail extends wepy.page {
     }).then(res => {
       console.log('saveBorrowMsg', res)
       if (res.result._id) {
-        this.$toast('请求发送成功!');
-        // TODO: 发送成功跳转页面
+        this.$redirect('../scan/donePage?status=requestSuccess_fromSearch')
       } else if (res.result.code) {
         this.$toast(res.result.message);
       }
@@ -220,8 +219,7 @@ export default class BookDetail extends wepy.page {
     }).then(res => {
       console.log('userPostbook=====>', res)
       if (res.errMsg === 'cloud.callFunction:ok') {
-        this.$toast('发布成功!');
-        // TODO: 发布成功跳转页面
+        this.$redirect('../scan/donePage?status=postSuccess_fromSearch')
       } else {
         this.$toast('发布失败,请重试!');
       }

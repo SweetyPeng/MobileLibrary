@@ -13,10 +13,9 @@ const db = cloud.database()
 // 云函数入口函数
 exports.main = async (event, context) => {
   try {
-    const status = true;
+    const status = event.status || true;
     const postTime = new Date(Date.now() - -8 * 60 * 60 * 1000).toJSON()
       .substr(0, 16)
-      .replace(/-/g, '/')
       .replace(/T/g, ' ');
     return await db.collection('booksCollection').add({
       data: {

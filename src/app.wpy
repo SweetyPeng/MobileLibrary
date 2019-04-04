@@ -29,6 +29,8 @@ export default class extends wepy.app {
       'pages/forTest/mapTest',
       'pages/minecom/evaluateSuccess',
       'pages/scan/scanDetail',
+      'pages/scan/inputBook',
+      'pages/scan/donePage',
       'pages/drift/driftDetail',
       'pages/message/noticeDetail'
     ],
