@@ -1,0 +1,267 @@
+<template>
+  <view class="input-form">
+    <view class="tips-warp">请确保填写的信息真实正确。</view>
+    <view class="inputs">
+      <view class="input-group">
+        <text class="input-label">书名</text>
+        <input type="text" placeholder-class="placeholder-class" placeholder="请填写"
+          value="{{bookName}}" @input="input"/>
+      </view>
+      <view class="input-group">
+        <text class="input-label">图书ISBN</text>
+        <input type="text" placeholder-class="placeholder-class" placeholder="请填写"
+          value="{{isbn}}"/>
+        <view class="iconfont icon-icon_scan" @tap="scan" ></view>
+      </view>
+      <view class="input-group"  bindtap="doUpload">
+        <text class="input-label">上传图片</text>
+        <view style="float:right;color:#f09450;font-size:28rpx;">点击上传书籍照片</view>
+      </view>
+      <block wx:if="{{bookImages}}">
+        <view class="uploader-container" wx:for="{{bookImages}}" wx:key="index">
+          <image class="uploader-image" src="{{item}}" data-idx="{{index}}" mode="aspectFit" bindtap="previewImg"></image>
+        </view>
+      </block>
+      <view>
+        <button class="submit-btn" bindtap="submitBook">发布</button>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import wx from 'utils/wx';
+export default class InputBook extends wepy.page {
+  config = {
+    navigationBarTitleText: '图书录入'
+  };
+  data = {
+    openId: '',
+    ownerName: '',
+    bookName: '',
+    isbn: '',
+    bookImages: [],
+    fileID: ''
+  };
+  methods = {
+    input(e) {
+      this.bookName = e.detail.value;
+    },
+    async scan() {
+      const resp = await wepy.scanCode({
+        scanType: ['barCode']
+      });
+      if (resp.scanType === 'EAN_13' || resp.scanType === 'EAN_10') {
+        this.isbn = resp.result;
+        this.$apply();
+      } else {
+        this.$toast('请扫描正确的图书条形码！')
+      }
+    },
+    doUpload() {
+      var that = this;
+      wx.chooseImage({
+        count: 1,
+        sizeType: ['compressed'],
+        sourceType: ['album', 'camera'],
+        success(res) {
+          // tempFilePath可以作为img标签的src属性显示图片
+          const tempFilePaths = res.tempFilePaths[0];
+          that.bookImages = that.bookImages.concat(tempFilePaths);
+          const cloudPath = `bookImages/images-${that.bookName}-${that.isbn}`;
+          wx.cloud.uploadFile({
+            cloudPath: cloudPath,
+            filePath: tempFilePaths,
+            success: res => {
+              console.log(res);
+              that.fileID = res.fileID;
+              this.$toast('上传成功');
+            },
+            fail: err => {
+              this.$toast('上传失败');
+              console.log(err)
+            }
+          })
+        }
+      })
+    },
+    previewImg(e) {
+      const current = e.target.dataset.idx;
+      wx.previewImage({
+        current: current,
+        urls: this.bookImages
+      })
+    },
+    submitBook() {
+      // 发布图书
+      const method = 'manual';
+      this.ownerName = this.$parent.globalData.userInfo.nickName;
+      this.openId = this.$parent.globalData.openId;
+      const bookImages = {
+        large: this.fileID
+      }
+      const params = {
+        method: method,
+        bookID: this.isbn,
+        bookName: this.bookName,
+        bookImages: bookImages,
+        ownerName: this.ownerName,
+        ownerID: this.openId
+      }
+      console.log('post params: ', params)
+      wx.cloud.callFunction({
+        name: 'userPostBookManually',
+        data: params
+      }).then(res => {
+        console.log('userPostbookManually=====>', res)
+        if (res.errMsg === 'cloud.callFunction:ok') {
+          this.$redirect('./donePage?status=postSuccess_fromScan')
+        } else {
+          this.$toast('发布失败,请重试!');
+        }
+      })
+    }
+  }
+  onLoad() {}
+}
+</script>
+<style lang="less">
+.input-form {
+  background: rgba(245, 245, 245, 1);
+  .tips-warp {
+    height: 64rpx;
+    background-color: #ffeddf;
+    color: #ef8e47;
+    font-size: 24rpx;
+    box-sizing: border-box;
+    padding: 0 32rpx;
+    line-height: 64rpx;
+  }
+  .inputs {
+    background: #fff;
+    padding: 0rpx 32rpx 0rpx 32rpx;
+    input {
+      position: relative;
+      font-size: 32rpx;
+      color: #5d5d5d;
+      line-height: 120rpx;
+      height: 120rpx;
+      -webkit-flex: 1;
+      flex: 1;
+      width: 100%;
+      text-align: right;
+      margin-right: 48rpx;
+      .left-placeholder-class {
+        text-align: left;
+        color: #b2b2b2;
+      }
+      .placeholder-class {
+        text-align: right;
+        color: #b2b2b2;
+      }
+      &.all {
+        text-align: left;
+        margin: 0;
+        width: 100%;
+      }
+    }
+    picker {
+      flex: 1;
+      position: relative;
+      width: 100rpx;
+      height: 120rpx;
+      color: #b2b2b2;
+      font-size: 32rpx;
+      margin-right: 48rpx;
+      text-align: right;
+      image {
+        width: 48px;
+        height: 48px;
+        position: absolute;
+        right: -48rpx;
+        top: 50%;
+        margin-top: -24rpx;
+      }
+      &[mode='date'] {
+        width: 200rpx;
+      }
+      &[mode='region'] {
+        width: 400rpx;
+      }
+    }
+    .arrow-img {
+      width: 48px;
+      height: 48px;
+      position: absolute;
+      right: 32rpx;
+      margin-top: 34rpx;
+    }
+    .input-group {
+      width: 100%;
+      height: 120px;
+      display: flex;
+      justify-content: space-between;
+      line-height: 120rpx;
+      border-bottom: 2rpx solid #f2f2f2;
+      .iconfont {
+        position: absolute;
+        right: 32rpx;
+        width: 48rpx;
+        height: 48rpx;
+        color: #cccccc;
+      }
+      .require {
+        color: #e10520;
+        float: left;
+      }
+      &.last {
+        border-bottom: none;
+      }
+      .input-label {
+        display: block;
+        font-size: 32rpx;
+        color: #5d5d5d;
+        line-height: 120rpx;
+        float: left;
+      }
+      .darker {
+        color: #5d5d5d;
+      }
+      .get-code {
+        color: rgba(49, 212, 218, 1);
+      }
+      .wait {
+        color: #b2b2b2;
+      }
+    }
+    
+    .uploader-container {
+      width: 100%;
+      height: 400rpx;
+      padding: 20rpx 0;
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      box-sizing: border-box;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    .uploader-image {
+      width: 100%;
+      height: 360rpx;
+    }  
+  }
+  .submit-btn {
+    margin: 0 auto;
+    margin-top: 120rpx;
+    margin-bottom: 120px;
+    width: 560rpx;
+    height: 96rpx;
+    background: rgba(49, 212, 218, 1);
+    border-radius: 48rpx;
+    font-size: 32rpx;
+    color: rgba(255, 255, 255, 1);
+    line-height: 96rpx;
+    text-align: center;
+  }
+}
+</style>
