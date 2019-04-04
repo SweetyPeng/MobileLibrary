@@ -144,7 +144,7 @@ export default class ScanDetail extends wepy.page {
         image_large: book.images.large,
         summary: book.summary
       }
-    }).then( res => {
+    }).then(res => {
       console.log(res);
     })
   }
