@@ -106,7 +106,9 @@ export default class InputBook extends wepy.page {
         bookName: this.bookName,
         bookImages: bookImages,
         ownerName: this.ownerName,
-        ownerID: this.openId
+        ownerID: this.openId,
+        holderName: this.ownerName,
+        holderID: this.openId
       }
       console.log('post params: ', params)
       wx.cloud.callFunction({

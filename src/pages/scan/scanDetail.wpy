@@ -117,7 +117,9 @@ export default class ScanDetail extends wepy.page {
         bookSummary: book.summary,
         bookImages: book.images,
         ownerName: this.ownerName,
-        ownerID: this.openId
+        ownerID: this.openId,
+        holderName: this.ownerName,
+        holderID: this.openId
       }
     }).then(res => {
       console.log('userPostbook=====>', res)
