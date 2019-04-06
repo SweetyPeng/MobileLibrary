@@ -37,7 +37,7 @@
         <view wx:for="{{newBooks}}" wx:key="{{index}}" class="content-list">
           <image
             src="{{item.bookImages.large}}"
-            @tap="onBookDetail({{item.bookID}})"
+            @tap="onDriftDetail({{item._id}})"
           />
         </view>
       </view>
@@ -93,15 +93,15 @@ export default class Index extends wepy.page {
     findMore() {
       this.$link(`/pages/bookInfo/bookList?from=findmore`)
     },
-    onBookDetail(isbn) {
+    onDriftDetail(id) {
       // 点击查看图书详情
-      this.$link(`/pages/bookInfo/bookDetail?isbn=${isbn}`);
+      this.$link(`/pages/drift/driftDetail?id=${id}`);
     }
   };
 
   events = {};
 
-  // 获取新书---云函数getNewBooks() ---数据库bookList
+  // 获取新书---云函数getNewBooks() ---数据库booksCollection
   getNewBooks() {
     wx.cloud.callFunction({
       name: 'getNewBooks',
@@ -109,7 +109,7 @@ export default class Index extends wepy.page {
         pageNum: 0
       }
     }).then(res => {
-      console.log(res)
+      console.log('getNewBooks----->', res)
       this.newBooks = res.result.data.slice(0, 6);
     }).catch(err => {
       console.log(err)

@@ -1,5 +1,5 @@
 <template>
-  <view class="booklist-card" @tap="onBookDetail({{item.bookID}})">
+  <view class="booklist-card" @tap="onBookDetail({{item._id}})">
     <view class="card-left">
       <image src="{{item.bookImages.large}}"/>
     </view>
@@ -24,7 +24,7 @@ export default class NewBookListCard extends wepy.component {
   };
   methods = {
     onBookDetail(id) {
-      this.$link(`/pages/bookInfo/bookDetail?isbn=${id}`);
+      this.$link(`/pages/drift/driftDetail?id=${id}`);
     }
   }
 }

@@ -1,0 +1,373 @@
+<template>
+  <view class="drift-page">
+    <view class="book-info">
+      <view class="img">
+        <image src="{{detailInfo.bookImages.large}}"/>
+      </view>
+      <view class="title">{{detailInfo.bookName}}</view>
+    </view>
+    <view class="owner-info">
+      <view>
+        当前持书人：
+        <text class="name">{{detailInfo.holderName}}</text>
+      </view>
+      <view>
+        发布者：
+        <text class="name">{{detailInfo.ownerName}}</text>
+      </view>
+      <view>发布日期: {{detailInfo.postTime}}</view>
+    </view>
+    <view class="option-btn">
+      <view class="btn" bindtap="borrow">借阅</view>
+      <view class="btn" bindtap="share">
+        <button open-type="share" class="btn">转发</button>
+      </view>
+      <view class="btn" bindtap="delete" wx:if="{{pageSource === 'mineDriftDetail'}}">删除</view>
+      <view class="btn" bindtap="review">评论</view>
+    </view>
+    <view class="drift-info">
+      <view class="title">
+        <view>漂流链</view>
+        <view class="info" bindtap="showChainList">{{count || '暂无'}}人预约</view>
+      </view>
+      <block wx:if="{{show}}">
+        <view class="desc" wx:if="{{chainList.length>0}}">
+          <view wx:for="{{chainList}}" wx:key="index">
+            <text>{{index+1}}</text>
+            <text>{{item.userName}}</text>
+            <text>{{item.borrowTime}}</text>
+          </view>
+        </view>
+        <view class="desc" wx:else>还没漂流过，点击借阅，即有机会成为第一个漂流人哦</view>
+      </block>
+    </view>
+    <!-- 借阅表单 -->
+    <view class="form {{visible?'form-show':''}}">
+      <view class="mask" bindtap="hiddenForm"></view>
+      <form bindsubmit="submit">
+        <view class="form-content">
+          <view class="input-item">
+            <text>微信号</text>
+            <input type="text" maxlength="25" placeholder="请输入微信号" name="wxNum" confirm-type="next"/>
+          </view>
+          <view class="input-item">
+            <text>电话</text>
+            <input type="number" maxlength="11" placeholder="请输入手机号码" name="phoneNum" confirm-type="next"/>
+          </view>
+          <view class="input-item">
+            <text>地址</text>
+            <input type="text" maxlength="25" placeholder="请输入您的所在地址" name="address" confirm-type="next"/>
+          </view>
+          <view class="input-item">
+            <text>留言</text>
+            <input type="text" placeholder="给书主的留言" maxlength="50" name="msg" confirm-type="done"/>
+          </view>
+          <view wx:if="{{infoVisible}}" class="info">请填写微信号和手机号</view>
+          <view class="input-item">
+            <button form-type="submit" class="send">发 送</button>
+          </view>
+        </view>
+      </form>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import wx from 'utils/wx';
+export default class DriftDetail extends wepy.page {
+  config = {
+    navigationBarTitleText: '漂流详情'
+  };
+  data = {
+    _id: '',
+    count: '',
+    detailInfo: {},
+    chainList: [],
+    borrowMessage: {},
+    pageSource: '',
+    visible: false, // 表单弹框
+    show: false // 漂流链
+  };
+  methods = {
+    borrow() {
+      this.visible = true;
+    },
+    hiddenForm() {
+      this.visible = false;
+    },
+    submit(e) {
+      let wxNum = e.detail.value.wxNum;
+      let phoneNum = e.detail.value.phoneNum;
+      let address = e.detail.value.address;
+      let msg = e.detail.value.msg;
+      this.borrowMessage = {
+        wxNum: wxNum,
+        phoneNum: phoneNum,
+        address: address,
+        msg: msg
+      };
+      if (!wxNum || !phoneNum || phoneNum.length !== 11) {
+        this.infoVisible = true
+        return;
+      }
+      this.visible = false;
+      this.$loading('发送中');
+      this.saveBorrowMsg();
+    },
+    async delete() {
+      var that = this;
+      wx.showModal({
+        title: '确定要删除吗',
+        content: '删除操作无法恢复，请慎重！',
+        success(res) {
+          if (res.confirm) {
+            const userID = that.$parent.globalData.openId;
+            const ownerID = that.detailInfo.ownerID;
+            const holderID = that.detailInfo.holderID;
+            if (ownerID === userID && holderID === userID) {
+              wx.cloud.callFunction({
+                name: 'updatePostBooks',
+                data: {
+                  bookID: that.detailInfo.bookID,
+                  ownerID: ownerID,
+                  holderID: holderID
+                }
+              }).then(res => {
+                if (res.result.errMsg === 'collection.remove:ok') {
+                  that.$link(`../scan/donePage?status=deleteSuccess`)
+                } else {
+                  that.$toast(res.message);
+                }
+              })
+            }
+          }
+        }
+      })
+    },
+    review() {
+      this.$toast('该模块还未开放，敬请期待~');
+    },
+    showChainList() {
+      this.show = !this.show;
+    }
+  };
+  // 保存借书信息
+  saveBorrowMsg() {
+    wx.cloud.callFunction({
+      name: 'saveBorrowMsg',
+      data: {
+        bookID: this.detailInfo.bookID,
+        bookImages: this.detailInfo.bookImages.large,
+        bookName: this.detailInfo.bookName,
+        bookOwnerID: this.detailInfo.ownerID,
+        bookOwnerName: this.detailInfo.ownerName,
+        bookHolderID: this.detailInfo.holderID,
+        bookHolderName: this.detailInfo.holderName,
+        borrowMessage: this.borrowMessage,
+        userName: this.$parent.globalData.userInfo.nickName
+      }
+    }).then(res => {
+      console.log('saveBorrowMsg', res)
+      if (res.result._id) {
+        this.$redirect('../scan/donePage?status=requestSuccess_fromSearch')
+      } else if (res.result.code) {
+        this.$toast(res.result.message);
+      }
+    })
+  }
+  // 获取发布的图书的详情
+  getDriftDetail() {
+    wx.cloud
+      .callFunction({
+        name: 'getDriftDetail',
+        data: {
+          _id: this._id
+        }
+      })
+      .then(res => {
+        console.log('getDriftDetail', res);
+        if (res.errMsg === 'cloud.callFunction:ok') {
+          let result = res.result;
+          this.detailInfo = result.detailData;
+          this.chainList = result.chainData;
+          this.count = result.count;
+          this.$apply();
+        }
+      });
+  }
+  onLoad(options) {
+    this._id = options.id;
+    this.pageSource = options.pageSource || 'newbookDetail';
+    this.getDriftDetail();
+    wx.showShareMenu({
+      withShareTicket: true
+    });
+  }
+}
+</script>
+<style lang="less">
+Page {
+  background-color: #ffffff;
+  height: 100%;
+}
+.drift-page {
+  padding: 32rpx;
+}
+.book-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .img {
+    width: 220rpx;
+    height: 300rpx;
+    image {
+      width: 220rpx;
+      height: 300rpx;
+    }
+  }
+  .title {
+    margin-top: 12rpx;
+    font-size: 36rpx;
+    font-weight: bold;
+    color: #5d5d5d;
+  }
+}
+.owner-info {
+  margin: 32rpx 0;
+  font-size: 32rpx;
+  color: #5d5d5d;
+  .name {
+    color: #4a90e2;
+  }
+}
+.option-btn {
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30rpx;
+  border-top: 2rpx solid #f2f2f2;
+  border-bottom: 2rpx solid #f2f2f2;
+  .btn {
+    width: 130rpx;
+    height: 60rpx;
+    border: 2rpx solid #f2f2f2;
+    border-radius: 16rpx;
+    background: #f9f9f9;
+    color: #2d2d2d;
+    font-size: 32rpx;
+    line-height: 60rpx;
+    text-align: center;
+    padding: 0;
+    box-sizing: inherit;
+  }
+}
+.drift-info {
+  height: 120rpx;
+  line-height: 120rpx;
+  .title {
+    display: flex;
+    justify-content: space-between;
+    font-size: 32rpx;
+    color: #5d5d5d;
+    border-bottom: 2rpx solid #f2f2f2;
+    .info {
+      color: #4a90e2;
+      text-decoration: underline;
+    }
+  }
+  .desc {
+    padding-top: 32rpx;
+    font-size: 32rpx;
+    color: #5d5d5d;
+    line-height: 44rpx;
+    text:first-child {
+      margin-right: 16rpx;
+    }
+    text:last-child {
+      margin-left: 16rpx;
+    }
+  }
+}
+// 弹窗样式
+.form {
+  .mask {
+    position: fixed;
+    background-color: rgba(0,0,0,0.5) !important;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+    opacity: 0;
+    z-index: -100;
+    transition: height .2s ease-in-out;
+  }
+  .form-content {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 0;
+    background-color: #fff;
+    transition: all .2s ease-in-out;
+    overflow: hidden;
+    z-index: 100;
+    color: #666;
+    font-size: 40rpx;
+  }
+}
+.form-show {
+  .mask {
+    visibility: visible;
+    opacity: 1;
+    height: 40%;
+    top: 0;
+    left: 0;
+    z-index: 101;
+  }
+  .form-content {
+    height: 60%;
+    .input-item {
+      display: flex;
+      margin: 0 20rpx;
+      border-top: 1px solid #ccc;
+      height: 100rpx;
+      align-items: center;
+      justify-content: center;
+      text {
+        width: 20%;
+        font-size: 30rpx;
+      }
+      wx-input {
+        display: inline-block;
+        width: 100%;
+        font-size: 30rpx;
+      }
+      .send {
+        margin-top: 20rpx;
+        border: 1px solid rgb(62, 58, 57);
+        height: 70rpx;
+        line-height: 70rpx;
+        background-color: #fff;
+        color: rgb(87, 86, 84);
+        font-size: 30rpx;
+        text-align: center;
+        width: 200rpx;
+        border-radius: 5rpx;
+      }
+    }
+    .input-item:first-child {
+      border-top: 0;
+    }
+    .input-item:last-child {
+      margin-top: 10rpx;
+      border-top: 0;
+    }
+    .info {
+      color: rgb(217, 59, 38);
+      text-align: center;
+      width: 100%;
+      font-size: 25rpx;
+    }
+  }
+}
+</style>

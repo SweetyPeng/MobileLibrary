@@ -67,7 +67,7 @@ export default class BookList extends wepy.page {
     this.$loading(false);
   }
 
-  // 获取新书---云函数getNewBooks() ---数据库bookList
+  // 获取新书---云函数getNewBooks() ---数据库booksCollection
   async getNewBooks() {
     const newBookList = await wx.cloud
       .callFunction({
@@ -87,7 +87,7 @@ export default class BookList extends wepy.page {
       title: '新书速递'
     });
     this.$apply();
-    console.log(this.newBookList);
+    console.log('getNewBookList', this.newBookList);
   }
   onLoad(options) {
     if (options.keyWords) {

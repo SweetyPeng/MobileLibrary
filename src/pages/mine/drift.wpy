@@ -1,7 +1,7 @@
 <template>
   <view class="drift-container {{!postBooks.length ? 'empty-style':''}}">
     <view wx:for="{{postBooks}}" wx:key="{{index}}" class="content-list">
-      <image src="{{item.bookImages.large}}" @tap="onBookDetail({{item.bookID}})"/>
+      <image src="{{item.bookImages.large}}" @tap="onBookDetail({{item._id}})"/>
     </view>
     <view wx:if="{{!postBooks.length}}">
       <EmptyPage 
@@ -32,7 +32,7 @@ export default class Drift extends wepy.page {
   }
   methods = {
     onBookDetail(id) {
-      this.$link(`/pages/drift/driftDetail?isbn=${id}`);
+      this.$link(`/pages/drift/driftDetail?id=${id}&pageSource=mineDriftDetail`);
     },
     bindTap() {
       wx.switchTab({
