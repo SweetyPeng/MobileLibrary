@@ -28,6 +28,8 @@ exports.main = async (event, context) => {
         bookImages: event.bookImages,
         ownerName: event.ownerName,
         ownerID: event.ownerID,
+        holderName: event.holderName,
+        holderID: event.holderID,
         postTime: postTime,
         bookStatus: status
       }

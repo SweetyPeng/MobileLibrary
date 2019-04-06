@@ -12,6 +12,9 @@ const db = cloud.database()
 
 // 云函数入口函数
 exports.main = async (event, context) => {
+  const borrowTime = new Date(Date.now() - -8 * 60 * 60 * 1000).toJSON()
+    .substr(0, 16)
+    .replace(/T/g, ' ');
   const hasBorrow = await db.collection('borrowMsg').where({
     userID: event.userInfo.openId,
     bookID: event.bookID,
@@ -28,8 +31,10 @@ exports.main = async (event, context) => {
           bookImages: event.bookImages,
           bookOwnerID: event.bookOwnerID,
           bookOwnerName: event.bookOwnerName,
+          bookHolderID: event.bookHolderID,
+          bookHolderName: event.bookHolderName,
           borrowMessage: event.borrowMessage,
-          borrowTime: event.borrowTime
+          borrowTime: borrowTime
         }
       })
     } catch (e) {

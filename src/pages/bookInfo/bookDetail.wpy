@@ -7,8 +7,8 @@
         <view style="padding:32rpx;">
           <view>当前持书人:</view>
           <view style="color:#4A90E2;text-decoration:underline;margin-top:16rpx;">
-            <view wx:if="{{bookStatusInfo.ownerName}}">
-              <view>{{bookStatusInfo.ownerName}}</view>
+            <view wx:if="{{bookStatusInfo.holderName}}">
+              <view>{{bookStatusInfo.holderName}}</view>
             </view>
             <view wx:else>暂无人发布</view>
           </view>
@@ -61,11 +61,15 @@
           <input type="text" maxlength="25" placeholder='请输入微信号' name="wxNum" confirm-type="next"/>
         </view>
         <view class="input-item">
-          <text>电   话</text>
+          <text>电话</text>
           <input type='number' maxlength="11"  placeholder='请输入手机号码' name="phoneNum" confirm-type="next"/>
         </view>
         <view class="input-item">
-          <text>留   言</text>
+          <text>地址</text>
+          <input type='text' maxlength="25"  placeholder='请输入您的所在地址' name="address" confirm-type="next"/>
+        </view>
+        <view class="input-item">
+          <text>留言</text>
           <input type="text" placeholder="给书主的留言" maxlength='50' name="msg" confirm-type="done"/>
         </view>
         <view wx:if="{{infoVisible}}" class="info">请填写微信号和手机号</view>
@@ -141,13 +145,14 @@ export default class BookDetail extends wepy.page {
     submit(e) {
       let wxNum = e.detail.value.wxNum;
       let phoneNum = e.detail.value.phoneNum;
+      let address = e.detail.value.address;
       let msg = e.detail.value.msg;
       this.borrowMessage = {
         wxNum: wxNum,
         phoneNum: phoneNum,
+        address: address,
         msg: msg
       };
-      // let bookData = this.bookInfo;
       if (!wxNum || !phoneNum || phoneNum.length !== 11) {
         this.infoVisible = true
         return;
@@ -168,8 +173,9 @@ export default class BookDetail extends wepy.page {
         bookName: this.bookInfo.title,
         bookOwnerID: this.bookStatusInfo.ownerID,
         bookOwnerName: this.bookStatusInfo.ownerName,
+        bookHolderID: this.bookStatusInfo.holderID,
+        bookHolderName: this.bookStatusInfo.holderName,
         borrowMessage: this.borrowMessage,
-        borrowTime: new Date().toLocaleString(),
         userName: this.$parent.globalData.userInfo.nickName
       }
     }).then(res => {
@@ -214,7 +220,9 @@ export default class BookDetail extends wepy.page {
         bookSummary: book.summary,
         bookImages: book.images,
         ownerName: book.ownerName,
-        ownerID: this.openId
+        ownerID: this.openId,
+        holderName: book.ownerName,
+        holderID: this.openId
       }
     }).then(res => {
       console.log('userPostbook=====>', res)
@@ -445,7 +453,7 @@ export default class BookDetail extends wepy.page {
     z-index : 100;
   }
   .form.show .form-content{
-    height: 40%;
+    height: 60%;
   }
   .form-content .input-item{
     display: flex;
