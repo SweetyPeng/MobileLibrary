@@ -15,7 +15,7 @@
         </view>
         <view style="padding:0 32rpx;margin-top:32rpx;">
           <button type="primary" size="mini" bindtap="publish">我要发布</button>
-          <button type="primary" size="mini" style="margin-left: 64rpx;" wx:if="{{bookStatusInfo.ownerName}}" bindtap="borrow">我要借阅</button>
+          <button type="primary" size="mini" style="margin-left: 64rpx;" wx:if="{{bookStatusInfo.holderName}}" bindtap="borrow">我要借阅</button>
         </view>
       </view>
     </ModalFixedBtm>
