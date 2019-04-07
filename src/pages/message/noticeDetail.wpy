@@ -18,7 +18,7 @@
       </view>
       <view class="card-wrap">
         <text>申请人地址</text>
-        <text class="detail-right">{{noticeData.address || '对方没有填写'}}</text>
+        <text class="detail-right">{{noticeData.borrowMessage.address || '对方没有填写'}}</text>
       </view>
       <view class="card-wrap">
         <text>申请时间</text>

@@ -29,7 +29,7 @@ export default class Drift extends wepy.page {
   }
   methods = {
     onBookDetail(id) {
-      this.$link(`/pages/drift/driftDetail?isbn=${id}`);
+      this.$link(`/pages/drift/driftDetail?isbn=${id}&from=borrow`);
     }
   }
   onLoad() {}
