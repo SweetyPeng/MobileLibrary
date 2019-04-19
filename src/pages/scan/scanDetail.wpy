@@ -34,7 +34,6 @@
     </scroll-view>
     <!-- 底部按钮 -->
     <view class="btn-group {{isIpx?'mb68':''}}">
-      <!-- <view class="write-btn" bindtap="writeReview">写书评</view> -->
       <view class="publish-btn" bindtap="publishBook">我要发布</view>
     </view>
   </view>
@@ -129,7 +128,7 @@ export default class ScanDetail extends wepy.page {
     }).then(res => {
       console.log('userPostbook=====>', res)
       if (res.errMsg === 'cloud.callFunction:ok') {
-        this.$redirect('./donePage?status=postSuccess_fromScan')
+        this.$redirect('./donePage?status=fromScan')
       } else {
         this.$toast('发布失败,请重试!');
       }

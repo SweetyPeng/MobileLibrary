@@ -24,31 +24,31 @@ export default class DonePage extends wepy.page {
 
   methods = {
     finish() {
-      if (this.status === 'postSuccess_fromScan' || this.status === 'postSuccess_fromSearch' || this.status === 'requestSuccess_fromSearch') {
+      if (this.status === 'fromScan' || this.status === 'fromSearch' || this.status === 'request') {
         wepy.switchTab({
           url: '/pages/tabBar/home'
         });
       } else {
-        this.$link('/page/mine/coupons/couponsList');
+        // this.$link('/page/mine/coupons/couponsList');
       }
     }
   };
   onLoad(options) {
     this.status = options.status;
     switch (this.status) {
-      case 'postSuccess_fromScan':
+      case 'fromScan':
         this.image = 'success-img';
         this.title = '发布成功';
         this.content = '您的小书已经踏上漂流之旅~';
         this.button = '首页';
         break;
-      case 'postSuccess_fromSearch':
+      case 'fromSearch':
         this.image = 'success-img';
         this.title = '发布成功';
         this.content = '您的小书已经踏上漂流之旅~';
         this.button = '首页';
         break;
-      case 'requestSuccess_fromSearch':
+      case 'request':
         this.image = 'success-img';
         this.title = '请求成功';
         this.content = '请耐心等待对方处理，继续逛逛吧';
@@ -67,13 +67,6 @@ export default class DonePage extends wepy.page {
   align-items: center;
   padding: 0 32px;
   padding-top: 120px;
-  .fail-img {
-    width: 200px;
-    height: 200px;
-    background: url('https://biosan-saas.oss-cn-beijing.aliyuncs.com/weichat/line/pay-fail.png')
-      no-repeat;
-    background-size: contain;
-  }
   .success-img {
     width: 200px;
     height: 200px;
