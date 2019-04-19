@@ -1,19 +1,13 @@
 <template>
-  <view class="search-bar">
+  <navigator class="search-bar" url="/pages/homecom/searchList" open-type="navigate">
     <view class="search-left">
       <image src="../../images/icon_search.png" class="search-icon"/>
-      <input
-        type="text"
-        placeholder="请输入书名/作者"
-        placeholder-class="input-placeholder"
-        value="{{keywords}}"
-        @input="inputKeywords"
-      />
+      <input type="text" placeholder="请输入书名/作者" placeholder-class="input-placeholder"/>
     </view>
     <view>
-      <button class="search-btn" @tap="queryBooks">查询</button>
+      <button class="search-btn" plain="true">查询</button>
     </view>
-  </view>
+  </navigator>
 </template>
 
 <script>
@@ -22,30 +16,10 @@ import wepy from 'wepy';
 export default class SearchBook extends wepy.component {
   props = {};
 
-  data = {
-    keywords: ''
-  };
+  data = {};
   events = {};
 
-  methods = {
-    inputKeywords(e) {
-      this.keywords = e.detail.value;
-    },
-    queryBooks() {
-      const hasWord = this.verifyInput(this.keywords);
-      if (hasWord) {
-        this.$link(`/pages/bookInfo/bookList?keyWords=${this.keywords}`);
-      }
-    }
-  };
-
-  verifyInput(word) {
-    if (!word) {
-      this.$toast('请输入书名/作者');
-      return false;
-    }
-    return true;
-  }
+  methods = {};
 }
 </script>
 <style lang="less">
@@ -54,6 +28,7 @@ export default class SearchBook extends wepy.component {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: rgba(49, 212, 218, 1);
   .search-left {
     display: flex;
     justify-content: center;
@@ -62,8 +37,8 @@ export default class SearchBook extends wepy.component {
     border-radius: 10rpx;
     border: 1rpx solid #f2f2f2;
     .search-icon {
-      width:40rpx;
-      height:40rpx;
+      width: 40rpx;
+      height: 40rpx;
       padding: 0 10rpx;
     }
     input {
@@ -81,10 +56,11 @@ export default class SearchBook extends wepy.component {
     text-align: center;
   }
   button {
-    height: 70rpx;
-    color: rgba(255, 255, 255, 1);
+    height: 72rpx;
+    color: rgba(49, 212, 218, 1);
     line-height: 70rpx;
-    background: rgba(49, 212, 218, 1);
+    background: #ffffff;
+    border: none;
   }
 }
 </style>
