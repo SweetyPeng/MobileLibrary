@@ -1,0 +1,105 @@
+<template>
+  <view class="done-page">
+    <view class="{{image}}"></view>
+    <view class="tip">{{title}}</view>
+    <view class="detail-tip">{{content}}</view>
+    <view class="btn" @tap="finish" wx:if="{{back_btn}}">{{back_btn}}</view>
+    <view class="btn mt32" @tap="onOpinion" wx:if="{{opinion_btn}}">{{opinion_btn}}</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+
+export default class FailPage extends wepy.page {
+  config = {
+    navigationBarTitleText: '漂流吧图书酱'
+  };
+
+  data = {
+    from: '',
+    image: '',
+    title: '',
+    content: '',
+    opinion_btn: '',
+    back_btn: ''
+  };
+
+  methods = {
+    onOpinion() {
+      this.$link('/pages/mine/evaluate');
+    },
+    finish() {
+      if (this.from === 'scan') {
+        wepy.switchTab({
+          url: '/pages/tabBar/scan'
+        });
+      } else {
+        this.$link('/pages/mine/coupons/couponsList');
+      }
+    }
+  };
+  onLoad(options) {
+    this.from = options.from;
+    switch (this.from) {
+      case 'scan':
+        this.image = 'fail-img';
+        this.title = '哎呀~网络出错啦';
+        this.content = '数据查询网络不稳定，试试手动添加吧，也可以将您的问题反馈给开发者';
+        this.opinion_btn = '意见反馈'
+        this.back_btn = '返回漂流';
+        break;
+      default:
+        break;
+    }
+  }
+}
+</script>
+<style lang='less'>
+.done-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 32px;
+  padding-top: 120px;
+  .fail-img {
+    width: 200px;
+    height: 200px;
+    background: url('https://biosan-saas.oss-cn-beijing.aliyuncs.com/weichat/certification/wait_certify.png')
+      no-repeat;
+    background-size: contain;
+  }
+  .tip {
+    margin-top: 48px;
+    margin-bottom: 32px;
+    height: 56px;
+    font-size: 40px;
+    color: rgba(0, 0, 0, 1);
+    line-height: 56px;
+  }
+  .detail-tip {
+    height: 40px;
+    font-size: 28px;
+    color: rgba(157, 157, 157, 1);
+    line-height: 40px;
+    text-align: center;
+  }
+  .btn {
+    margin-top: 120px;
+    width: 560rpx;
+    height: 96rpx;
+    border-radius: 56rpx;
+    background-color: #31d4da;
+    color: #ffffff;
+    font-size: 32rpx;
+    text-align: center;
+    line-height: 96rpx;
+  }
+  .mt32 {
+    margin-top: 32rpx !important;
+  }
+}
+page {
+  height: 100%;
+  background: #f3f3f3;
+}
+</style>

@@ -5,8 +5,8 @@
       <view class="book-icon">
         <image src="../../images/book-icon.png"/>
       </view>
-      <view class="paragraph">漂流吧图书酱，类似于流动图书馆，是一个图书漂流和借阅工具</view>
-      <view class="paragraph">漂流图书到学校或公司，结识志趣一致的TA</view>
+      <view class="paragraph">漂流吧图书酱，是一个图书漂流工具，在朋友间相互传阅纸质图书。</view>
+      <view class="paragraph">漂流图书到学校，结识志趣一致的TA，一起交流分享。</view>
       <view class="paragraph">快来开始你的图书漂流之旅吧~</view>
     </view>
     <view class="scan">
@@ -16,7 +16,7 @@
     </view>
     <view class="scan">
       <button class="scan-btn" @tap="inputBook">
-        <image src="../../images/scan.png" class="scan-img"/>手动录入图书
+        <image src="../../images/input.png" class="scan-img"/>手工填写(推荐)
       </button>
     </view>
   </view>
@@ -58,8 +58,7 @@ export default class Drift extends wepy.page {
     });
   }
 
-  onLoad() {
-  }
+  onLoad() {}
 }
 </script>
 <style lang="less">

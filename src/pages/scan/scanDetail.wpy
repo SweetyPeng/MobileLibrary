@@ -93,7 +93,12 @@ export default class ScanDetail extends wepy.page {
       name: 'bookInfo',
       data: param
     }).then(res => {
-      return JSON.parse(res.result);
+      console.log(res);
+      if (res && res.result) {
+        return JSON.parse(res.result);
+      } else {
+        this.$link('./failPage?from=scan');
+      }
     }).catch(err => {
       console.log(err);
     });
