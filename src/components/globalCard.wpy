@@ -1,0 +1,89 @@
+<template>
+  <view class="global-card {{ open ? 'global-card-show' : ''}}">
+    <view class="global-card-mask" @tap="closeCard(true)"></view>
+    <view class="global-card-inner">
+      <slot name="card-inner"></slot>
+      <slot name="card-icon"></slot>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+export default class GlobalCard extends wepy.component {
+  data = {
+    open: false
+  };
+  props = {
+    canCloseMask: {
+      type: Boolean,
+      default: true
+    }
+  };
+  components = {};
+  computed = {};
+  methods = {
+    closeCard: function(params) {
+      if (params) {
+        this.open = false;
+        return;
+      }
+      if (this.canCloseMask) {
+        this.open = false;
+      }
+    },
+    open: function() {
+      this.open = true;
+    }
+  };
+  onLoad() {}
+}
+</script>
+<style lang='less'>
+@global-card: ~"global-card";
+
+.@{global-card}{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  &-mask{
+    display: none;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    background: #000000;
+    opacity: .5;
+    z-index: 10;
+    transition: .5s;
+  }
+  &-show{
+    .@{global-card}-mask{
+      display: block;
+    }
+    .@{global-card}-inner{
+      opacity: 1;
+      height: 700rpx;
+      display: block;
+    }
+  }
+  &-inner{
+    position: fixed;
+    display: none;
+    width: 560rpx;
+    // height: 700rpx;
+    height: 0;
+    background: white;
+    border-radius: 16rpx;
+    // overflow: hidden;
+    margin-top: 200rpx;
+    opacity: 0;
+    z-index: 11;
+    transition: all .5s linear;
+  }
+  &-inner-opacity{
+    opacity: 0;
+  }
+}
+</style>

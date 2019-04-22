@@ -1,5 +1,17 @@
 <template>
   <view>
+    <!-- 消息提醒 -->
+    <GlobalCard>
+      <view class="card-inner" slot="card-inner">
+        <image src="https://biosan-saas.oss-cn-beijing.aliyuncs.com/medicClient/doctorCenter/emptyOrder.png"/>
+        <view class="title">消息提醒</view>
+        <view class="detail">叮咚~您收到借阅消息啦，请及时处理！</view>
+        <view class="btn">
+          <button class="k" @tap="onMessage">点击查看</button>
+        </view>
+      </view>
+      <view class="global-close iconfont icon-icon_close" slot="card-icon" @tap="globalClose"></view>
+    </GlobalCard>
     <!-- 查询图书 -->
     <SearchBook/>
     <!-- 轮播图 -->
@@ -35,10 +47,7 @@
       </view>
       <view class="item-content">
         <view wx:for="{{newBooks}}" wx:key="{{index}}" class="content-list">
-          <image
-            src="{{item.bookImages.large}}"
-            @tap="onDriftDetail({{item._id}})"
-          />
+          <image src="{{item.bookImages.large}}" @tap="onDriftDetail({{item._id}})"/>
         </view>
       </view>
     </view>
@@ -49,6 +58,7 @@
 import wepy from 'wepy';
 import wx from 'utils/wx';
 import SearchBook from '../homecom/searchBook';
+import GlobalCard from 'components/globalCard';
 import RequestMixin from 'mixins/request';
 
 export default class Index extends wepy.page {
@@ -56,7 +66,8 @@ export default class Index extends wepy.page {
     navigationBarTitleText: '漂流吧图书酱'
   };
   components = {
-    SearchBook
+    SearchBook,
+    GlobalCard
   };
 
   mixins = [RequestMixin];
@@ -91,11 +102,18 @@ export default class Index extends wepy.page {
       this.$link(linkUrl);
     },
     findMore() {
-      this.$link(`/pages/bookInfo/bookList?from=findmore`)
+      this.$link(`/pages/bookInfo/bookList?from=findmore`);
     },
     onDriftDetail(id) {
       // 点击查看图书详情
       this.$link(`/pages/drift/driftDetail?id=${id}`);
+    },
+    onMessage() {
+      this.$link('/pages/mine/message');
+      this.$invoke('GlobalCard', 'closeCard', true)
+    },
+    globalClose() {
+      this.$invoke('GlobalCard', 'closeCard', true)
     }
   };
 
@@ -109,13 +127,27 @@ export default class Index extends wepy.page {
         pageNum: 0
       }
     }).then(res => {
-      console.log('getNewBooks----->', res)
+      console.log('getNewBooks----->', res);
       this.newBooks = res.result.data.slice(0, 6);
     }).catch(err => {
-      console.log(err)
+      console.log(err);
     });
   }
+  // 查询是否有借书消息
+  getMessageCount() {
+    wx.cloud.callFunction({
+      name: 'getMessage',
+      data: {}
+    }).then(res => {
+      const count = res.result.data.length || 0;
+      if (count > 0) {
+        this.$invoke('GlobalCard', 'open');
+        console.log('getMessageCount--->', count)
+      }
+    })
+  }
   onLoad() {
+    this.getMessageCount();
   }
   onShow() {
     this.getNewBooks();
@@ -125,6 +157,54 @@ export default class Index extends wepy.page {
 <style lang="less">
 page {
   background: rgba(245, 245, 245, 1);
+}
+.global-close {
+  position: absolute;
+  bottom: -80rpx;
+  left: 45%;
+  color: white;
+  border-radius: 52rpx;
+  border: 2px solid white;
+  width: 52rpx;
+  height: 52rpx;
+  text-align: center;
+}
+.card-inner {
+  border-radius: 16rpx;
+  image {
+    width: 100%;
+    height: 300rpx;
+  }
+  .title {
+    color: #5d5d5d;
+    font-size: 40rpx;
+    text-align: center;
+    font-weight: bolder;
+  }
+  .detail {
+    color: #5d5d5d;
+    font-size: 28rpx;
+    text-align: center;
+    padding: 0 58rpx;
+    padding-top: 32rpx;
+    line-height: 45rpx;
+  }
+  .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 80rpx;
+    .k {
+      width: 400rpx;
+      height: 80rpx;
+      font-size: 32rpx;
+      line-height: 80rpx;
+      text-align: center;
+      background: #31D4DA;
+      color: white;
+      border-radius: 8rpx;
+    }
+  }
 }
 .banner {
   width: 100%;
