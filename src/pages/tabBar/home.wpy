@@ -30,7 +30,7 @@
         <text class="title-name">新书速递</text>
         <view class="more" @tap="findMore">
           <text class="more-title">查看更多</text>
-          <i class="iconfont icon-icon_Arrow"></i>
+          <i class="iconfont icon-icon_arrow"></i>
         </view>
       </view>
       <view class="item-content">

@@ -1,7 +1,7 @@
 <template>
   <view class="notice-card" bindtap="toDetail({{item._id}})">
     <view class="time_state">
-      <view class="_icon iconfont icon-icon_news_Coupons" style="color:orange"></view>
+      <view class="_icon iconfont icon-icon_news_notice" style="color:orange"></view>
       <view>借阅申请</view>
       <view>{{item.borrowTime}}</view>
     </view>

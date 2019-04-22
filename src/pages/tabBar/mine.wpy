@@ -8,7 +8,7 @@
       <myMessage :item.sync="message_data"/>
       <myDrift :item.sync="drift_data"/>
       <myBorrow :item.sync="borrow_data"/>
-      <myThoughts :item.sync="thoughts_data"/>
+      <!-- <myThoughts :item.sync="thoughts_data"/> -->
       <myInvite :item.sync="invitation_data"/>
       <myEvaluation :item.sync="evaluation_data"/>
     </view>
@@ -23,7 +23,7 @@ import RequestMixin from 'mixins/request';
 
 export default class Index extends wepy.page {
   config = {
-    navigationBarTitleText: '流动图书馆'
+    navigationBarTitleText: '漂流吧图书酱'
   };
   components = {
     avatarNickName: AvatarNickName,
@@ -37,39 +37,40 @@ export default class Index extends wepy.page {
   mixins = [RequestMixin];
   data = {
     message_data: {
-      icon: 'icon-icon_reportgrey',
+      icon: 'icon-icon-plan',
       operator: '我的消息',
       description: '查看消息',
       type: 'message',
       mgb: '20rpx'
     },
     drift_data: {
-      icon: 'icon-icon_Inspection_grey',
+      icon: 'icon-icon_reportgrey',
       operator: '我的漂流',
       description: '点击查看',
       type: 'drift'
     },
     borrow_data: {
-      icon: 'icon-icon_me_invoice',
+      icon: 'icon-icon_me_order',
       operator: '我的借阅',
       description: '点击查看',
-      type: 'borrow'
+      type: 'borrow',
+      mgb: '20rpx'
     },
     thoughts_data: {
-      icon: 'icon-icon_home_edit',
+      icon: 'icon-icon_edit',
       operator: '我的书评',
       description: '点击查看',
       type: 'thought',
       mgb: '20rpx'
     },
     invitation_data: {
-      icon: 'icon-icon_Forward',
+      icon: 'icon-icon_share',
       operator: '邀请好友',
       description: '点击邀请',
       type: 'invite'
     },
     evaluation_data: {
-      icon: 'icon-icon_Forward',
+      icon: 'icon-icon_write',
       operator: '意见反馈',
       type: 'evaluate',
       mgb: '48rpx'
@@ -94,7 +95,7 @@ export default class Index extends wepy.page {
           pageUrl = '../mine/thought';
           break;
         case 'invite':
-          pageUrl = '';
+          pageUrl = '../mine/invite';
           break;
         case 'evaluate':
           pageUrl = '../mine/evaluate';

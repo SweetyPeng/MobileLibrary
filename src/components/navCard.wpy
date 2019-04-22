@@ -7,7 +7,7 @@
             </view>
             <view class="right">
                 <view class="descp">{{item.description}}</view>
-                <text class="_icon iconfont icon-icon_Arrow"></text>
+                <text class="_icon iconfont icon-icon_arrow"></text>
             </view>
         </view>
         <view class="line"></view>
