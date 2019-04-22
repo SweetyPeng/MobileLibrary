@@ -84,7 +84,7 @@ export default class Index extends wepy.page {
         banner_img_link: '/pages/bannerInfo/bookReview'
       },
       {
-        banner_img_url: '../../images/bannerImgs/bookrank.jpg',
+        banner_img_url: '../../images/bannerImgs/bookcount.jpg',
         banner_img_link: '/pages/bannerInfo/bookRank'
       }
     ],
