@@ -135,15 +135,18 @@ export default class Index extends wepy.page {
   }
   // 查询是否有借书消息
   getMessageCount() {
+    let _that = this;
     wx.cloud.callFunction({
       name: 'getMessage',
       data: {}
     }).then(res => {
       const count = res.result.data.length || 0;
-      if (count > 0) {
+      let countNum = _that.$db.get('messageCount');
+      if (count > 0 && countNum !== count) {
         this.$invoke('GlobalCard', 'open');
         console.log('getMessageCount--->', count)
       }
+      _that.$db.set('messageCount', count);
     })
   }
   onLoad() {
