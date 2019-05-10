@@ -5,9 +5,9 @@
     </view>
     <view class="card-right">
       <view class="title">{{item.bookName}}</view>
-      <view class="author">作者：{{item.bookAuthor[0]}}</view>
-      <view class="pubdate">出版社：{{item.bookPublisher}}</view>
-      <view class="pubdate">出版时间：{{item.bookPubdate}}</view>
+      <view class="author">{{item.bookAuthor?'作者：':'发布者：'}}{{item.bookAuthor?item.bookAuthor[0]:item.ownerName}}</view>
+      <view class="pubdate" wx:if="{{item.bookPublisher}}">出版社：{{item.bookPublisher}}</view>
+      <view class="pubdate">{{item.bookPubdate?'出版时间：':'发布时间：'}}{{item.bookPubdate?item.bookPubdate:item.postTime}}</view>
     </view>
   </view>
 </template>
