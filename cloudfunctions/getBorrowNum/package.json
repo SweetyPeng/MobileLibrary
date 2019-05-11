@@ -1,5 +1,5 @@
 {
-  "name": "login",
+  "name": "getBorrowNum",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

@@ -9,7 +9,7 @@
             <span class="title-em">发布</span>图书总数
           </view>
           <view class="data-number">
-            <span class="number-em">{{statisticsInfo.postNum}}</span>本
+            <span class="number-em">{{postNum}}</span>本
           </view>
         </view>
         <view class="card-data-2">
@@ -17,7 +17,7 @@
             <span class="title-em">借阅</span>图书总数
           </view>
           <view class="data-number">
-            <span class="number-em">{{statisticsInfo.borrowNum}}</span>本
+            <span class="number-em">{{borrowNum}}</span>本
           </view>
         </view>
       </view>
@@ -26,17 +26,27 @@
 </template>
 <script>
 import wepy from 'wepy';
+import wx from 'utils/wx';
 export default class Index extends wepy.page {
   config = {
     navigationBarTitleText: '漂流统计'
   };
   data = {
-    statisticsInfo: {
-      postNum: 20,
-      borrowNum: 4
-    }
+    postNum: 0,
+    borrowNum: 4
+  }
+  getBorrowNum() {
+    wx.cloud.callFunction({
+      name: 'getBorrowNum',
+      data: {}
+    }).then(res => {
+      this.borrowNum = res.result.total;
+      this.$apply();
+    })
   }
   onLoad() {
+    this.postNum = this.$parent.globalData.postNum;
+    this.getBorrowNum();
   }
 }
 </script>

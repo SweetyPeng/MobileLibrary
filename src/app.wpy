@@ -80,7 +80,8 @@ export default class extends wepy.app {
   };
 
   globalData = {
-    userInfo: {}
+    userInfo: {},
+    postNum: 0
   };
 
   constructor() {

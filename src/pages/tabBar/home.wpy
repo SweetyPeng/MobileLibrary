@@ -129,6 +129,7 @@ export default class Index extends wepy.page {
     }).then(res => {
       console.log('getNewBooks----->', res);
       this.newBooks = res.result.data.slice(0, 6);
+      this.$parent.globalData.postNum = res.result.data.length;
     }).catch(err => {
       console.log(err);
     });
