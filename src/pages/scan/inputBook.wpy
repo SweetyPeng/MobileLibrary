@@ -117,7 +117,7 @@ export default class InputBook extends wepy.page {
       }).then(res => {
         console.log('userPostbookManually=====>', res)
         if (res.errMsg === 'cloud.callFunction:ok') {
-          this.$redirect('./donePage?status=postSuccess_fromScan')
+          this.$redirect('./donePage?status=fromScan')
         } else {
           this.$toast('发布失败,请重试!');
         }

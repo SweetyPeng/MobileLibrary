@@ -28,13 +28,16 @@ export default class DonePage extends wepy.page {
         wepy.switchTab({
           url: '/pages/tabBar/home'
         });
-      } else {
-        // this.$link('/page/mine/coupons/couponsList');
+      } else if (this.status === 'deleteSuccess') {
+        wepy.switchTab({
+          url: '/pages/tabBar/mine'
+        });
       }
     }
   };
   onLoad(options) {
     this.status = options.status;
+    console.log(this.status)
     switch (this.status) {
       case 'fromScan':
         this.image = 'success-img';
@@ -53,6 +56,12 @@ export default class DonePage extends wepy.page {
         this.title = '请求成功';
         this.content = '请耐心等待对方处理，继续逛逛吧';
         this.button = '首页';
+        break;
+      case 'deleteSuccess':
+        this.image = 'success-img';
+        this.title = '删除成功';
+        this.content = '您已删除该书，继续逛逛吧';
+        this.button = '我的';
         break;
       default:
         break;
