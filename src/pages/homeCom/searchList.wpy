@@ -1,0 +1,162 @@
+<template>
+  <view>
+    <!-- 固定查询框 -->
+    <view class="search-bar">
+      <view class="search-left">
+        <image src="../../images/icon_search.png" class="search-icon"/>
+        <input
+          type="text"
+          placeholder="请输入书名/作者"
+          placeholder-class="input-placeholder"
+          value="{{keywords}}"
+          @input="inputKeywords"
+        />
+      </view>
+      <view>
+        <button class="search-btn" plain="true" @tap="queryBooks">查询</button>
+      </view>
+    </view>
+    <!-- 查询结果 -->
+    <view class="search-result">
+      <block wx:if="{{bookList.length>0}}">
+        <repeat for="{{bookList}}" key="index" item="item">
+          <BookListCard :item="item"/>
+        </repeat>
+        <view class="tips">
+          本次搜索结果共有{{total}}条，当前{{ total>20 ? '只显示前20条':'已全部显示'}}
+        </view>
+      </block>
+      <block wx:else>
+        <EmptyPage :item="emptyPageData"/>
+      </block>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import wx from 'utils/wx';
+import RequestMixin from 'mixins/request';
+import BookListCard from '../bookInfo/bookListCard';
+import EmptyPage from 'components/empty';
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: '图书查询'
+  };
+  components = {
+    BookListCard,
+    EmptyPage
+  };
+  data = {
+    keywords: '',
+    total: 0,
+    bookList: [],
+    emptyPageData: {
+      url: 'https://oss.biosan.cn/healthWechat/common/empty-img.png',
+      description: '暂时没有找到您想要的图书哦'
+    }
+  };
+  mixins = [RequestMixin];
+  methods = {
+    inputKeywords(e) {
+      this.keywords = e.detail.value;
+    },
+    queryBooks() {
+      const hasWord = this.verifyInput(this.keywords);
+      if (hasWord) {
+        const keyWord = encodeURI(this.keywords);
+        this.queryBookByName(keyWord);
+      }
+    }
+  };
+  // 输入验证
+  verifyInput(word) {
+    if (!word) {
+      this.$toast('请输入书名/作者');
+      return false;
+    }
+    return true;
+  }
+  // 通过关键字查询图书 --通过云函数
+  async queryBookByName(word) {
+    this.$loading('加载中');
+    const resp = await wx.cloud
+      .callFunction({
+        // 传递给云函数的参数
+        name: 'getBookListByName',
+        data: {
+          name: word
+        }
+      })
+      .then(res => {
+        let result = JSON.parse(res.result);
+        console.log('Search图书列表', result);
+        return JSON.parse(res.result);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    this.bookList = resp.books;
+    this.total = resp.total;
+    this.$apply();
+    this.$loading(false);
+  }
+  onLoad() {
+  }
+}
+</script>
+<style lang="less">
+.search-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  padding: 20rpx 32rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(49, 212, 218, 1);
+  .search-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 10rpx;
+    border: 1rpx solid #f2f2f2;
+    .search-icon {
+      width: 40rpx;
+      height: 40rpx;
+      padding: 0 10rpx;
+    }
+    input {
+      width: 500rpx;
+      height: 70rpx;
+    }
+    .input-placeholder {
+      font-size: 32rpx;
+      color: #b2b2b2;
+      padding-left: 8rpx;
+    }
+  }
+  .search-btn {
+    font-size: 32px;
+    text-align: center;
+  }
+  button {
+    height: 72rpx;
+    color: rgba(49, 212, 218, 1);
+    line-height: 70rpx;
+    background: #ffffff;
+    border: none;
+  }
+}
+.search-result {
+  padding: 0 32rpx;
+  padding-top: 110rpx;
+  margin-bottom: 48rpx;
+  .tips {
+    text-align:center;
+    margin-top:32rpx;
+    font-size:28rpx;
+    color:#EF8E47;
+  }
+}
+</style>

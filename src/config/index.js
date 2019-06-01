@@ -1,17 +1,16 @@
 export let env = process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
 const domains = {
-  apiUrl: 'http://douban.uieee.com/v2/book/', // 代理豆瓣Api
-  dev: 'https://example.dev.cn', // 测试api接口
-  prod: 'https://example.prod.cn' // 正式api接口
+  test: 'http://localhost:8080', // 本地
 };
+const apiUrl = 'http://douban.uieee.com/v2/book/'; // 代理豆瓣Api
 // 小程序本地存储key的前缀
 const dbPrefixes = {
   dev: 'dev.',
   prod: 'prod.',
-  apiUrl: 'apiUrl.'
+  test: 'test.'
 };
 
-env = 'apiUrl';
+env = 'test';
 
 export const isPord = env === 'prod';
 export const isDev = env === 'dev';

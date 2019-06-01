@@ -33,19 +33,19 @@
         <text>一、查询</text>
       </view>
       <view class="content">
-        <text>在首页查询输入框，输入书名或作者，点击查询即可了解相关书籍信息</text>
+        <text>在首页点击查询框，进入图书查询页面，输入书名或作者，点击查询即可获取相关信息</text>
       </view>
       <view class="title2">
         <text>二、发布漂流</text>
       </view>
       <view class="content">
-        <text>通过扫描书籍背后的ISBN条形码，将您手中的闲置书籍进行发布。</text>
+        <text>通过扫描书籍背后的ISBN条形码，或者手工拍照上传，将您手中的闲置书籍进行发布。</text>
       </view>
       <view class="title2">
         <text>三、预约书籍</text>
       </view>
       <view class="content">
-        <text>查看书籍信息后，可点击预约，填写预约信息，之后只需要静静等待书主人消息了</text>
+        <text>查看书籍信息后，可点击借阅，填写借阅信息，之后只需要静静等待书主人消息了</text>
       </view>
       <view class="title2">
         <text>四、书籍交接</text>
@@ -57,7 +57,7 @@
         <text>五、分享</text>
       </view>
       <view class="content">
-        <text>您可以写下书评分享阅读后的感受，也可以通过转发，让朋友们看到您的漂流信息。当然，欢迎邀请朋友一起来漂流哦~</text>
+        <text>您可以写下漂流卡片分享关于图书的感受，也可以通过转发，让朋友们看到您的漂流信息。当然，欢迎邀请朋友一起来漂流哦~</text>
       </view>
 
       <view class="title">

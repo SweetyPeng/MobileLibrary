@@ -1,17 +1,250 @@
 <template>
-  <view>书评</view>
+  <view class="book-review">
+    <image class="header-img" mode="widthFix" src="../../images/topic.jpg"/>
+    <view class="title">
+      <view>一本好书，</view>
+      <view>就是一盏陈年佳酿，让你回味；</view>
+      <view>又如一位益友，</view>
+      <view>带你在书的王国尽情遨游；</view>
+      <view>相信每个人都有想要推荐的一本好书，</view>
+      <view>写下你的想法，和大家分享吧</view>
+    </view>
+    <view class="content-write">
+      <textarea placeholder-class="placeholder-class" placeholder="#推荐一本你喜爱的书#"
+        value="{{userInput}}" @input="writeThoughts"/>
+      <view class="submit-btn" @tap="submit">发表</view>
+    </view>
+    <view class="content-card">
+      <view class="card-title">评论</view>
+      <block wx:if="{{reviewList.length>0}}">
+        <view class="card-content" wx:for="{{reviewList}}" wx:key="{{index}}">
+          <view class="card-detail">
+            <view class="content-top">
+              <image src="{{item.photo}}"/>
+              <view class="top-detail">
+                <view class="name">{{item.name}}</view>
+                <view class="time">{{item.time}}</view>
+              </view>
+            </view>
+            <view class="content-bottom">{{item.content}}</view>
+          </view>
+        </view>
+        <view class="tip" wx:if="{{reviewListCount>5 && viewmore === 0}}" @tap="viewMore">查看更多>></view>
+        <view class="tip" wx:else>已显示全部</view>
+      </block>
+      <block wx:else>
+        <view class="card-content">
+          <view>暂无讨论，快来抢坐沙发吧~</view>
+        </view>
+      </block>
+    </view>
+  </view>
 </template>
 <script>
 import wepy from 'wepy';
-export default class Index extends wepy.page {
-  config = {
-    navigationBarTitleText: '书籍分享'
-  };
+import wx from 'utils/wx';
 
+export default class BookReview extends wepy.page {
+  config = {
+    navigationBarTitleText: '话题讨论'
+  };
+  data = {
+    viewmore: 0,
+    reviewListCount: 0,
+    userInput: '',
+    reviewList: [
+      // {
+      //   photo: 'https://oss.biosan.cn/medicClient/doctorCenter/photo-1.png',
+      //   name: '测试一号',
+      //   time: '2019-4-29',
+      //   content: '我推荐《围城》，它是由钱钟书先生所著，是中国现代文学史上一部风格独特的讽刺小说。书中的精言妙语可谓是用到登峰造极的境界，而幽默诙谐的语言则淋漓尽致体现了人生的酸甜苦辣千般滋味。'
+      // },
+      // {
+      //   photo: 'https://oss.biosan.cn/medicClient/doctorCenter/photo-2.png',
+      //   name: '测试二号',
+      //   time: '2019-4-28',
+      //   content: '《追风筝的人》由美籍阿富汗作家卡勒德·胡赛尼所著，主要围绕风筝与阿富汗的两个少年之间展开，一个富家少年与家中仆人关于风筝的故事，关于人性的背叛与救赎。'
+      // },
+      // {
+      //   photo: 'https://oss.biosan.cn/medicClient/doctorCenter/photo-3.png',
+      //   name: '测试三号',
+      //   time: '2019-4-27',
+      //   content: '《活着》是作家余华的代表作之一，讲述一个人在三反五反，大跃进，文化大革命等社会变革中一生的故事，这是一个历尽世间沧桑和磨难老人的人生感言，是一幕演绎人生苦难经历的戏剧。'
+      // }
+    ]
+  }
+  methods = {
+    submit() {
+      let len = this.userInput.length;
+      if (len === 0) {
+        this.$toast('发表内容不能为空！');
+      } else {
+        this.saveThoughts();
+        this.userInput = '';
+        this.onLoad();
+      }
+    },
+    writeThoughts(e) {
+      this.userInput = e.detail.value;
+    },
+    viewMore() {
+      this.viewmore = 1;
+      this.getThoughts();
+    }
+  }
+  // 保存评论
+  async saveThoughts() {
+    const params = {
+      avatarUrl: this.$parent.globalData.userInfo.avatarUrl,
+      userName: this.$parent.globalData.userInfo.nickName,
+      postTime: new Date(Date.now() - -8 * 60 * 60 * 1000).toJSON().substr(0, 10),
+      postContent: this.userInput
+    }
+    const db = wx.cloud.database({});
+    db.collection('topicReview').add({
+      data: params
+    }).then(res => {
+      if (res.errMsg === 'collection.add:ok') {
+        this.$toast('发表成功！');
+      }
+    }).catch(err => {
+      console.log(err)
+      this.$toast('网络有问题,请重试');
+    })
+  }
+  // 获取评论
+  async getThoughts() {
+    const db = wx.cloud.database({});
+    db.collection('topicReview').get()
+    .then(res => {
+      const reviewList = res.data.map(item => {
+        return Object.assign(item, {
+          photo: item.avatarUrl,
+          name: item.userName,
+          time: item.postTime,
+          content: item.postContent
+        })
+      });
+      this.reviewListCount = reviewList.length || 0;
+      if (this.viewmore === 0) {
+        this.reviewList = reviewList.slice(0, 5) || [];
+      } else {
+        this.reviewList = reviewList;
+      }
+      this.$apply();
+    })
+  }
   onLoad() {
-    console.log('书籍分享');
+    this.getThoughts();
   }
 }
 </script>
 <style lang="less">
+Page{
+  background: #f5f5f5;
+}
+.book-review {
+  padding-bottom: 100rpx;
+  .header-img {
+    width: 100%;
+    display: block;
+    border-radius: 0 0 20rpx 20rpx;
+  }
+  .title {
+    font-size: 24rpx;
+    color: #5d5d5d;
+    text-align: center;
+    line-height: 48rpx;
+    padding-top: 20rpx;
+  }
+  .content-write {
+    display: flex;
+    align-items: center;
+    flex-direction:column;
+    padding-bottom: 16rpx;
+    textarea {
+      width: 686rpx;
+      height: 150rpx;
+      background: rgba(255, 255, 255, 1);
+      border-radius: 8px;
+      border: 2px solid rgba(204, 204, 204, 1);
+      margin-top: 32rpx;
+      padding: 16rpx 32rpx;
+    }
+    .placeholder-class {
+      height: 40rpx;
+      font-size: 28px;
+      color: rgba(178, 178, 178, 1);
+      line-height: 40px;
+    }
+    .submit-btn {
+      margin: 0 auto;
+      text-align: center;
+      font-size: 32px;
+      color: rgba(255, 255, 255, 1);
+      width: 560px;
+      height: 96px;
+      line-height: 96px;
+      background: rgba(49, 212, 218, 1);
+      border-radius: 48px;
+      margin-top: 20rpx;
+    }
+  }
+  .content-card {
+    width: 686rpx;
+    background: #ffffff;
+    border-radius: 12rpx 12rpx 10rpx 10rpx;
+    margin: 0 32rpx;
+    .card-title {
+      padding: 20rpx;
+      font-size: 32rpx;
+      font-weight: bold;
+      line-height: 56rpx;
+    }
+    .card-content {
+      padding: 0 20rpx;
+      .card-detail {
+        border-top: 2rpx solid #f2f2f2;
+      }
+      .content-top {
+        display: flex;
+        align-items: center;
+        padding-top: 8rpx;
+        image {
+          width: 120rpx;
+          height: 120rpx;
+          border-radius: 50%;
+        }
+        .top-detail {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start; 
+          padding-left: 16rpx;
+          font-size: 28rpx;
+          .name {
+            font-weight: bold;
+          }
+          .time {
+            padding-top: 10rpx;
+            color: #b2b2b2;
+            font-size: 22rpx;
+          }
+        }
+      }
+      .content-bottom {
+        font-size: 28rpx;
+        padding: 8rpx 0;
+      }
+    }
+    .tip {
+      font-size: 24rpx;
+      color: #2d2d2d;
+      text-align: center;
+      border-top: 1rpx solid #f2f2f2;
+      height: 60rpx;
+      line-height: 60rpx;
+
+    }
+  }
+}
 </style>

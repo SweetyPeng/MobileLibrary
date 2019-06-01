@@ -1,0 +1,137 @@
+<template>
+  <view>
+    <view class="invite-card {{ open ? 'card-show':''}}">
+      <view class="card-mask"></view>
+      <view class="card-inner add-card-inner">
+        <view class="inner-content">
+          <image src="/images/bannerImgs/readtime.jpg"/>
+          <view class="title">邀请朋友</view>
+          <view class="details">以书为友，品读智慧；以书结友，分享快乐！</view>
+          <view class="btn">
+            <button open-type="share" class="k" @tap="popUpClose">点击邀请</button>
+          </view>
+        </view>
+        <view class="inner-icon">
+          <view class="pop-up-close iconfont icon-icon_close" @tap="popUpClose"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+export default class Invite extends wepy.page {
+  config = {
+    navigationBarTitleText: '漂流吧图书酱'
+  };
+  data = {
+    open: true
+  };
+  methods = {
+    popUpClose() {
+      wepy.switchTab({
+        url: '/pages/tabBar/mine'
+      });
+    }
+  }
+  onShareAppMessage(options) {
+    return {
+      title: '漂流吧图书酱',
+      path: '/pages/welcome/welcome'
+    }
+  }
+}
+</script>
+<style lang="less">
+.invite-card {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  .card-mask {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    transition: 0.5s;
+    background: rgba(0, 0, 0, 0.6);
+  }
+  .card-inner {
+    position: fixed;
+    top: 0;
+    left: 95rpx;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    z-index: 11;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    transition: all 0.5s linear;
+  }
+}
+.card-show {
+  .card-mask {
+    display: block;
+  }
+  .card-inner {
+    opacity: 1;
+  }
+}
+.pop-up-close {
+  width: 52rpx;
+  height: 52rpx;
+  color: #ffffff;
+  margin-top: 60rpx;
+  text-align: center;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+.add-card-inner {
+  width: 560rpx;
+}
+.inner-content {
+  border-radius: 16rpx;
+  background-color: #ffffff;
+  image {
+    width: 100%;
+    height: 280rpx;
+  }
+  .title {
+    color: #5d5d5d;
+    font-size: 40rpx;
+    text-align: center;
+    margin-top: 32rpx;
+    font-weight: bolder;
+  }
+  .details {
+    color: #5d5d5d;
+    font-size: 28rpx;
+    text-align: center;
+    padding: 0 58rpx;
+    padding-top: 32rpx;
+    line-height: 45rpx;
+  }
+  .btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 80rpx;
+    margin-bottom: 30rpx;
+    .k {
+      width: 400rpx;
+      height: 80rpx;
+      font-size: 32rpx;
+      line-height: 80rpx;
+      text-align: center;
+      background: #1a90f3;
+      color: white;
+      border-radius: 8rpx;
+    }
+  }
+}
+</style>

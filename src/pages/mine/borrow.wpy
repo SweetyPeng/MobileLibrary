@@ -1,18 +1,75 @@
 <template>
-  <view>
-    我的借阅
+  <view class="borrow-container {{!borrowedBooks.length ? 'empty-style':''}}">
+    <view wx:for="{{borrowedBooks}}" wx:key="{{index}}" class="content-list">
+      <image src="{{item.bookImages}}" @tap="onBookDetail({{item.bookID}})"/>
+    </view>
+    <view wx:if="{{!borrowedBooks.length}}">
+      <EmptyPage :item="emptyPageData"/>
+    </view>
   </view>
 </template>
 <script>
 import wepy from 'wepy';
-export default class Borrow extends wepy.component {
+import wx from 'utils/wx';
+import EmptyPage from 'components/empty';
+
+export default class Drift extends wepy.page {
   config = {
     navigationBarTitleText: '我的借阅'
   };
-  onLoad() {
-    console.log('borrow');
+  components = {
+    EmptyPage
+  };
+  data = {
+    borrowedBooks: [],
+    emptyPageData: {
+      url: 'https://oss.biosan.cn/healthWechat/common/empty-img.png',
+      description: '您还没有借阅记录哦'
+    }
   }
-};
+  methods = {
+    onBookDetail(id) {
+      this.$link(`/pages/drift/driftDetail?isbn=${id}&from=borrow`);
+    }
+  }
+  onLoad() {}
+
+  onShow() {
+    this.getBorrowedBooks();
+  }
+  getBorrowedBooks() {
+    wx.cloud.callFunction({
+      name: 'getBorrowedBooks',
+      data: {}
+    }).then(res => {
+      console.log('getBorrowedBooks----->', res)
+      this.borrowedBooks = res.result.data;
+      this.$apply();
+    })
+  }
+}
 </script>
 <style lang="less">
+.borrow-container {
+  padding: 32rpx 0;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  .content-list {
+    width:350rpx;
+    height:400rpx;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 20rpx 15rpx 10rpx #cccccc;
+    image {
+      width: 200rpx;
+      height: 300rpx;
+    }
+  }
+}
+.empty-style {
+  display: flex;
+  justify-content: center;
+}
 </style>

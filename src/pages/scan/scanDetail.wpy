@@ -1,0 +1,303 @@
+<template>
+  <view class="book-detail">
+    <!-- 是否确定发布模态框 -->
+    <bsDialog>
+      <view slot="bsDialog_content" class="content-tip">
+        <view>请您确定是否要发布漂流?</view>
+        <view>《{{bookInfo.title}}》</view>
+      </view>
+    </bsDialog>
+    <!-- 图书详情 -->
+    <scroll-view
+      class="wrapper-scroll"
+      scroll-y="true"
+      scroll-top="100"
+    >
+      <view class="detail-img">
+        <view class="detail-img-bg" style=" background-image: url({{bookInfo.images.large}})"></view>
+        <image src="{{bookInfo.images.large}}" class="detail-img-s"/>
+      </view>
+      <view class="detail-info">
+        <view class="detail-fl">
+          <view class="detail-title">{{bookInfo.title}}</view>
+          <view class="detail-text detail-author">作者：{{bookInfo.author}}</view>
+          <view class="detail-text detail-publisher">出版社：{{bookInfo.publisher}}</view>
+          <view class="detail-text detail-pubdate">出版时间：{{bookInfo.pubdate}}</view>
+        </view>
+        <view class="detail-summary">
+          <text class="ibox-title-small">图书简介:</text>
+          <view class="ibox-content">
+            <view>{{bookInfo.summary || '找不到简介呢'}}</view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+    <!-- 底部按钮 -->
+    <view class="btn-group {{isIpx?'mb68':''}}">
+      <view class="publish-btn" bindtap="publishBook">我要发布</view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+import wx from 'utils/wx';
+import bsDialog from 'components/bs_dialog';
+import RequestMixin from 'mixins/request';
+
+export default class ScanDetail extends wepy.page {
+  config = {
+    navigationBarTitleText: '图书详情'
+  };
+  components = {
+    bsDialog
+  }
+  data = {
+    bookInfo: {},
+    isIpx: false,
+    hidden: true, // 隐藏借阅按钮
+    infoVisible: false, // 输入提示信息
+    ownerName: '',
+    openId: '',
+    isbn: ''
+  }
+  mixins = [RequestMixin];
+  methods = {
+    async publishBook() {
+      let resp = await this.$invoke('bsDialog', 'showBsDialog', {
+        title: '是否发布漂流',
+        buttons: [
+          {
+            type: 'confirm',
+            text: '确定',
+            color: '#0076FF'
+          },
+          {
+            type: 'cancle',
+            text: '取消',
+            color: '#0076FF'
+          }
+        ]
+      });
+      let { type } = resp;
+      if (type === 'confirm') {
+        let book = this.bookInfo;
+        this.userPostBook(book);
+      }
+    }
+  };
+
+  // isbn 查询图书详情信息 --云函数bookInfo
+  async queryBookById(param) {
+    const resp = await wx.cloud.callFunction({
+      name: 'bookInfo',
+      data: param
+    }).then(res => {
+      console.log(res);
+      if (res && res.result) {
+        return JSON.parse(res.result);
+      } else {
+        this.$link('./failPage?from=scan');
+      }
+    }).catch(err => {
+      console.log(err);
+    });
+    if (resp) {
+      this.saveBooks(resp);
+    }
+    this.bookInfo = resp;
+    this.$apply();
+  }
+
+  // 发布图书，图书-用户
+  userPostBook(book) {
+    wx.cloud.callFunction({
+      name: 'userPostBook',
+      data: {
+        bookID: this.isbn,
+        bookName: book.title,
+        bookAuthor: book.author,
+        bookPublisher: book.publisher,
+        bookPubdate: book.pubdate,
+        bookSummary: book.summary,
+        bookImages: book.images,
+        ownerName: this.ownerName,
+        ownerID: this.openId,
+        holderName: this.ownerName,
+        holderID: this.openId
+      }
+    }).then(res => {
+      console.log('userPostbook=====>', res)
+      if (res.errMsg === 'cloud.callFunction:ok') {
+        this.$redirect('./donePage?status=fromScan')
+      } else {
+        this.$toast('发布失败,请重试!');
+      }
+    })
+  }
+
+  // 将扫描所得图书存入数据库--bookLibrary
+  saveBooks(book) {
+    wx.cloud.callFunction({
+      name: 'saveScanBook',
+      data: {
+        id_scan: book.id,
+        isbn: book.isbn,
+        author: book.author,
+        title: book.title,
+        pubdate: book.pubdate,
+        publisher: book.publisher,
+        image: book.image,
+        image_large: book.images.large,
+        summary: book.summary
+      }
+    }).then(res => {
+      console.log(res);
+    })
+  }
+
+  onLoad(options) {
+    this.ownerName = this.$parent.globalData.userInfo.nickName;
+    this.openId = this.$parent.globalData.openId;
+    this.isbn = options.isbn;
+    if (options.isbn) {
+      const param = {
+        isbn: options.isbn
+      }
+      this.queryBookById(param);
+    }
+    this.isIphoneX();
+  }
+  // 判断是否是iphoneX
+  async isIphoneX() {
+    const systemInfo = await wepy.getSystemInfo();
+    const isIpx = systemInfo.model;
+    this.isIpx = isIpx.indexOf('iPhone X') > -1;
+    this.$apply();
+  }
+}
+</script>
+<style lang="less">
+.book-detail {
+  .bs-dialog__header {
+    font-size: 34rpx;
+  }
+  .content-tip {
+    font-size: 28rpx;
+    color: rgba(93,93,93,1);
+    line-height: 40rpx;
+    text-align: center;
+  }
+  .wrapper-scroll {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+  }
+  .detail-img {
+    position: relative;
+    width: 100%;
+    height: 600rpx;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    overflow: hidden;
+    .detail-img-bg {
+      position: absolute;
+      z-index: -2;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 600rpx;
+      background-size: cover;
+      background-position: center;
+      filter: blur(30rpx);
+      transform: scale(1.2);
+    }
+    .detail-img-s {
+      z-index: 9999;
+      width: 354rpx;
+      height: 504rpx;
+      margin-top: 47rpx;
+      box-shadow: 0 0rpx 30rpx rgba(0, 0, 0, 0.3);
+    }
+  }
+  .detail-info {
+    background: #fff;
+    padding: 30rpx;
+    font-size: 28rpx;
+    color: #656565;
+    .detail-fl {
+      .detail-title {
+        font-size: 50rpx;
+        color: #2d2d2d;
+        font-weight: bold;
+        margin-bottom: 20rpx;
+      }
+      .detail-text {
+        margin-bottom: 14rpx;
+      }
+    }
+  }
+  .detail-summary {
+    background: #fff;
+    .ibox-title-small {
+      display: block;
+      padding-bottom: 10rpx;
+      text-overflow: ellipsis;
+    }
+    .ibox-content {
+      padding-bottom: 100rpx;
+      line-height: 60rpx;
+    }
+    .ibox-content view {
+      margin-bottom: 20rpx;
+    }
+  }
+  .btn-group{
+    width: 100%;
+    height: 100rpx;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    .publish-btn{
+      width: 100%;
+      height: 100%;
+      font-size: 36rpx;
+      display: inline-block;
+      border-radius: 0;
+      padding: 0;
+      border: 0;
+      color: #fff;
+      background-color: #2BD3D2;
+      line-height: 100rpx;
+      text-align: center;
+    }
+    .write-btn{
+      width: 40%;
+      height: 100%;
+      display: inline-block;
+      background-color:  #018CA6;
+      font-size: 36rpx;
+      border-radius: 0;
+      padding: 0;
+      color: #fff;
+      line-height: 100rpx;
+      text-align: center;
+    }
+  }
+  .mb68 {
+    bottom: 68rpx !important;
+    &::after {
+      content: ' ';
+      position: fixed;
+      height: 68rpx;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #fff;
+    }
+  }
+}
+</style>

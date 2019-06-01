@@ -5,13 +5,18 @@
       <view class="book-icon">
         <image src="../../images/book-icon.png"/>
       </view>
-      <view class="paragraph">漂流吧图书酱，类似于流动图书馆，是一个图书漂流和借阅工具</view>
-      <view class="paragraph">漂流图书到学校或公司，结识志趣一致的TA</view>
+      <view class="paragraph">漂流吧图书酱，是一个图书漂流工具，在朋友间相互传阅纸质图书。</view>
+      <view class="paragraph">漂流图书到学校，结识志趣一致的TA，一起交流分享。</view>
       <view class="paragraph">快来开始你的图书漂流之旅吧~</view>
     </view>
     <view class="scan">
       <button class="scan-btn" @tap="scanBook">
         <image src="../../images/scan.png" class="scan-img"/>扫一扫漂流图书
+      </button>
+    </view>
+    <view class="scan">
+      <button class="scan-btn" @tap="inputBook">
+        <image src="../../images/input.png" class="scan-img"/>手工填写(推荐)
       </button>
     </view>
   </view>
@@ -34,11 +39,15 @@ export default class Drift extends wepy.page {
       });
       if (resp.scanType === 'EAN_13' || resp.scanType === 'EAN_10') {
         wepy.navigateTo({
-          url: `../bookInfo/bookDetail?isbn=${resp.result}`
+          url: `../scan/scanDetail?isbn=${resp.result}`
         });
       } else {
         this.showToast('请扫描正确的图书条形码！');
       }
+    },
+    // 手工录入
+    inputBook() {
+      this.$link('/pages/scan/inputBook');
     }
   };
 
@@ -49,8 +58,7 @@ export default class Drift extends wepy.page {
     });
   }
 
-  onLoad() {
-  }
+  onLoad() {}
 }
 </script>
 <style lang="less">
@@ -62,8 +70,8 @@ export default class Drift extends wepy.page {
   margin-bottom: 60rpx;
 }
 .introduce {
-  padding: 2%;
-  padding-top: 8%;
+  padding: 20rpx;
+  padding-top: 80rpx;
 }
 .book-icon {
   text-align: center;
@@ -76,20 +84,19 @@ export default class Drift extends wepy.page {
   display: block;
   width: 100%;
   font-size: 28rpx;
-  color: #bbbbbb;
+  color: #b2b2b2;
   word-break: break-all;
   word-wrap: break-word;
-  margin-bottom: 40rpx;
+  margin-bottom: 20rpx;
 }
 .scan {
-  margin: 6%;
-  margin-bottom: 0;
-  padding-bottom: 10%;
+  padding-bottom: 20rpx;
 }
 .scan .scan-btn {
-  background-color: #31d4da;
+  width: 550rpx;
   color: #fff;
   border-radius: 60rpx;
+  background-color: #31d4da;
 }
 .scan .scan-img {
   height: 100rpx;

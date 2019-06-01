@@ -1,7 +1,7 @@
 <style lang="less">
-  // global
-  @import url(./less/iconfont.less);
-  @import url(./less/base.less);
+// global
+@import url(./less/iconfont.less);
+@import url(./less/base.less);
 </style>
 <script>
 import wepy from 'wepy';
@@ -12,6 +12,7 @@ import 'utils/injectObj';
 export default class extends wepy.app {
   config = {
     pages: [
+      'pages/welcome/welcome',
       'pages/tabBar/home',
       'pages/tabBar/mine',
       'pages/tabBar/scan',
@@ -25,9 +26,16 @@ export default class extends wepy.app {
       'pages/mine/drift',
       'pages/mine/thought',
       'pages/mine/evaluate',
-      'pages/main/main',
+      'pages/mine/invite',
       'pages/forTest/mapTest',
-      'pages/minecom/evaluateSuccess'
+      'pages/minecom/evaluateSuccess',
+      'pages/scan/scanDetail',
+      'pages/scan/inputBook',
+      'pages/scan/donePage',
+      'pages/scan/failPage',
+      'pages/drift/driftDetail',
+      'pages/message/noticeDetail',
+      'pages/homecom/searchList'
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -35,9 +43,9 @@ export default class extends wepy.app {
       navigationBarTitleText: '漂流吧图书酱',
       navigationBarTextStyle: 'white'
     },
-    'permission': {
+    permission: {
       'scope.userLocation': {
-        'desc': '你的位置信息将用于小程序位置接口的效果展示'
+        desc: '你的位置信息将用于小程序位置接口的效果展示'
       }
     },
     tabBar: {
@@ -71,7 +79,10 @@ export default class extends wepy.app {
     }
   };
 
-  globalData = {};
+  globalData = {
+    userInfo: {},
+    postNum: 0
+  };
 
   constructor() {
     super();
@@ -81,14 +92,13 @@ export default class extends wepy.app {
 
   onLaunch() {
     if (!wx.cloud) {
-      console.error('请使用 2.2.3 或以上的基础库以使用云能力')
+      console.error('请使用 2.2.3 或以上的基础库以使用云能力');
     } else {
       wx.cloud.init({
         traceUser: true,
         env: 'develop-a5b2d2'
-      })
+      });
     }
-    this.globalData = {}
   }
 }
 </script>

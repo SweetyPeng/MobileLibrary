@@ -1,0 +1,132 @@
+<template>
+  <view class="coupon-mask" style="display:{{visible==='1'?'block':'none'}};">
+    <view class="coupon-container" style="height: {{compHeight}}rpx">
+      <view class="top-bar">
+        <view>{{title}}</view>
+        <text class="close iconfont icon-icon_close" @tap="close"></text>
+      </view>
+      <view class="coupon-body">
+        <slot></slot>
+      </view>
+    </view>
+    <block wx:if="{{showOkBtn}}">
+      <view class="btn" @tap="ok">确定</view>
+    </block>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+
+export default class ModalFixedBtm extends wepy.component {
+  props = {
+    title: {
+      type: String
+    },
+    compHeight: {
+      type: String,
+      default: '900'
+    },
+    showOkBtn: {
+      type: String,
+      default: ''
+    },
+    visible: {
+      type: String,
+      default: '0'
+    }
+  };
+
+  data = {};
+
+  methods = {
+    close() {
+      this.visible = '';
+    },
+    open() {
+      this.visible = '1';
+    },
+    ok() {
+      this.$emit('ok');
+    }
+  };
+}
+</script>
+
+<style lang="less">
+@import url(../less/lesshat.less);
+.coupon-mask {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 13;
+  background-color: rgba(0, 0, 0, 0.5);
+  .coupon-container {
+    width: 100%;
+    display: flex;
+    z-index: 12;
+    background-color: #F5F5F5;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0rpx;
+    left: 0rpx;
+    animation: 0.2s linear picker_view;
+    .top-bar {
+      height: 96px;
+      display: flex;
+      padding: 0 32px;
+      font-size: 32px;
+      font-weight: bold;
+      align-items: center;
+      background-color: #ffffff;
+      justify-content: space-between;
+      border-bottom: 2px solid rgba(242,242,242,1);
+      .iconfont {
+        color: #9d9d9d;
+        font-weight: normal;
+      }
+    }
+    .coupon-body {
+      height:800rpx;
+      overflow-y: scroll;
+    }
+  }
+}
+.btn {
+  width: 100%;
+  height: 100px;
+  background: rgba(49, 212, 218, 1);
+  font-size: 32rpx;
+  line-height: 100rpx;
+  color: rgba(255, 255, 255, 1);
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 12;
+}
+.fix-iphonex-button {
+  bottom: 68rpx !important;
+  &::after {
+    content: ' ';
+    position: fixed;
+    height: 68rpx;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+  }
+}
+@keyframes picker_view {
+  from {
+    bottom: -900rpx;
+  }
+  to {
+    bottom: 0;
+  }
+}
+</style>

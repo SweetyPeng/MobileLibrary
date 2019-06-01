@@ -1,18 +1,33 @@
 <template>
   <view class="book-detail">
+    <!-- 查看书籍状态底部弹窗 -->
+    <ModalFixedBtm 
+      title="该书籍状态">
+      <view>
+        <view style="padding:32rpx;">
+          <view>当前持书人:</view>
+          <view style="color:#4A90E2;text-decoration:underline;margin-top:16rpx;">
+            <view wx:if="{{bookStatusInfo.holderName}}">
+              <view>{{bookStatusInfo.holderName}}</view>
+            </view>
+            <view wx:else>暂无人发布</view>
+          </view>
+        </view>
+        <view style="padding:0 32rpx;margin-top:32rpx;">
+          <button type="primary" size="mini" bindtap="publish">我要发布</button>
+          <button type="primary" size="mini" style="margin-left: 64rpx;" wx:if="{{bookStatusInfo.holderName}}" bindtap="borrow">我要借阅</button>
+        </view>
+      </view>
+    </ModalFixedBtm>
     <!-- 是否确定发布模态框 -->
     <bsDialog>
       <view slot="bsDialog_content" class="content-tip">
         <view>请您确定是否要发布漂流?</view>
-        <view>{{bookInfo.title}}</view>
+        <view>《{{bookInfo.title}}》</view>
       </view>
     </bsDialog>
     <!-- 图书详情 -->
-    <scroll-view
-      class="wrapper-scroll"
-      scroll-y="true"
-      scroll-top="100"
-    >
+    <scroll-view class="wrapper-scroll" scroll-y="true" scroll-top="100">
       <view class="detail-img">
         <view class="detail-img-bg" style=" background-image: url({{bookInfo.images.large}})"></view>
         <image src="{{bookInfo.images.large}}" class="detail-img-s"/>
@@ -20,34 +35,23 @@
       <view class="detail-info">
         <view class="detail-fl">
           <view class="detail-title">{{bookInfo.title}}</view>
-          <view class="detail-text detail-author">作者：{{bookInfo.author}}</view>
-          <view class="detail-text detail-publisher">出版社：{{bookInfo.publisher}}</view>
-          <view class="detail-text detail-pubdate">出版时间：{{bookInfo.pubdate}}</view>
+          <view class="detail-text detail-author">作者：{{bookInfo.author || '暂无'}}</view>
+          <view class="detail-text detail-publisher">出版社：{{bookInfo.publisher || '暂无'}}</view>
+          <view class="detail-text detail-pubdate">出版时间：{{bookInfo.pubdate || '暂无'}}</view>
         </view>
-        <view class="detail-fr">
-          <view class="detail-star-box">
-            <view class="detail-star">{{bookInfo.rating.average}}</view>
-            <image class="detail-star-img" src="{{bookInfo.rating.block}}"/>
+        <view class="detail-summary">
+          <text class="ibox-title-small">图书简介：</text>
+          <view class="ibox-content">
+            <view>{{bookInfo.summary || '找不到简介呢'}}</view>
           </view>
         </view>
       </view>
-      <view class="book-status">
-        <text>书籍状态</text>
-        <view class="content">
-          <view>持书人：{{bookowner || '暂无人发布'}}</view>
-        </view>
-      </view>
-      <view class="detail-summary">
-        <text class="ibox-title-small">图书简介</text>
-        <view class="ibox-content">
-          <view>{{bookInfo.summary || '找不到简介呢'}}</view>
-        </view>
-      </view>
     </scroll-view>
+    <!-- 底部按钮 -->
     <view class="btn-group {{isIpx?'mb68':''}}">
-      <view class="publish-btn" bindtap="publishBook">我要发布</view>
-      <view class="borrow-btn" bindtap="borrowBook">我要借阅</view>
+      <view class="status-btn" bindtap="checkBookStatus">查看书籍状态</view>
     </view>
+    <!-- 借阅表单 -->
     <view class="form {{visible?'show':''}}" >
       <view class="mask" bindtap="hiddenForm"></view>
       <form bindsubmit="submit">
@@ -57,11 +61,15 @@
           <input type="text" maxlength="25" placeholder='请输入微信号' name="wxNum" confirm-type="next"/>
         </view>
         <view class="input-item">
-          <text>电   话</text>
+          <text>电话</text>
           <input type='number' maxlength="11"  placeholder='请输入手机号码' name="phoneNum" confirm-type="next"/>
         </view>
         <view class="input-item">
-          <text>留   言</text>
+          <text>地址</text>
+          <input type='text' maxlength="25"  placeholder='请输入您的所在地址' name="address" confirm-type="next"/>
+        </view>
+        <view class="input-item">
+          <text>留言</text>
           <input type="text" placeholder="给书主的留言" maxlength='50' name="msg" confirm-type="done"/>
         </view>
         <view wx:if="{{infoVisible}}" class="info">请填写微信号和手机号</view>
@@ -76,27 +84,32 @@
 <script>
 import wepy from 'wepy';
 import wx from 'utils/wx';
-import { getStar } from 'utils/star';
-import bsDialog from 'components/bs_dialog';
 import RequestMixin from 'mixins/request';
+import ModalFixedBtm from 'components/modalFixedBtm';
+import bsDialog from 'components/bs_dialog';
 
 export default class BookDetail extends wepy.page {
   config = {
     navigationBarTitleText: '图书详情'
   };
   components = {
+    ModalFixedBtm,
     bsDialog
-  }
+  };
   data = {
     bookInfo: {},
+    bookStatusInfo: {},
+    borrowMessage: {},
     isIpx: false,
+    ownerName: '',
+    openId: '',
     visible: false, // 表单弹框
     hidden: true, // 隐藏借阅按钮
     infoVisible: false // 输入提示信息
-  }
+  };
   mixins = [RequestMixin];
   methods = {
-    async publishBook() {
+    async publish() {
       let resp = await this.$invoke('bsDialog', 'showBsDialog', {
         title: '是否发布漂流',
         buttons: [
@@ -114,65 +127,161 @@ export default class BookDetail extends wepy.page {
       });
       let { type } = resp;
       if (type === 'confirm') {
-        // TODO: 发布图书
-        this.$toast('发布成功！');
+        let book = this.bookInfo;
+        this.userPostBook(book);
+        this.$invoke('ModalFixedBtm', 'close');
       }
     },
-    borrowBook() {
+    borrow() {
       this.visible = true;
     },
     hiddenForm() {
       this.visible = false;
     },
+    checkBookStatus() {
+      this.$invoke('ModalFixedBtm', 'open');
+      this.checkBookStatusInfo();
+    },
     submit(e) {
-      console.log(e.detail);
       let wxNum = e.detail.value.wxNum;
       let phoneNum = e.detail.value.phoneNum;
+      let address = e.detail.value.address;
       let msg = e.detail.value.msg;
-      let bookData = this.bookInfo;
-      console.log(msg);
-      console.log(bookData);
+      this.borrowMessage = {
+        wxNum: wxNum,
+        phoneNum: phoneNum,
+        address: address,
+        msg: msg
+      };
       if (!wxNum || !phoneNum || phoneNum.length !== 11) {
         this.infoVisible = true
         return;
       }
       this.visible = false;
       this.$loading('发送中');
-      // TODO: 借阅信息发送
+      this.saveBorrowMsg();
+      this.$invoke('ModalFixedBtm', 'close');
     }
   };
-
+  // 保存借书信息
+  saveBorrowMsg() {
+    wx.cloud.callFunction({
+      name: 'saveBorrowMsg',
+      data: {
+        bookID: this.bookInfo.isbn,
+        bookImages: this.bookInfo.images.large,
+        bookName: this.bookInfo.title,
+        bookOwnerID: this.bookStatusInfo.ownerID,
+        bookOwnerName: this.bookStatusInfo.ownerName,
+        bookHolderID: this.bookStatusInfo.holderID,
+        bookHolderName: this.bookStatusInfo.holderName,
+        borrowMessage: this.borrowMessage,
+        userName: this.$parent.globalData.userInfo.nickName
+      }
+    }).then(res => {
+      console.log('saveBorrowMsg', res)
+      if (res.result._id) {
+        this.$redirect('../scan/donePage?status=request')
+      } else if (res.result.code) {
+        this.$toast(res.result.message);
+      }
+    })
+  }
+  // 查看书籍状态信息
+  checkBookStatusInfo() {
+    const isbn = this.bookInfo.isbn;
+    wx.cloud.callFunction({
+      name: 'checkBookStatus',
+      data: {
+        bookISBN: isbn
+      }
+    }).then(res => {
+      if (res.result.data.length) {
+        this.bookStatusInfo = res.result.data[0];
+        this.$apply();
+      } else {
+        this.bookStatusInfo = {};
+      }
+    })
+  }
+  // 图书-用户
+  userPostBook(book) {
+    this.ownerName = this.$parent.globalData.userInfo.nickName;
+    this.openId = this.$parent.globalData.openId;
+    book.ownerName = this.ownerName;
+    wx.cloud.callFunction({
+      name: 'userPostBook',
+      data: {
+        bookID: book.isbn,
+        bookName: book.title,
+        bookAuthor: book.author,
+        bookPublisher: book.publisher,
+        bookPubdate: book.pubdate,
+        bookSummary: book.summary,
+        bookImages: book.images,
+        ownerName: book.ownerName,
+        ownerID: this.openId,
+        holderName: book.ownerName,
+        holderID: this.openId
+      }
+    }).then(res => {
+      console.log('userPostbook=====>', res)
+      if (res.errMsg === 'cloud.callFunction:ok') {
+        this.$redirect('../scan/donePage?status=fromSearch')
+      } else {
+        this.$toast('发布失败,请重试!');
+      }
+    })
+  }
+  // 发布图书--业务流程--图书数据库--bookList
+  postBooks(book) {
+    this.ownerName = this.$parent.globalData.userInfo.nickName;
+    book.ownerName = this.ownerName;
+    wx.cloud.callFunction({
+      name: 'postBook',
+      data: {
+        bookID: book.isbn,
+        bookName: book.title,
+        bookAuthor: book.author,
+        bookPublisher: book.publisher,
+        bookPubdate: book.pubdate,
+        bookSummary: book.summary,
+        bookImages: book.images,
+        owner: {
+          ownerName: book.ownerName
+        }
+      }
+    }).then(res => {
+      console.log('postbook=====>', res)
+      if (res.errMsg === 'cloud.callFunction:ok') {
+        this.$toast('发布成功!');
+      } else {
+        this.$toast('发布失败,请重试!');
+      }
+    })
+  }
   /**
    * 查询图书详情信息 --通过云函数
    * @param {Object}
    * param 为id：通过id查询，为isbn：通过isbn查询
    */
   async queryBookById(param) {
-    const resp = await wx.cloud.callFunction({
-      // 传递给云函数的参数
-      name: 'bookInfo',
-      data: param
-    }).then(res => {
-      return JSON.parse(res.result);
-    }).catch(err => {
-      console.log(err);
-    });
-    if (resp) {
-      resp.rating = Object.assign(resp.rating, {
-        block: getStar(resp.rating.average)
+    const resp = await wx.cloud
+      .callFunction({
+        // 传递给云函数的参数
+        name: 'bookInfo',
+        data: param
+      })
+      .then(res => {
+        return JSON.parse(res.result);
+      })
+      .catch(err => {
+        console.log(err);
       });
-      if (resp.summary.length > 100) {
-        resp.summary = resp.summary.substr(0, 100) + '...';
-      }
+    if (resp) {
+      console.log('resp图书详情', resp);
     }
     this.bookInfo = resp;
-    this.$apply();
-  }
-  // 判断是否是iphoneX
-  async isIphoneX() {
-    const systemInfo = await wepy.getSystemInfo();
-    const isIpx = systemInfo.model;
-    this.isIpx = isIpx.indexOf('iPhone X') > -1;
     this.$apply();
   }
 
@@ -186,24 +295,32 @@ export default class BookDetail extends wepy.page {
     if (options.isbn) {
       const param = {
         isbn: options.isbn
-      }
+      };
       this.queryBookById(param);
     }
     this.isIphoneX();
   }
+  // 判断是否是iphoneX
+  async isIphoneX() {
+    const systemInfo = await wepy.getSystemInfo();
+    const isIpx = systemInfo.model;
+    this.isIpx = isIpx.indexOf('iPhone X') > -1;
+    this.$apply();
+  }
 }
 </script>
 <style lang="less">
+
 .book-detail {
   .bs-dialog__header {
-    font-size: 34rpx;
-  }
-  .content-tip {
-    font-size: 28rpx;
-    color: rgba(93,93,93,1);
-    line-height: 40rpx;
-    text-align: center;
-  }
+  font-size: 34rpx;
+}
+.content-tip {
+  font-size: 28rpx;
+  color: rgba(93,93,93,1);
+  line-height: 40rpx;
+  text-align: center;
+}
   .wrapper-scroll {
     position: fixed;
     left: 0;
@@ -243,10 +360,9 @@ export default class BookDetail extends wepy.page {
   .detail-info {
     background: #fff;
     padding: 30rpx;
-    display: flex;
-    justify-content: space-between;
+    font-size: 28rpx;
+    color: #656565;
     .detail-fl {
-      width: 500rpx;
       .detail-title {
         font-size: 50rpx;
         color: #2d2d2d;
@@ -254,108 +370,33 @@ export default class BookDetail extends wepy.page {
         margin-bottom: 20rpx;
       }
       .detail-text {
-        font-size: 28rpx;
-        color: #656565;
         margin-bottom: 14rpx;
       }
-      .detail-tags text {
-        position: relative;
-        font-size: 28rpx;
-        color: #ffac2d;
-        padding: 14rpx 18rpx;
-        display: inline-block;
-        margin-right: 16rpx;
-        margin-bottom: 14rpx;
-        margin-top: 20rpx;
-      }
-      .detail-tags text::after {
-        content: ' ';
-        width: 200%;
-        height: 200%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        border: 1px solid #ffac2d;
-        -webkit-transform: scale(0.5);
-        transform: scale(0.5);
-        -webkit-transform-origin: 0 0;
-        transform-origin: 0 0;
-        box-sizing: border-box;
-        border-radius: 6px;
-      }
-    }
-    .detail-fr {
-      width: 170rpx;
-      .detail-star-box {
-        width: 167rpx;
-        height: 167rpx;
-        box-shadow: 0 0rpx 20rpx rgba(0, 0, 0, 0.2);
-        background: #fff;
-        display: flex;
-        justify-content: center;
-        align-content: center;
-        flex-direction: column;
-        text-align: center;
-        overflow: hidden;
-        .detail-star {
-          font-size: 38rpx;
-          font-weight: bold;
-          color: #2d2d2d;
-          margin-bottom: 16rpx;
-        }
-
-        .detail-star-img {
-          width: 130rpx;
-          height: 24rpx;
-          display: block;
-          background-repeat: no-repeat;
-          background-position: center;
-          background-size: cover;
-          margin: 0 auto;
-        }
-      }
-    }
-  }
-  .book-status {
-    padding: 0 30rpx 30rpx;
-    text {
-      font-size: 30rpx;
-      color: #2d2d2d;
-      display: block;
-      padding: 20rpx 0;
-    }
-    .content {
-      color: #00B267;
     }
   }
   .detail-summary {
     background: #fff;
-    padding: 0 30rpx 30rpx;
     .ibox-title-small {
-      font-size: 30rpx;
-      color: #989898;
       display: block;
-      padding: 20rpx 0;
+      padding-bottom: 10rpx;
       text-overflow: ellipsis;
     }
     .ibox-content {
       padding-bottom: 100rpx;
-      font-size: 32rpx;
-      color: #2d2d2d;
       line-height: 60rpx;
     }
     .ibox-content view {
       margin-bottom: 20rpx;
     }
   }
-  .btn-group{
+  .btn-group {
     width: 100%;
     height: 100rpx;
     position: fixed;
     bottom: 0;
     left: 0;
-    .publish-btn{
-      width: 50%;
+    .status-btn {
+      width: 100%;
       height: 100%;
       font-size: 36rpx;
       display: inline-block;
@@ -363,19 +404,7 @@ export default class BookDetail extends wepy.page {
       padding: 0;
       border: 0;
       color: #fff;
-      background-color: #2BD3D2;
-      line-height: 100rpx;
-      text-align: center;
-    }
-    .borrow-btn{
-      width: 50%;
-      height: 100%;
-      display: inline-block;
-      background-color:  rgb(13,118,161);
-      font-size: 36rpx;
-      border-radius: 0;
-      padding: 0;
-      color: #fff;
+      background-color: #2bd3d2;
       line-height: 100rpx;
       text-align: center;
     }
@@ -424,7 +453,7 @@ export default class BookDetail extends wepy.page {
     z-index : 100;
   }
   .form.show .form-content{
-    height: 40%;
+    height: 60%;
   }
   .form-content .input-item{
     display: flex;

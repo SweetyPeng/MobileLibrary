@@ -1,18 +1,83 @@
 <template>
-  <view>
-    我的漂流
+  <view class="drift-container {{!postBooks.length ? 'empty-style':''}}">
+    <view wx:for="{{postBooks}}" wx:key="{{index}}" class="content-list">
+      <image src="{{item.bookImages.large}}" @tap="onBookDetail({{item._id}})"/>
+    </view>
+    <view wx:if="{{!postBooks.length}}">
+      <EmptyPage 
+        :item="emptyPageData"
+        @bindTap.user="bindTap"/>
+    </view>
   </view>
 </template>
 <script>
 import wepy from 'wepy';
-export default class Borrow extends wepy.component {
+import wx from 'utils/wx';
+import EmptyPage from 'components/empty';
+
+export default class Drift extends wepy.page {
   config = {
     navigationBarTitleText: '我的漂流'
   };
-  onLoad() {
-    console.log('漂流');
+  components = {
+    EmptyPage
+  };
+  data = {
+    postBooks: [],
+    emptyPageData: {
+      url: 'https://oss.biosan.cn/healthWechat/common/empty-img.png',
+      description: '您还没有发布漂流哦',
+      btn: '点我去发布漂流'
+    }
   }
-};
+  methods = {
+    onBookDetail(id) {
+      this.$link(`/pages/drift/driftDetail?id=${id}&pageSource=mineDriftDetail`);
+    },
+    bindTap() {
+      wx.switchTab({
+        url: '/pages/tabBar/scan'
+      })
+    }
+  }
+  onLoad() {}
+
+  onShow() {
+    this.getPostBooks();
+  }
+  getPostBooks() {
+    wx.cloud.callFunction({
+      name: 'getPostBooks',
+      data: {}
+    }).then(res => {
+      console.log('getPostBooks----->', res)
+      this.postBooks = res.result.data;
+      this.$apply();
+    })
+  }
+}
 </script>
 <style lang="less">
+.drift-container {
+  padding: 32rpx 0;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  .content-list {
+    width:350rpx;
+    height:400rpx;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 20rpx 15rpx 10rpx #cccccc;
+    image {
+      width: 200rpx;
+      height: 300rpx;
+    }
+  }
+}
+.empty-style {
+  display: flex;
+  justify-content: center;
+}
 </style>

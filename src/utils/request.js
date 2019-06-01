@@ -35,23 +35,25 @@ const requestWithLogin = async (
   return resp;
 };
 
+const session = {
+  sessionId: wx.getStorageSync('sessionId')
+};
 const request = (method, url, params = {}, showToast = false, handler = {}) => {
   params = deepCopy(params);
-  let token = db.get('token');
 
   Debug('request url:' + url);
-  Debug('request token:' + token);
-
-  if (params.usertoken === undefined && token) params.usertoken = token;
 
   if (/^http(s)?/.test(url)) {
     handler.url = url;
   } else {
     handler.url = domain + url;
   }
-
+  handler.header = {
+    'sessionId': session.sessionId
+  };
   handler.data = params;
   handler.method = method;
+  
   if (method === 'POST') {
     handler.header['content-type'] = 'application/x-www-form-urlencoded; charset=UTF-8';
     handler.header['accept'] = 'application/json';
@@ -114,32 +116,4 @@ const toastFn = (showToast, open = true) => {
   }
 };
 
-const setSession = loginData => {
-  if (loginData) {
-    let user = {
-      userId: loginData.user_id,
-      userName: loginData.user_name,
-      userMobile: loginData.user_mobile,
-      isRegister: !(loginData.notregister === 'true')
-    };
-    db.setUser(user);
-    db.set('token', loginData.usertoken);
-    wepy.$bus.emit('listenRegister', {
-      user: user,
-      token: loginData.usertoken
-    });
-  }
-};
-
-const getSession = () => {
-  return {
-    user: db.getUser(),
-    token: db.get('token')
-  };
-};
-
-const logout = () => {
-  db.clear();
-};
-
-export { GET, POST, PUT, DELETE, setSession, getSession, logout};
+export { GET, POST, PUT, DELETE, session};

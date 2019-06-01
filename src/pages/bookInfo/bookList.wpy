@@ -5,6 +5,11 @@
         <BookListCard :item="item"/>
       </repeat>
     </block>
+    <block wx:elif="{{newBookList.length>0}}">
+      <repeat for="{{newBookList}}" key="index" item="item">
+        <NewBookListCard :item="item"/>
+      </repeat>
+    </block>
     <block wx:else>
       <EmptyPage :item="emptyPageData"/>
     </block>
@@ -15,6 +20,7 @@ import wepy from 'wepy';
 import wx from 'utils/wx';
 import RequestMixin from 'mixins/request';
 import BookListCard from './bookListCard';
+import NewBookListCard from './newBookListCard';
 import EmptyPage from 'components/empty';
 export default class BookList extends wepy.page {
   config = {
@@ -22,13 +28,15 @@ export default class BookList extends wepy.page {
   };
   components = {
     BookListCard,
+    NewBookListCard,
     EmptyPage
   };
   data = {
     keyWord: '',
     bookList: [],
+    newBookList: [],
     emptyPageData: {
-      url: 'https://oss.biosan.cn/medicClient/coupon/nocoupons.png',
+      url: 'https://oss.biosan.cn/healthWechat/common/empty-img.png',
       description: '暂时没有找到您想要的图书哦'
     }
   };
@@ -38,24 +46,57 @@ export default class BookList extends wepy.page {
   // 通过关键字查询图书 --通过云函数
   async queryBookByName(word) {
     this.$loading('加载中');
-    const resp = await wx.cloud.callFunction({
-      // 传递给云函数的参数
-      name: 'getBookListByName',
-      data: {
-        name: word
-      }
-    }).then(res => {
-      return JSON.parse(res.result);
-    }).catch(err => {
-      console.log(err);
-    });
+    const resp = await wx.cloud
+      .callFunction({
+        // 传递给云函数的参数
+        name: 'getBookListByName',
+        data: {
+          name: word
+        }
+      })
+      .then(res => {
+        let result = JSON.parse(res.result);
+        console.log('Search图书列表', result);
+        return JSON.parse(res.result);
+      })
+      .catch(err => {
+        console.log(err);
+      });
     this.bookList = resp.books;
     this.$apply();
     this.$loading(false);
   }
+
+  // 获取新书---云函数getNewBooks() ---数据库booksCollection
+  async getNewBooks() {
+    const newBookList = await wx.cloud
+      .callFunction({
+        name: 'getNewBooks',
+        data: {
+          pageNum: 0
+        }
+      })
+      .then(res => {
+        return res.result.data;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    this.newBookList = newBookList;
+    wx.setNavigationBarTitle({
+      title: '新书速递'
+    });
+    this.$apply();
+    console.log('getNewBookList', this.newBookList);
+  }
   onLoad(options) {
-    this.keyWord = encodeURI(options.keyWords); // 中文转码
-    this.queryBookByName(this.keyWord);
+    if (options.keyWords) {
+      this.keyWord = encodeURI(options.keyWords); // 中文转码
+      this.queryBookByName(this.keyWord);
+    }
+    if (options.from === 'findmore') {
+      this.getNewBooks();
+    }
   }
 }
 </script>

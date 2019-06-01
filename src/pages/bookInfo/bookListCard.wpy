@@ -5,11 +5,8 @@
     </view>
     <view class="card-right">
       <view class="title">{{item.title}}</view>
-      <view class="tags">
-        <text wx:if="{{item.tags[0].title}}">{{item.tags[0].title}}</text>
-        <text wx:if="{{item.tags[1].title}}">{{item.tags[1].title}}</text>
-      </view>
       <view class="author">作者：{{item.author[0]}}</view>
+      <view class="pubdate">出版社：{{item.publisher}}</view>
       <view class="pubdate">出版时间：{{item.pubdate}}</view>
     </view>
   </view>

@@ -1,0 +1,74 @@
+<template>
+  <view class="notice-card" bindtap="toDetail({{item._id}})">
+    <view class="time_state">
+      <view class="_icon iconfont icon-icon_news_notice" style="color:orange"></view>
+      <view>借阅申请</view>
+      <view>{{item.borrowTime}}</view>
+    </view>
+    <view class="bookname">书名：《{{item.bookName}}》</view>
+    <view class="borrower">申请人：{{item.userName}}</view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy';
+export default class NoticeCard extends wepy.component {
+  components = {};
+  data = {};
+  props = {
+    item: {
+      type: Object
+    }
+  };
+  methods = {
+    toDetail(id) {
+      this.$link(`../message/noticeDetail?noticeId=${id}`);
+    }
+  }
+};
+</script>
+<style lang="less">
+.notice-card {
+  box-sizing: border-box;
+  margin-bottom: 20rpx;
+  background: rgba(255, 255, 255, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  .time_state {
+    display: flex;
+    padding-left: 32rpx;
+    margin-top: 16rpx;
+    align-items: center;
+    ._icon {
+      width: 48rpx;
+      height: 48rpx;
+    }
+    :nth-child(2) {
+      color: #5d5d5d;
+      font-size: 28rpx;
+      font-weight: bolder;
+      margin-left: 16rpx;
+      box-sizing: border-box;
+    }
+    :nth-child(3) {
+      color: #9d9d9d;
+      font-size: 28rpx;
+      margin-left: 16rpx;
+    }
+  }
+  .bookname {
+    color: #9d9d9d;
+    font-size: 32rpx;
+    padding-left: 80rpx;
+    padding-right: 32rpx;
+    margin-top: 32rpx;
+  }
+  .borrower {
+    color: #9d9d9d;
+    font-size: 28rpx;
+    padding-left: 80rpx;
+    margin-bottom: 32rpx;
+    margin-top: 32rpx;
+  }
+}
+</style>
